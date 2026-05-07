@@ -369,23 +369,38 @@ class Index:
         return [dict(r) for r in rows]
 
     def get_session_turns(
-        self, agent: str, session_id: str, max_turns: int = 200
-    ) -> list[dict[str, Any]]:
+        self,
+        agent: str,
+        session_id: str,
+        offset: int = 0,
+        limit: int = 200,
+        roles: list[str] | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        """Return (turns, total). `total` is the count after `roles` filter is applied,
+        so callers can paginate with (offset, limit) without needing a second query."""
         conn = _connect(self.path)
         try:
+            base_sql = "FROM turns WHERE agent_id=? AND session_id=?"
+            params: list[Any] = [agent, session_id]
+            if roles:
+                placeholders = ",".join("?" for _ in roles)
+                base_sql += f" AND role IN ({placeholders})"
+                params.extend(roles)
+
+            total = conn.execute(f"SELECT COUNT(*) {base_sql}", params).fetchone()[0]
+
             rows = conn.execute(
-                """
+                f"""
                 SELECT turn_index, role, content_text, tool_name, tool_args_json, ts
-                FROM turns
-                WHERE agent_id=? AND session_id=?
+                {base_sql}
                 ORDER BY turn_index ASC
-                LIMIT ?
+                LIMIT ? OFFSET ?
                 """,
-                (agent, session_id, max_turns),
+                [*params, limit, offset],
             ).fetchall()
         finally:
             conn.close()
-        return [dict(r) for r in rows]
+        return [dict(r) for r in rows], int(total)
 
     def session_watermark(self, agent: str, session_id: str) -> tuple[int, int] | None:
         conn = _connect(self.path)

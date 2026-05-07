@@ -127,12 +127,42 @@ def list_sessions(
 
 @mcp.tool()
 def get_session(
-    ctx: Context, agent: str, session_id: str, max_turns: int = 200
+    ctx: Context,
+    agent: str,
+    session_id: str,
+    offset: int = 0,
+    limit: int = 200,
+    only_human: bool = False,
+    roles: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Full transcript reconstruction for one session."""
+    """Reconstruct a session transcript with pagination and optional role filtering.
+
+    `offset` / `limit` paginate (default returns turns 0..199; set offset=200 for the
+    next page). Use the returned `total` and `has_more` to drive pagination.
+
+    `only_human=True` returns just user turns (convenience equivalent to roles=["user"]).
+    `roles=["user","agent"]` keeps human + assistant messages, drops tools and thoughts.
+    If both are passed, `roles` wins.
+    """
     state = _ctx(ctx)
-    turns = state.idx.get_session_turns(agent, session_id, max_turns=max(1, min(max_turns, 5000)))
-    return {"agent": agent, "session_id": session_id, "turns": turns}
+    safe_limit = max(1, min(limit, 5000))
+    safe_offset = max(0, offset)
+
+    role_filter = roles if roles else (["user"] if only_human else None)
+
+    turns, total = state.idx.get_session_turns(
+        agent, session_id, offset=safe_offset, limit=safe_limit, roles=role_filter
+    )
+    return {
+        "agent": agent,
+        "session_id": session_id,
+        "turns": turns,
+        "total": total,
+        "offset": safe_offset,
+        "limit": safe_limit,
+        "has_more": safe_offset + len(turns) < total,
+        "roles_filter": role_filter,
+    }
 
 
 @mcp.tool()
