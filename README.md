@@ -13,21 +13,38 @@ database. MCP tools query that index.
 
 Two backends ship today:
 
-- **Filesystem (default for Claude Code & Codex CLI).** Reads the agent's
-  on-disk session store directly: `~/.claude/projects/*/*.jsonl` and
-  `~/.codex/sessions/<year>/<month>/<day>/*.jsonl`. Captures 100% of local
-  history, fast, no subprocess churn. Incremental scans are mtime-gated.
-- **ACP (default for everything else).** Lazy-spawns each agent as an ACP
-  subprocess, calls `session/list` + `session/load`, drains the replayed
-  `session/update` notifications. For agents whose ACP adapter filters
-  `session/list` by spawning cwd (e.g. Claude Code's adapter would, if used),
-  cwd discovery iterates known project roots.
+- **Filesystem (default wherever a parser exists).** Reads the agent's on-disk
+  session store directly. Bundled parsers cover **Claude Code, Codex CLI, Goose,
+  Cursor, Cline, Roo Code, Kilo Code, Zed, Gemini CLI, Qwen Code, Continue, and
+  Aider**. Captures 100% of local history, fast, no subprocess churn.
+  Incremental scans are mtime- or `updated_at`-gated depending on the store
+  shape. Filesystem-only agents (Cursor, Cline-in-VS-Code, Zed, Continue) are
+  auto-detected even when their CLI isn't installed — we just read their
+  state files.
+- **ACP (fallback for agents without a filesystem parser).** Lazy-spawns each
+  agent as an ACP subprocess, calls `session/list` + `session/load`, drains the
+  replayed `session/update` notifications. For agents whose ACP adapter filters
+  `session/list` by spawning cwd, cwd discovery iterates known project roots.
 
 You can override the backend per agent in `config.toml` — see
 [Configuration](#configuration) below. The filesystem backend is the reason
 indexed coverage is ~16× higher than ACP-only would deliver: most agent ACP
 adapters expose only a small recent slice of `session/list`, while the
 filesystem store is complete.
+
+### Where each agent stores its data
+
+| Agent | Storage | Format |
+| --- | --- | --- |
+| Claude Code | `~/.claude/projects/*/<uuid>.jsonl` | per-session JSONL |
+| Codex CLI | `~/.codex/sessions/<y>/<m>/<d>/rollout-*.jsonl` | per-session JSONL |
+| Goose | `~/.local/share/goose/sessions/sessions.db` | SQLite |
+| Cursor | `~/Library/Application Support/Cursor/User/globalStorage/state.vscdb` | SQLite (composer headers + per-bubble blobs; orphan composers also recovered) |
+| Cline / Roo / Kilo | `…/Code/User/globalStorage/<publisher>/tasks/<id>/api_conversation_history.json` | JSON (Anthropic-format) |
+| Zed | `~/Library/Application Support/Zed/threads/threads.db` | SQLite (payloads may be Zstd) |
+| Gemini CLI / Qwen Code | `~/.{gemini,qwen}/tmp/<projectHash>/chats/*.{json,jsonl}` | JSON / JSONL |
+| Continue | `~/.continue/sessions/<id>.json` | JSON |
+| Aider | `<repo>/.aider.chat.history.md` (per repo; needs `project_roots` in config) | Markdown |
 
 ## Install
 
@@ -44,14 +61,12 @@ acp-memory doctor
 ```
 
 That prints the database path, the registry fetch result, the agents detected
-locally, and per-agent indexed status. Expect:
-
-- `claude-code-acp` (or `claude-acp`) — `ok` once Claude Code is logged in.
-- `codex-acp` — `ok` or `unsupported`, depending on installed Codex version.
-- `goose` — currently `unsupported` on most builds (waiting on `session/load`).
-
-If an agent shows `needs_auth`, run that agent's normal login flow (e.g.
-`claude login`) and call the `refresh` MCP tool or wait for the next poll.
+locally, and per-agent indexed status. Filesystem-backed agents (the ones in
+the table above) show `ok` as soon as their on-disk store is found — no
+subprocess launch required. ACP-only agents may also show `unsupported` if
+their adapter lacks `loadSession`, or `needs_auth` if `session/list` returns
+401. For `needs_auth`, run that agent's normal login flow (e.g. `claude login`)
+and call the `refresh` MCP tool or wait for the next poll.
 
 ## Wire into Claude Code
 
@@ -110,14 +125,20 @@ enabled = false
 # ACP-only agent that needs cwd hints (override auto-discovery)
 [agents.gemini]
 cwds = ["/Users/me/code/foo", "/Users/me/code/bar"]
+
+# Aider has no central session store — chat history lives next to each repo.
+# Configure the project roots you want indexed.
+[agents.aider]
+project_roots = ["/Users/me/code/foo", "/Users/me/code/bar"]
 ```
 
 ### Backend selection
 
 Per-agent `backend` values:
 
-- `"filesystem"` — read the agent's local session store (only for agents that
-  have a parser: `claude-acp`, `claude-code-acp`, `codex-acp`).
+- `"filesystem"` — read the agent's local session store. Bundled parsers exist
+  for `claude-acp`, `codex-acp`, `goose`, `cursor`, `cline`, `roo-code`,
+  `kilo`, `zed`, `gemini`, `qwen-code`, `continue`, and `aider`.
 - `"acp"` — lazy-spawn the agent as an ACP subprocess and use `session/list` +
   `session/load`.
 - omitted — auto: filesystem if a parser exists, else ACP.

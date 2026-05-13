@@ -136,5 +136,16 @@ def detect_agents(registry_agents: list[dict[str, Any]], cfg: Config) -> list[Ag
                 enabled=True,
             )
         )
+        seen_ids.add(agent_id)
+
+    # Filesystem-only agents (Cursor, Cline, Zed, Continue, ...) that aren't in the ACP
+    # registry. The registry doesn't know about them, but if their on-disk store exists
+    # we can index it directly. These are registered with empty launch commands; the
+    # poller routes them to the filesystem backend.
+    from acp_memory_server.filesystem_backend import discover_filesystem_only_agents
+
+    for spec in discover_filesystem_only_agents(cfg, seen_ids):
+        detected.append(spec)
+        seen_ids.add(spec.id)
 
     return detected

@@ -48,6 +48,8 @@ class AgentOverride:
     cwds: list[str] | None = None
     # backend = "acp" | "filesystem" | "auto" (default; uses filesystem if available, else acp)
     backend: str | None = None
+    # Per-project roots for agents whose history lives next to the working tree (Aider, Crush, ...).
+    project_roots: list[str] | None = None
 
 
 @dataclass
@@ -84,6 +86,7 @@ def load_config() -> Config:
             cwd=section.get("cwd"),
             cwds=list(section["cwds"]) if "cwds" in section else None,
             backend=section.get("backend"),
+            project_roots=list(section["project_roots"]) if "project_roots" in section else None,
         )
     return cfg
 
