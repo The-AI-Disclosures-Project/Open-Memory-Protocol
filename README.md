@@ -71,7 +71,7 @@ Once the protocol has stable production adoption, the written specification will
 Formal in-kind partners: **Mozilla** and **IBM**. Direct implementation and specification collaborators: **Letta** (specification lead), **Block / goose** (open-source agent harness). Broader working group spans agent framework maintainers, memory-focused open-source projects, vector-database providers, and enterprise adopters.
 
 - Kickoff technical convening: **September 9, 2026** (online, co-hosted with Mozilla and IBM).
-- Second convening: **October 2026** at the O'Reilly open-source unconference (Berkeley).
+- Optional gathering: **October 2026** at the O'Reilly open-source unconference (Berkeley).
 
 ## Working principles
 
