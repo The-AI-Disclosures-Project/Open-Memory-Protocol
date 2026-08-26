@@ -9,8 +9,8 @@ materials, and develop the technical work associated with the initiative.
 
 ## Repository layout
 
-- [`prototypes/open-memory-protocol/`](prototypes/open-memory-protocol/) — the
-  current MCP server prototype, imported from
+- [`prototypes/`](prototypes/) — the current MCP server prototype, imported
+  from
   [The-AI-Disclosures-Project/Open-Memory-Protocol](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol)
   at upstream commit `02b8d92`.
 - [`references/`](references/) — research, source notes, and background reading
