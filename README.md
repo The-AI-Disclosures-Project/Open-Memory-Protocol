@@ -54,7 +54,7 @@ See [ai-disclosures.org/omp](https://ai-disclosures.org/omp) for the full securi
 
 - [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — the current draft specification, authored by Charles Packer (Letta) with feedback from the AI Disclosures Project team.
 - [`reference/`](reference/) — Python reference implementation of the loader, validator, and harness contract (runs against any spec-conformant memory directory).
-- [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — ACP-based MCP memory-server prototype (Sruly Rosenblat).
+- [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — ACP-based MCP memory-server prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in **May 2026**; imported here at upstream commit `02b8d92`.
 - [`references/`](references/) — research, source notes, and background reading relevant to the initiative.
 - [`docs/contributing.md`](docs/contributing.md) — how to participate in the working group.
 - [`GOVERNANCE.md`](GOVERNANCE.md) — steering committee, RFC process, licensing, long-term stewardship.
@@ -72,6 +72,25 @@ Formal in-kind partners: **Mozilla** and **IBM**. Direct implementation and spec
 
 - Kickoff technical convening: **September 9, 2026** (online, co-hosted with Mozilla and IBM).
 - Optional gathering: **October 2026** at the O'Reilly open-source unconference (Berkeley).
+
+## Project history
+
+OMPI consolidates work that has been developing across the AI Disclosures Project for over a year. The initiative did not start with this repository; this repository is where the technical and governance work is now converging.
+
+- **August 2025** — "Protocols and Power" (Moure, O'Reilly, Strauss) is published as an SSRC working paper. It sets out the intellectual case for open protocols in AI markets and the market-structure argument that underpins OMP. Available at [ai-disclosures.org](https://www.ai-disclosures.org/assets/papers/Protocols-and-Power-Moure-OReilly-Strauss_SSRC_08272025.pdf).
+- **April–May 2026** — Rockefeller Foundation Bellagio convening on *Human + AI Markets*. Twenty leaders across AI labs, memory-infrastructure providers, and civil-society organizations discuss agent-memory portability among other open-market questions.
+- **May 2026** — First public commits on the ACP-based memory-server prototype ([`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp)), covering session indexing across twelve coding-agent harnesses. Now imported here as [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/).
+- **June 2026** — FOO Camp session (O'Reilly Media, Lighthaven Berkeley) advances the coding-agent memory-portability agenda with builders across the stack.
+- **July–August 2026** — "The Memory Walled Garden" and companion writeups publish on [Asimov's Addendum](https://asimovaddendum.substack.com/) as the initiative's public position. Charles Packer (Letta) circulates the draft Agent Memory Specification, reviewed by the AI Disclosures Project team; this is the working draft that has become [`spec/draft-v0.1.md`](spec/draft-v0.1.md).
+- **August 2026** — OMPI consolidates its work in this repository as the canonical technical and governance home.
+- **September 9, 2026** — Kickoff technical convening, co-hosted with Mozilla and IBM.
+- **October 2026** — In-person gathering at the O'Reilly open-source unconference (Berkeley).
+
+## Working group recruitment network
+
+As of August 2026, the OMPI outreach and technical-review pipeline contains **54 external individuals across 44 organizations or affiliations**, spanning the full agent-memory stack. Representative organizations tracked in the pipeline include Anthropic (Claude Code), OpenAI (Codex, ChatGPT Memory), Google (Gemini, ReasoningBank), AWS AgentCore Memory, Microsoft (AutoGen), LangChain / LangGraph, LlamaIndex, Letta, Mem0, Zep, Graphiti, Pinecone, Salesforce Agentforce, LinkedIn, W3C, the Agentic AI Foundation, and multiple coding-agent projects.
+
+Thirteen external participants from ten affiliations are confirmed for the September 9, 2026 technical convening. Recruitment for the working group remains open beyond the founding network; contacts are counted as OMP users only when they actually implement or test the protocol, not on the basis of interest or attendance.
 
 ## Working principles
 
