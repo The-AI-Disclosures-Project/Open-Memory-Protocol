@@ -78,11 +78,11 @@ Formal in-kind partners: **Mozilla** and **IBM**. Direct implementation and spec
 OMPI consolidates work that has been developing across the AI Disclosures Project for over a year. The initiative did not start with this repository; this repository is where the technical and governance work is now converging.
 
 - **August 2025** — "Protocols and Power" (Moure, O'Reilly, Strauss) is published as an SSRC working paper. It sets out the intellectual case for open protocols in AI markets and the market-structure argument that underpins OMP. Available at [ai-disclosures.org](https://www.ai-disclosures.org/assets/papers/Protocols-and-Power-Moure-OReilly-Strauss_SSRC_08272025.pdf).
+- **October 3, 2025** — ["The Memory Walled Garden"](https://asimovaddendum.substack.com/p/the-memory-walled-garden) publishes on *Asimov's Addendum* as the initiative's first public position on portable AI-agent memory.
 - **April–May 2026** — Rockefeller Foundation Bellagio convening on *Human + AI Markets*. Twenty leaders across AI labs, memory-infrastructure providers, and civil-society organizations discuss agent-memory portability among other open-market questions.
 - **May 2026** — First public commits on the ACP-based memory-server prototype ([`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp)), covering session indexing across twelve coding-agent harnesses. Now imported here as [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/).
 - **June 2026** — FOO Camp session (O'Reilly Media, Lighthaven Berkeley) advances the coding-agent memory-portability agenda with builders across the stack.
-- **July–August 2026** — ["The Memory Walled Garden"](https://asimovaddendum.substack.com/p/the-memory-walled-garden) publishes on *Asimov's Addendum* as the initiative's public position on portable AI-agent memory. Charles Packer (Letta) circulates the draft Agent Memory Specification, reviewed by the AI Disclosures Project team; this is the working draft that has become [`spec/draft-v0.1.md`](spec/draft-v0.1.md).
-- **August 2026** — OMPI consolidates its work in this repository as the canonical technical and governance home.
+- **August 2026** — Charles Packer (Letta) circulates the draft Agent Memory Specification, reviewed by the AI Disclosures Project team; this is the working draft that has become [`spec/draft-v0.1.md`](spec/draft-v0.1.md). OMPI consolidates its work in this repository as the canonical technical and governance home.
 - **September 9, 2026** — Kickoff technical convening, co-hosted with Mozilla and IBM.
 - **October 2026** — In-person gathering at the O'Reilly open-source unconference (Berkeley).
 

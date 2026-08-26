@@ -30,7 +30,7 @@ The reference implementation follows semantic versioning. Reference-implementati
 
 ## Code of conduct
 
-The Initiative operates under the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). Behavior violating the covenant should be reported to [conduct@aidisclosures.org](mailto:conduct@aidisclosures.org).
+The Initiative operates under the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). Behavior violating the covenant should be reported to [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org).
 
 ## Working-group meetings
 
@@ -40,6 +40,4 @@ The Initiative operates under the [Contributor Covenant v2.1](https://www.contri
 
 ## Contact
 
-- Working-group coordination: [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org)
-- Security: [security@aidisclosures.org](mailto:security@aidisclosures.org)
-- Code of conduct: [conduct@aidisclosures.org](mailto:conduct@aidisclosures.org)
+All Initiative correspondence — working-group coordination, security disclosures, and code-of-conduct reports — goes to [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org).

@@ -46,7 +46,7 @@ The Initiative also intends to submit the mature written specification to the IE
 
 ## Security policy
 
-The Initiative maintains a public security policy in [`SECURITY.md`](SECURITY.md) (in development). Vulnerability reports in the reference implementation or in the protocol itself are handled through coordinated disclosure at [security@aidisclosures.org](mailto:security@aidisclosures.org). Security patches to the reference implementation follow the timelines documented in the security policy (typically 14 days for high-severity issues, 30 days for medium-severity).
+The Initiative maintains a public security policy in [`SECURITY.md`](SECURITY.md) (in development). Vulnerability reports in the reference implementation or in the protocol itself are handled through coordinated disclosure at [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org). Security patches to the reference implementation follow the timelines documented in the security policy (typically 14 days for high-severity issues, 30 days for medium-severity).
 
 ## Transparency
 
