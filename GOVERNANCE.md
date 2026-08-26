@@ -46,7 +46,7 @@ The specification uses semantic versioning. Reference-implementation releases ar
 
 ## Security policy
 
-The Initiative maintains a public security policy in [`SECURITY.md`](SECURITY.md) (in development). Vulnerability reports in the reference implementation or in the protocol itself are handled through coordinated disclosure at [security@ai-disclosures.org](mailto:security@ai-disclosures.org). Security patches to the reference implementation follow the timelines documented in the security policy (typically 14 days for high-severity issues, 30 days for medium-severity).
+The Initiative maintains a public security policy in [`SECURITY.md`](SECURITY.md) (in development). Vulnerability reports in the reference implementation or in the protocol itself are handled through coordinated disclosure at [security@aidisclosures.org](mailto:security@aidisclosures.org). Security patches to the reference implementation follow the timelines documented in the security policy (typically 14 days for high-severity issues, 30 days for medium-severity).
 
 ## Transparency
 

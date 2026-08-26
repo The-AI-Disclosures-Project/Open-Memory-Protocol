@@ -84,7 +84,7 @@ This repository will evolve as the initiative and partner work progress.
 - Read the [current draft spec](spec/draft-v0.1.md) and open an issue with feedback.
 - Try the Python reference implementation ([`reference/`](reference/)) against your own memory workload.
 - Explore the ACP-based memory-server prototype ([`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)).
-- Contact [ompi@ai-disclosures.org](mailto:ompi@ai-disclosures.org) to join the working group.
+- Contact [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to join the working group.
 
 ## License
 

@@ -7,7 +7,7 @@ Thanks for your interest in the Open Memory Protocol (OMP). This document is the
 - **Specification feedback.** Read [`spec/draft-v0.1.md`](../spec/draft-v0.1.md) and open an issue with feedback, questions, or proposed changes.
 - **Reference implementation.** The Python reference lives in [`reference/`](../reference/). Bug reports, patches, and additional loader / validator implementations are welcome.
 - **Conformance tests.** The [`conformance/`](../conformance/) directory holds an executable test suite. If your memory system implements OMP, run the suite and report results.
-- **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@ai-disclosures.org](mailto:ompi@ai-disclosures.org) to be added.
+- **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
 - **Adopter case studies.** If you have implemented OMP in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
 
 ## Proposing a protocol change (RFC)
@@ -30,7 +30,7 @@ The reference implementation follows semantic versioning. Reference-implementati
 
 ## Code of conduct
 
-The Initiative operates under the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). Behavior violating the covenant should be reported to [conduct@ai-disclosures.org](mailto:conduct@ai-disclosures.org).
+The Initiative operates under the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). Behavior violating the covenant should be reported to [conduct@aidisclosures.org](mailto:conduct@aidisclosures.org).
 
 ## Working-group meetings
 
@@ -40,6 +40,6 @@ The Initiative operates under the [Contributor Covenant v2.1](https://www.contri
 
 ## Contact
 
-- Working-group coordination: [ompi@ai-disclosures.org](mailto:ompi@ai-disclosures.org)
-- Security: [security@ai-disclosures.org](mailto:security@ai-disclosures.org)
-- Code of conduct: [conduct@ai-disclosures.org](mailto:conduct@ai-disclosures.org)
+- Working-group coordination: [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org)
+- Security: [security@aidisclosures.org](mailto:security@aidisclosures.org)
+- Code of conduct: [conduct@aidisclosures.org](mailto:conduct@aidisclosures.org)

@@ -6,7 +6,7 @@ readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Open Memory Protocol Initiative", email = "ompi@ai-disclosures.org" },
+    { name = "Open Memory Protocol Initiative", email = "ompi@aidisclosures.org" },
 ]
 keywords = ["ai", "agent-memory", "interoperability", "coding-agents", "open-standards"]
 classifiers = [
