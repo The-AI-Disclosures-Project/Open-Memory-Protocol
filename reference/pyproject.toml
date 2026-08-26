@@ -1,0 +1,44 @@
+[project]
+name = "open-memory-protocol"
+version = "0.1.0"
+description = "Reference implementation of the Open Memory Protocol (OMP)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Open Memory Protocol Initiative", email = "ompi@ai-disclosures.org" },
+]
+keywords = ["ai", "agent-memory", "interoperability", "coding-agents", "open-standards"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://ai-disclosures.org/omp"
+Repository = "https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol"
+Specification = "https://ai-disclosures.org/omp"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["open_memory_protocol"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
