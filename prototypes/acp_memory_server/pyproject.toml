@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "acp-memory-server"
@@ -20,8 +20,9 @@ dependencies = [
 [project.scripts]
 acp-memory = "acp_memory_server.cli:main"
 
-[tool.hatch.build.targets.wheel]
-packages = ["acp_memory_server"]
+[tool.setuptools]
+packages = ["acp_memory_server", "acp_memory_server.filesystem_backend"]
+package-dir = { acp_memory_server = ".", "acp_memory_server.filesystem_backend" = "filesystem_backend" }
 
 [tool.ruff]
 line-length = 110
