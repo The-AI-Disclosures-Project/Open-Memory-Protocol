@@ -28,9 +28,27 @@ The **Open Memory Protocol (OMP)** is the technical work: an open, interoperable
 
 ## Why OMP
 
+Agent memory is persistent context that affects future model or agent behavior: user-provided facts, model- or agent-derived summaries, project instructions, prior decisions and actions, tool outputs, and references to underlying transcripts or artifacts. It is scoped to a user, project, organization, or shared group, and is distinct from a raw chat export. A memory system selects, transforms, organizes, retrieves, and expires information for future use.
+
 Every major coding-agent harness (Claude Code, Codex, goose, OpenClaw, Letta Code) implements memory, but each uses a different convention — `AGENTS.md`, `MEMORY.md`, `USER.md`, `HUMAN.md`. Developers cannot move a stateful agent from one harness to another. Enterprises cannot switch memory providers without re-ingesting derived memory objects. Open-source memory projects duplicate one another because there is no shared object model, provenance format, or exchange protocol to converge on.
 
-OMP specifies the smallest interoperable layer needed to make agent memory portable across harnesses and memory-layer services. Backends, storage, ownership, synchronization, and internal architecture stay with implementers.
+Fragmented memory has real engineering and security costs. Developers write bespoke adapters. Users and enterprises cannot reliably move accumulated context. Provenance is often lost when memory is copied. Permissions that were meaningful in one system may not survive export, and security review is harder when each integration defines its own exchange behavior. OMP specifies the smallest interoperable layer needed to address these costs while allowing implementations to keep their own storage backends, ownership models, and internal architectures.
+
+## What a portable OMP record contains
+
+The working object model is developed openly and tested against real implementations. Expected minimum fields (design hypotheses, not fixed requirements at project start):
+
+| Element | Purpose |
+|---|---|
+| **Identity and version** | Stable record identifier and schema/protocol version, for migration and de-duplication. |
+| **Scope / namespace** | User, project, organization, or shared-group scope; separates memory that may be portable from memory that must remain local. |
+| **Type and payload** | Small typed envelope plus implementation-extensible content, so systems can interoperate without forcing one internal memory taxonomy. |
+| **Source and provenance** | Originating system, underlying event/transcript/artifact reference, transformation history, authorship/derivation metadata. |
+| **Lifecycle** | Creation and update times, retention/expiry, optional decay/recency semantics. |
+| **Permissions and consent** | Who or what may read, export, modify, or share a record; preserves access constraints during exchange. |
+| **Integrity metadata** | Hashes, signatures, or other integrity information supporting chain of custody and tamper detection. |
+
+See [ai-disclosures.org/omp](https://ai-disclosures.org/omp) for the full security-and-risk table and the four-rule harness contract.
 
 ## Repository layout
 
