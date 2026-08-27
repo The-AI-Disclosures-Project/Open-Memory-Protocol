@@ -1,6 +1,6 @@
-# OMP Reference Implementation (Python)
+# OMP — Python experiment
 
-Reference implementation of the [Open Memory Protocol (OMP)](../README.md), targeting the harness contract and validation rules in [`spec/draft-v0.1.md`](../spec/draft-v0.1.md).
+An experimental Python sketch exploring the [Open Memory Protocol (OMP)](../README.md), targeting the harness contract and validation rules in [`spec/draft-v0.1.md`](../spec/draft-v0.1.md).
 
 ## Install
 

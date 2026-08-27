@@ -1,4 +1,4 @@
-"""Open Memory Protocol (OMP) reference implementation.
+"""Open Memory Protocol (OMP) experimental code.
 
 Public API:
 - MemoryDirectory: a validated OMP memory root

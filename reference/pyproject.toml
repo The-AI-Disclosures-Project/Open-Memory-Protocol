@@ -1,7 +1,7 @@
 [project]
 name = "open-memory-protocol"
 version = "0.1.0"
-description = "Reference implementation of the Open Memory Protocol (OMP)"
+description = "experimental code of the Open Memory Protocol (OMP)"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
