@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ai-disclosures.org/omp"><strong>Site</strong></a> ·
+  <a href="https://ai-disclosures.org/ompi"><strong>Site</strong></a> ·
   <a href="spec/draft-v0.1.md"><strong>Draft spec</strong></a> ·
   <a href="reference/"><strong>Experimental code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·

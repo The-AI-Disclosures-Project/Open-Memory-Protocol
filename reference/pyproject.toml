@@ -25,9 +25,9 @@ dependencies = []
 dev = ["pytest>=7", "ruff>=0.5"]
 
 [project.urls]
-Homepage = "https://ai-disclosures.org/omp"
+Homepage = "https://ai-disclosures.org/ompi"
 Repository = "https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol"
-Specification = "https://ai-disclosures.org/omp"
+Specification = "https://ai-disclosures.org/ompi"
 
 [build-system]
 requires = ["hatchling"]
