@@ -1,14 +1,14 @@
 # Contributing to the Open Memory Protocol
 
-Thanks for your interest in the Open Memory Protocol (OMP). This document is the entry point for anyone who wants to shape the specification, contribute to the experimental code, run the conformance suite against their own memory system, or participate in the working group.
+Thanks for your interest in the Open Memory Protocol (OMPI). This document is the entry point for anyone who wants to shape the specification, contribute to the experimental code, run the conformance suite against their own memory system, or participate in the working group.
 
 ## Ways to contribute
 
 - **Specification feedback.** Read [`spec/draft-v0.1.md`](../spec/draft-v0.1.md) and open an issue with feedback, questions, or proposed changes.
 - **Experimental code.** The Python sketch lives in [`reference/`](../reference/). Bug reports, patches, and additional loader / validator experiments are welcome.
-- **Conformance tests.** The [`conformance/`](../conformance/) directory holds an executable test suite. If your memory system implements OMP, run the suite and report results.
+- **Conformance tests.** The [`conformance/`](../conformance/) directory holds an executable test suite. If your memory system implements OMPI, run the suite and report results.
 - **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
-- **Adopter case studies.** If you have implemented OMP in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
+- **Adopter case studies.** If you have implemented OMPI in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
 
 ## Proposing a protocol change
 

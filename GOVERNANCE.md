@@ -1,6 +1,6 @@
 # Governance
 
-The Open Memory Protocol Initiative (OMPI) develops and maintains the Open Memory Protocol (OMP). This document describes how the Initiative is organized, how decisions are made, and how the governance trajectory is expected to mature over the first two years of active work.
+The Open Memory Protocol Initiative (OMPI) develops and maintains the Open Memory Protocol (OMPI). This document describes how the Initiative is organized, how decisions are made, and how the governance trajectory is expected to mature over the first two years of active work.
 
 ## Hosting and legal structure
 
@@ -35,7 +35,7 @@ Licensing is part of the product architecture.
 - Contributions to the core repository use a **Developer Certificate of Origin (DCO) sign-off**, not copyright assignment, preserving contributor ownership while creating a clear chain of contribution.
 - Dependencies must use compatible open-source licenses and are tracked through automated license and dependency scanning, with SBOMs where practical.
 - Independent implementations keep their own copyright and compatible open-source licenses.
-- The OMP / OMPI name and any conformance mark are stewarded by AI Disclosures Project / CS&S during the award under a neutral-use policy. Conformance claims depend on published tests, not organizational membership.
+- The OMPI / OMPI name and any conformance mark are stewarded by AI Disclosures Project / CS&S during the award under a neutral-use policy. Conformance claims depend on published tests, not organizational membership.
 - If mature specification work moves to a formal standards body or an Agentic AI Foundation project, the transition agreement preserves open licensing and applies the receiving body's patent / IP policy prospectively.
 
 ## Long-term stewardship

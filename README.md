@@ -28,19 +28,19 @@
 
 This repository is the shared working space for the Open Memory Protocol Initiative (OMPI), undertaken with partners to advance portable, interoperable, and user-controlled memory across AI systems.
 
-The **Open Memory Protocol (OMP)** is the technical work: an open, interoperable protocol for portable AI-agent memory. **OMPI** is the multi-stakeholder working group that develops it, hosted at the [AI Disclosures Project](https://ai-disclosures.org/) (a project of [Code for Science & Society](https://www.codeforsociety.org/)).
+The **Open Memory Protocol (OMPI)** is the technical work: an open, interoperable protocol for portable AI-agent memory. **OMPI** is the multi-stakeholder working group that develops it, hosted at the [AI Disclosures Project](https://ai-disclosures.org/) (a project of [Code for Science & Society](https://www.codeforsociety.org/)).
 
-## Why OMP
+## Why OMPI
 
 Agent memory is persistent context that affects future model or agent behavior: user-provided facts, model- or agent-derived summaries, project instructions, prior decisions and actions, tool outputs, and references to underlying transcripts or artifacts. It is scoped to a user, project, organization, or shared group, and is distinct from a raw chat export. A memory system selects, transforms, organizes, retrieves, and expires information for future use.
 
 Every major coding-agent harness (Claude Code, Codex, goose, OpenClaw, Letta Code) implements memory, but each uses a different convention — `AGENTS.md`, `MEMORY.md`, `USER.md`, `HUMAN.md`. Developers cannot move a stateful agent from one harness to another. Enterprises cannot switch memory providers without re-ingesting derived memory objects. Open-source memory projects duplicate one another because there is no shared object model, provenance format, or exchange protocol to converge on.
 
-Fragmented memory has real engineering and security costs. Developers write bespoke adapters. Users and enterprises cannot reliably move accumulated context. Provenance is often lost when memory is copied. Permissions that were meaningful in one system may not survive export, and security review is harder when each integration defines its own exchange behavior. OMP specifies the smallest interoperable layer needed to address these costs while allowing implementations to keep their own storage backends, ownership models, and internal architectures.
+Fragmented memory has real engineering and security costs. Developers write bespoke adapters. Users and enterprises cannot reliably move accumulated context. Provenance is often lost when memory is copied. Permissions that were meaningful in one system may not survive export, and security review is harder when each integration defines its own exchange behavior. OMPI specifies the smallest interoperable layer needed to address these costs while allowing implementations to keep their own storage backends, ownership models, and internal architectures.
 
 ## Shared practices we might build on
 
-The working group's [scoping note](spec/scoping-note-2026-08.md) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that are candidates for a minimal open protocol. These are the concrete issues the group will discuss — not commitments about what OMP will contain.
+The working group's [scoping note](spec/scoping-note-2026-08.md) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that are candidates for a minimal open protocol. These are the concrete issues the group will discuss — not commitments about what OMPI will contain.
 
 1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
 2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
@@ -78,7 +78,7 @@ Partners: **Mozilla** and **IBM**. Direct implementation and specification colla
 
 OMPI consolidates work that has been developing across the AI Disclosures Project for over a year. The initiative did not start with this repository; this repository is where the technical and governance work is now converging.
 
-- **August 2025** — "Protocols and Power" (Moure, O'Reilly, Strauss) is published as an SSRC working paper. It sets out the intellectual case for open protocols in AI markets and the market-structure argument that underpins OMP. Available at [ai-disclosures.org](https://www.ai-disclosures.org/assets/papers/Protocols-and-Power-Moure-OReilly-Strauss_SSRC_08272025.pdf).
+- **August 2025** — "Protocols and Power" (Moure, O'Reilly, Strauss) is published as an SSRC working paper. It sets out the intellectual case for open protocols in AI markets and the market-structure argument that underpins OMPI. Available at [ai-disclosures.org](https://www.ai-disclosures.org/assets/papers/Protocols-and-Power-Moure-OReilly-Strauss_SSRC_08272025.pdf).
 - **October 3, 2025** — ["The Memory Walled Garden"](https://asimovaddendum.substack.com/p/the-memory-walled-garden) publishes on *Asimov's Addendum* as the initiative's first public position on portable AI-agent memory.
 - **April–May 2026** — Rockefeller Foundation Bellagio convening on *Human + AI Markets*. Twenty leaders across AI labs, memory-infrastructure providers, and civil-society organizations discuss agent-memory portability among other open-market questions.
 - **May 2026** — First public commits on the ACP-based memory-server prototype ([`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp)), covering session indexing across twelve coding-agent harnesses. Now imported here as [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/).
@@ -91,7 +91,7 @@ OMPI consolidates work that has been developing across the AI Disclosures Projec
 
 As of August 2026, the OMPI outreach and technical-review pipeline contains **54 external individuals across 44 organizations or affiliations**, spanning the full agent-memory stack. Representative organizations tracked in the pipeline include Anthropic (Claude Code), OpenAI (Codex, ChatGPT Memory), Google (Gemini, ReasoningBank), AWS AgentCore Memory, Microsoft (AutoGen), LangChain / LangGraph, LlamaIndex, Letta, Mem0, Zep, Graphiti, Pinecone, Salesforce Agentforce, LinkedIn, W3C, the Agentic AI Foundation, and multiple coding-agent projects.
 
-Thirteen external participants from ten affiliations are confirmed for the September 9, 2026 technical convening. Recruitment for the working group remains open beyond the founding network; contacts are counted as OMP users only when they actually implement or test the protocol, not on the basis of interest or attendance.
+Thirteen external participants from ten affiliations are confirmed for the September 9, 2026 technical convening. Recruitment for the working group remains open beyond the founding network; contacts are counted as OMPI users only when they actually implement or test the protocol, not on the basis of interest or attendance.
 
 ## Working principles
 
