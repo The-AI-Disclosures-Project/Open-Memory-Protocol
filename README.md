@@ -40,7 +40,7 @@ The fragmentation has real engineering and security costs. Developers write besp
 
 ## Shared practices in the ecosystem
 
-The ecosystem's [scoping note](spec/scoping-note-2026-08.md) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
+The ecosystem's [scoping note](spec/scoping-note-2026-08.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
 
 1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
 2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
@@ -48,11 +48,11 @@ The ecosystem's [scoping note](spec/scoping-note-2026-08.md) surveys memory impl
 4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
 5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
 
-The [full scoping note](spec/scoping-note-2026-08.md) covers coding-harness patterns, consumer-assistant patterns, enterprise patterns, what is converging across vendors (background consolidation, progressive disclosure), and what remains implementation-specific (retrieval internals, human-approval workflow, MCP memory access).
+The [full scoping note](spec/scoping-note-2026-08.pdf) covers coding-harness patterns, consumer-assistant patterns, enterprise patterns, what is converging across vendors (background consolidation, progressive disclosure), and what remains implementation-specific (retrieval internals, human-approval workflow, MCP memory access).
 
 ## Repository layout
 
-- [`spec/scoping-note-2026-08.md`](spec/scoping-note-2026-08.md) — ecosystem scoping note surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
+- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — ecosystem scoping note surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 - [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — the current draft OMP technology, authored by Charles Packer (Letta) with feedback from the AI Disclosures Project team.
 - [`reference/`](reference/) — reference Python implementation of the loader, validator, and harness contract from the draft technology.
 - [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — ACP-based MCP memory-server prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in **May 2026**; imported here at upstream commit `02b8d92`.
