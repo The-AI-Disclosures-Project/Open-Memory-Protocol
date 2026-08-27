@@ -38,25 +38,22 @@ Every major coding-agent harness (Claude Code, Codex, goose, OpenClaw, Letta Cod
 
 Fragmented memory has real engineering and security costs. Developers write bespoke adapters. Users and enterprises cannot reliably move accumulated context. Provenance is often lost when memory is copied. Permissions that were meaningful in one system may not survive export, and security review is harder when each integration defines its own exchange behavior. OMP specifies the smallest interoperable layer needed to address these costs while allowing implementations to keep their own storage backends, ownership models, and internal architectures.
 
-## What the OMP record model should cover
+## Shared practices we might build on
 
-The working group is considering the following primitives as the core of a portable memory record. These are design directions under review, not a fixed specification. Final semantics will follow implementation testing and RFC review over the first year of active work.
+The working group's [scoping note](spec/scoping-note-2026-08.md) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that are candidates for a minimal open protocol. These are the concrete issues the group will discuss — not commitments about what OMP will contain.
 
-| Element | Purpose |
-|---|---|
-| **Identity and version** | Stable record identifier and schema/protocol version, for migration and de-duplication. |
-| **Scope / namespace** | User, project, organization, or shared-group scope; separates memory that may be portable from memory that must remain local. |
-| **Type and payload** | Small typed envelope plus implementation-extensible content, so systems can interoperate without forcing one internal memory taxonomy. |
-| **Source and provenance** | Originating system, underlying event/transcript/artifact reference, transformation history, authorship/derivation metadata. |
-| **Lifecycle** | Creation and update times, retention/expiry, optional decay/recency semantics. |
-| **Permissions and consent** | Who or what may read, export, modify, or share a record; preserves access constraints during exchange. |
-| **Integrity metadata** | Hashes, signatures, or other integrity information supporting chain of custody and tamper detection. |
+1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
+2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
+3. **Lifecycle operations.** Memory treated as something with a lifecycle: create (remember), read (recall), update (correct or revise), delete (forget). Explicit in Hermes, Letta, Foundry, Copilot Studio, and various coding harnesses.
+4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
+5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
 
-See [ai-disclosures.org/omp](https://ai-disclosures.org/omp) for the full security-and-risk table and the four-rule harness contract.
+The [full scoping note](spec/scoping-note-2026-08.md) covers coding-harness patterns, consumer-assistant patterns, enterprise patterns, what is converging across vendors (background consolidation, progressive disclosure), and what remains implementation-specific (retrieval internals, human-approval workflow, MCP memory access).
 
 ## Repository layout
 
-- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — the current draft specification, authored by Charles Packer (Letta) with feedback from the AI Disclosures Project team.
+- [`spec/scoping-note-2026-08.md`](spec/scoping-note-2026-08.md) — working-group scoping note surveying current memory implementations and shared primitives an open protocol might build on (August 2026).
+- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — Charles Packer's discussion draft of an Agent Memory Specification, circulating in the working group as a starting point for RFC review.
 - [`reference/`](reference/) — an experimental Python sketch of the loader, validator, and harness contract from the discussion draft. Not a reference implementation; a first sketch for working-group discussion.
 - [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — ACP-based MCP memory-server prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in **May 2026**; imported here at upstream commit `02b8d92`.
 - [`references/`](references/) — research, source notes, and background reading relevant to the initiative.
