@@ -1,5 +1,7 @@
 # Open Memory Protocol — Scoping Note
 
+> **The authoritative version is the PDF: [`scoping-note-2026-08.pdf`](scoping-note-2026-08.pdf).** This markdown mirror is provided for in-repo search and rendering; the PDF governs where the two differ. Both versions will be superseded by future revisions of the scoping note as the working group's understanding evolves.
+
 **Status:** Working-group scoping note, August 2026
 **License:** CC BY 4.0
 **Reviewers:** AI Disclosures Project team; ChatGPT and human reviewers
