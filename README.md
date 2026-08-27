@@ -111,9 +111,9 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 
 ## Ecosystem recruitment network
 
-As of August 2026, the OMPI outreach and technical-review pipeline includes **54 external individuals across 44 organizations or affiliations**, spanning the full agent-memory stack. Representative organizations in the pipeline include Anthropic (Claude Code), OpenAI (Codex, ChatGPT Memory), Google (Gemini, ReasoningBank), AWS AgentCore Memory, Microsoft (AutoGen), LangChain / LangGraph, LlamaIndex, Letta, Mem0, Zep, Graphiti, Pinecone, Salesforce Agentforce, LinkedIn, W3C, the Agentic AI Foundation, and multiple coding-agent projects.
+As of August 2026, the OMPI outreach and technical-review pipeline includes organizations and individuals, spanning the full agent-memory stack. Representatives from Pinecone, Letta, IBM, Mozilla, Block / goose, the Agentic AI Foundation (AAIF), Pi, and individual contributors to AI Labs such as Gemini are all involved in preliminary work and discussions. We hope to grow this ecosystem to include Microsoft, Anthropic (Claude Code), OpenAI (Codex, ChatGPT Memory), Google (Gemini, ReasoningBank), AWS AgentCore Memory, Microsoft (AutoGen), LangChain / LangGraph, LlamaIndex, Mem0, Zep, Graphiti, Salesforce Agentforce, LinkedIn, W3C,  and multiple coding-agent projects.
 
-Thirteen external participants from ten affiliations are confirmed for the September 9, 2026 ecosystem convening. Recruitment remains open beyond the founding network; contacts are counted as OMP users only when they implement or test the technology, not on the basis of interest or attendance.
+Thirteen external participants from ten affiliations are confirmed for the September 9, 2026 ecosystem convening. Recruitment remains open beyond the founding network; contacts are counted as OMPI users only when they implement, test, or help give feedback on the technology, not on the basis of interest or attendance.
 
 ## How to contribute
 
