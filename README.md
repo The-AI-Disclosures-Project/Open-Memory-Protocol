@@ -20,7 +20,7 @@
 
 ---
 
-> **Current stage.** OMPI is at the early-stage discussion phase. The protocol has not been built. The specification is a discussion draft, the Python code is an early experiment, and the working group holds its **first informal discussion on September 9, 2026** (online, co-hosted with Mozilla and IBM). Every artifact in this repository is a starting point for RFC review, not a finalized deliverable.
+> **Current stage.** OMPI is at the early-stage discussion phase. The protocol has not been built. The specification is a discussion draft, the Python code is an early experiment, and the working group holds its **first informal discussion on September 9, 2026** (online, co-hosted with Mozilla and IBM). Every artifact in this repository is a starting point for discussion, iteration, and experimentation through usage and adoption in the market — not a finalized deliverable.
 
 ---
 
@@ -53,12 +53,12 @@ The [full scoping note](spec/scoping-note-2026-08.md) covers coding-harness patt
 ## Repository layout
 
 - [`spec/scoping-note-2026-08.md`](spec/scoping-note-2026-08.md) — working-group scoping note surveying current memory implementations and shared primitives an open protocol might build on (August 2026).
-- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — Charles Packer's discussion draft of an Agent Memory Specification, circulating in the working group as a starting point for RFC review.
+- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — Charles Packer's discussion draft of an Agent Memory Specification, circulating in the working group as a starting point for discussion, iteration, and experimentation in the market.
 - [`reference/`](reference/) — an experimental Python sketch of the loader, validator, and harness contract from the discussion draft. Not a reference implementation; a first sketch for working-group discussion.
 - [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — ACP-based MCP memory-server prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in **May 2026**; imported here at upstream commit `02b8d92`.
 - [`references/`](references/) — research, source notes, and background reading relevant to the initiative.
 - [`docs/contributing.md`](docs/contributing.md) — how to participate in the working group.
-- [`GOVERNANCE.md`](GOVERNANCE.md) — steering committee, RFC process, licensing, long-term stewardship.
+- [`GOVERNANCE.md`](GOVERNANCE.md) — steering committee, decision process, licensing, long-term stewardship.
 - [`media/`](media/) — logo and other visual assets.
 
 ## First vertical: coding agents

@@ -10,13 +10,13 @@ During the award period, OMPI is a named initiative housed at the AI Disclosures
 
 | Period | Structure | Decision rights and output |
 |---|---|---|
-| **Months 0–6: bootstrap** | AI Disclosures Project / OMPI project team plus an interim Technical Steering Group (TSG) of 5–7 active implementers and reviewers, with at least three seats held by external organizations. | Publish charter, DCO / contributor rules, security policy, release authority, maintainer ladder, initial roadmap, and RFC process. The AI Disclosures Project schedules work and administers funds; technical decisions follow published public rules. |
+| **Months 0–6: bootstrap** | AI Disclosures Project / OMPI project team plus an interim Technical Steering Group (TSG) of 5–7 active implementers and reviewers, with at least three seats held by external organizations. | Publish charter, DCO / contributor rules, security policy, release authority, maintainer ladder, initial roadmap, and iteration process for proposed changes. The AI Disclosures Project schedules work and administers funds; technical decisions follow published public rules. |
 | **Months 6–12: distributed maintenance** | TSG of up to seven seats, no more than two from any one organization, selected from active maintainers and implementation representatives under published eligibility rules. | Approve stable protocol features, releases, maintainer additions, and roadmap. Breaking changes require two-thirds approval and a migration plan; ordinary decisions use consensus / majority rules described in the charter. |
 | **Months 12–24: sustainability transition** | Broader maintainer council plus adopter and user representation, an external governance review, and an institutional-home assessment. | Reduce dependence on founders. Target maintainers drawn from at least five organizations. Continue within AI Disclosures Project / CS&S unless maintainers and adopters support affiliation or transition to the Agentic AI Foundation or another appropriate neutral steward under an open transition plan. |
 
 ## Decision rules
 
-- Technical changes go through public issues and RFCs.
+- Technical changes go through public issues and iterative discussion in the open.
 - Component maintainers may merge non-breaking implementation changes after required review.
 - Changes to the core object model, exchange semantics, or conformance profile use lazy consensus among maintainers.
 - Unresolved decisions may be decided by a simple majority of the Technical Steering Group.
@@ -50,8 +50,8 @@ The Initiative maintains a public security policy in [`SECURITY.md`](SECURITY.md
 
 ## Transparency
 
-- All RFCs, issues, pull requests, and meeting records are public.
-- The TSG publishes a quarterly public report covering adoption metrics, RFC status, security advisories, and financial position.
+- All issues, pull requests, discussion threads, and meeting records are public.
+- The TSG publishes a quarterly public report covering adoption metrics, in-flight discussions, security advisories, and financial position.
 - Working-group meeting notes are published within one week of each meeting.
 
 ## Amendments

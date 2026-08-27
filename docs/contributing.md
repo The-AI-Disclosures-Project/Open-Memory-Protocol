@@ -5,28 +5,28 @@ Thanks for your interest in the Open Memory Protocol (OMP). This document is the
 ## Ways to contribute
 
 - **Specification feedback.** Read [`spec/draft-v0.1.md`](../spec/draft-v0.1.md) and open an issue with feedback, questions, or proposed changes.
-- **experimental code.** The Python reference lives in [`reference/`](../reference/). Bug reports, patches, and additional loader / validator implementations are welcome.
+- **Experimental code.** The Python sketch lives in [`reference/`](../reference/). Bug reports, patches, and additional loader / validator experiments are welcome.
 - **Conformance tests.** The [`conformance/`](../conformance/) directory holds an executable test suite. If your memory system implements OMP, run the suite and report results.
 - **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
 - **Adopter case studies.** If you have implemented OMP in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
 
-## Proposing a protocol change (RFC)
+## Proposing a protocol change
 
-Substantive changes to the protocol are proposed as RFCs. See [`GOVERNANCE.md`](../GOVERNANCE.md) for the full process. In brief:
+Substantive changes to the protocol move through open discussion, iteration, testing, implementation, and market experimentation. See [`GOVERNANCE.md`](../GOVERNANCE.md) for the full process. In brief:
 
-1. Open an RFC issue in this repository using the RFC template.
-2. Include: problem statement, proposed spec change, implementation sketch or link.
-3. Public comment stays open for at least two weeks.
+1. Open an issue in this repository describing the problem and a proposed direction.
+2. Include: problem statement, proposed change, implementation sketch or link, and (where possible) evidence from usage or adoption.
+3. Public discussion stays open for at least two weeks so implementers and adopters can weigh in.
 4. Protocol Editors decide (merge, revise, decline), with rationale.
 5. Steering Committee reviews editor decisions quarterly.
 
-## experimental code development
+## Experimental code development
 
 - Install: `pip install -e reference/`
 - Run tests: `pytest reference/tests/`
 - Style: `ruff format` and `ruff check`
 
-The experimental code follows semantic versioning. experimental code changes require two reviewer approvals and a passing test suite before merge.
+The experimental code follows semantic versioning. Changes require two reviewer approvals and a passing test suite before merge.
 
 ## Code of conduct
 
