@@ -72,9 +72,7 @@ The [full scoping note](spec/scoping-note-2026-08.pdf) covers coding-harness pat
 
 ## First vertical: coding agents
 
-The ecosystem's initial focus is the coding-agent vertical, where memory lock-in is most acute and developer adoption of standardized tooling is fastest. Early implementations explore memory transfer across Claude Code, Codex, goose, and Letta Code as a first end-to-end benchmark.
-
-Once OMP has stable production adoption across implementers, the written technology is submitted to the IETF for formal ratification.
+The ecosystem's initial implementation focus will be compatibility with coding-agents, where memory lock-in is most acute and developer adoption of standardized tooling is fastest. Early implementations explore memory transfer across Claude Code, Codex, goose, and Letta Code as a first implementation.
 
 ## Ecosystem partners
 
