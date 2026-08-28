@@ -40,7 +40,7 @@ The fragmentation has real engineering and security costs. Developers write besp
 
 ## Shared practices in the ecosystem
 
-The ecosystem's [scoping note](spec/scoping-note-2026-08.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
+The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
 
 1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
 2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
@@ -48,13 +48,12 @@ The ecosystem's [scoping note](spec/scoping-note-2026-08.pdf) surveys memory imp
 4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
 5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
 
-The [full scoping note](spec/scoping-note-2026-08.pdf) covers coding-harness patterns, consumer-assistant patterns, enterprise patterns, what is converging across vendors (background consolidation, progressive disclosure), and what remains implementation-specific (retrieval internals, human-approval workflow, MCP memory access).
 
 ## Key Artifacts
 
-- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
-
 - [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open memory protocol technology spec**, authored by Charles Packer (Letta).
+
+- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 
 - [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
 
