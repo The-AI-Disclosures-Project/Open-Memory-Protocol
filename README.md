@@ -30,7 +30,7 @@ The **Open Memory Protocol (OMP)** is an open, royalty-free technology for porta
 
 This repository is the technical and governance home of the ecosystem.
 
-## Why OMP
+## Why an open protocol
 
 Agent memory is persistent context that affects future model or agent behavior: user-provided facts, model- or agent-derived summaries, project instructions, prior decisions and actions, tool outputs, and references to underlying transcripts or artifacts. It is scoped to a user, project, organization, or shared group, and is distinct from a raw chat export. A memory system selects, transforms, organizes, retrieves, and expires information for future use.
 
