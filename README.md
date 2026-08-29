@@ -55,6 +55,8 @@ The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memo
 
 - [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 
+- [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
+
 - [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
 
 - [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — An old experimental **ACP-based MCP memory-server prototype** indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`.
