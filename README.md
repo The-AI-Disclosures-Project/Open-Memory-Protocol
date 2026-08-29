@@ -53,9 +53,9 @@ The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memo
 
 - [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open memory protocol technology spec**, authored by Charles Packer (Letta).
 
-- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
-
 - [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
+
+- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 
 - [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
 
