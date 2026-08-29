@@ -30,6 +30,18 @@ The **Open Memory Protocol (OMP)** is an open, royalty-free technology for porta
 
 This repository is the technical and governance home of the ecosystem.
 
+## Key Artifacts
+
+- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open memory protocol technology spec**, authored by Charles Packer (Letta).
+
+- [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
+
+- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
+
+- [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
+
+- [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — An old experimental **ACP-based MCP memory-server prototype** indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`.
+
 ## Why an Open Protocol
 
 Agent memory is persistent context that affects future model or agent behavior: user-provided facts, model- or agent-derived summaries, project instructions, prior decisions and actions, tool outputs, and references to underlying transcripts or artifacts. It is scoped to a user, project, organization, or shared group, and is distinct from a raw chat export. A memory system selects, transforms, organizes, retrieves, and expires information for future use.
@@ -47,19 +59,6 @@ The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memo
 3. **Lifecycle operations.** Memory treated as something with a lifecycle: create (remember), read (recall), update (correct or revise), delete (forget). Explicit in Hermes, Letta, Foundry, Copilot Studio, and various coding harnesses.
 4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
 5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
-
-
-## Key Artifacts
-
-- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open memory protocol technology spec**, authored by Charles Packer (Letta).
-
-- [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
-
-- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
-
-- [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
-
-- [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — An old experimental **ACP-based MCP memory-server prototype** indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`.
 
 ## Site Resources
 
