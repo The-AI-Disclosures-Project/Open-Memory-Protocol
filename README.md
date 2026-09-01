@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://ai-disclosures.org/ompi"><strong>Site</strong></a> ·
   <a href="spec/draft-v0.1.md"><strong>Draft technology</strong></a> ·
-  <a href="prototypes/python-loader-validator/"><strong>Reference code</strong></a> ·
+  <a href="prototypes/python-loader-validator/"><strong>Python code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
   <a href="docs/contributing.md"><strong>Contribute</strong></a>
@@ -20,7 +20,7 @@
 
 ---
 
-> **Current stage.** OMPI is an open-source ecosystem in early public development. The v0.1 draft technology and reference Python implementation are open for community iteration, and the ecosystem's first public convening is **September 9, 2026** (online, co-hosted with Mozilla and IBM). All artifacts in this repository are developed openly for use, adoption, and iteration by contributors and implementers across the ecosystem.
+> **Current stage.** OMPI is an open-source ecosystem in early public development. The v0.1 draft technology and experimental Python implementation are open for community iteration, and the ecosystem's first public convening is **September 9, 2026** (online, co-hosted with Mozilla and IBM). All artifacts in this repository are developed openly for use, adoption, and iteration by contributors and implementers across the ecosystem.
 
 ---
 
@@ -60,15 +60,25 @@ The ecosystem's brief [scoping note](spec/scoping-note-2026-09.pdf) surveys memo
 4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
 5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
 
-## Site Resources
+## Repository Layout
 
-- [`research/`](research/) — research, source notes, and background reading relevant to the ecosystem.
+```
+Open-Memory-Protocol/
+├── spec/                       — specifications & scoping notes
+│   ├── draft-v0.1.md               (Packer draft technology spec)
+│   ├── ams-card-mozilla-draft.pdf  (Mozilla Agent Memory System Card)
+│   └── scoping-note-2026-09.pdf    (Strauss & Rosenblat scoping note, Sept 2026)
+├── prototypes/                 — experimental code
+│   ├── python-loader-validator/    (Python loader + validator sketch)
+│   └── acp_memory_server/          (ACP-based MCP memory-server prototype)
+├── research/                   — research notes, background reading, essays
+├── docs/                       — contributing guide and other docs
+├── media/                      — logo and visual assets
+├── GOVERNANCE.md               — Technical Steering Group, decision process, licensing
+└── README.md
+```
 
-- [`docs/contributing.md`](docs/contributing.md) — how to participate in the ecosystem.
-
-- [`GOVERNANCE.md`](GOVERNANCE.md) — Technical Steering Group, decision process, licensing, long-term stewardship.
-
-- [`media/`](media/) — logo and other visual assets.
+Three top-level content folders (`spec/`, `prototypes/`, `research/`) plus supporting files at the repo root.
 
 ## First vertical: coding agents
 
@@ -114,7 +124,7 @@ Thirteen external participants from ten affiliations are confirmed for the Septe
 ## How to contribute
 
 - Read the [draft technology](spec/draft-v0.1.md) and open an issue with feedback.
-- Run the [reference Python implementation](prototypes/python-loader-validator/) against your own memory workload.
+- Run the [experimental Python implementation](prototypes/python-loader-validator/) against your own memory workload.
 - Explore the [ACP-based memory-server prototype](prototypes/acp_memory_server/).
 - Contact [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to join the ecosystem.
 
