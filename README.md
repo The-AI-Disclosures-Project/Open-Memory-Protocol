@@ -32,9 +32,13 @@ This repository is the technical and governance home of the ecosystem.
 
 ## Key Artifacts
 
-- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open memory protocol technology spec**, authored by Charles Packer (Letta).
+- [`spec/draft-v0.1.md`](spec/draft-v0.1.md) — A draft **Open Memory Protocol technology spec (v0.1)**, authored by Charles Packer (CEO, Letta).
+
+- [`spec/draft-v0.2-packer.pdf`](spec/draft-v0.2-packer.pdf) — **v0.2 Agent Memory Specification**, updated draft by Charles Packer (Letta) — expanded schema, provenance, and lifecycle definitions.
 
 - [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
+
+- [**`me.md`**](https://github.com/block/me.md) — draft **personal-sovereignty memory protocol** authored by David Hamilton (Block / goose). A user-owned, plain-file protocol for what agents know about you: files live on the user's machine, agents may only *propose* additions, and the user decides what becomes memory. Complementary discussion draft in the OMP ecosystem. Canonical source: `github.com/block/me.md`.
 
 - [`spec/scoping-note-2026-09.pdf`](spec/scoping-note-2026-09.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 
