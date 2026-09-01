@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://ai-disclosures.org/ompi"><strong>Site</strong></a> ·
   <a href="spec/draft-v0.1.md"><strong>Draft technology</strong></a> ·
-  <a href="reference/"><strong>Reference code</strong></a> ·
+  <a href="prototypes/python-loader-validator/"><strong>Reference code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
   <a href="docs/contributing.md"><strong>Contribute</strong></a>
@@ -36,9 +36,9 @@ This repository is the technical and governance home of the ecosystem.
 
 - [`spec/ams-card-mozilla-draft.pdf`](spec/ams-card-mozilla-draft.pdf) — draft **Agent Memory System Card (AMS Card)** template contributed by Mozilla, a structured documentation framework for memory systems (deployment, capabilities, lifecycle, performance, limitations, governance, privacy).
 
-- [`spec/scoping-note-2026-08.pdf`](spec/scoping-note-2026-08.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
+- [`spec/scoping-note-2026-09.pdf`](spec/scoping-note-2026-09.pdf) — **Memory ecosystem scoping note** surveying current memory implementations and shared primitives an open technology can standardize (August 2026).
 
-- [`reference/`](reference/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
+- [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/) — A draft **Python implementation** of the loader, validator, and harness contract for the draft open memory protocol technology.
 
 - [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/) — An old experimental **ACP-based MCP memory-server prototype** indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`.
 
@@ -52,7 +52,7 @@ The fragmentation has real engineering and security costs. Developers write besp
 
 ## Shared practices in the ecosystem
 
-The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
+The ecosystem's brief [scoping note](spec/scoping-note-2026-09.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
 
 1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
 2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
@@ -62,7 +62,7 @@ The ecosystem's brief [scoping note](spec/scoping-note-2026-08.pdf) surveys memo
 
 ## Site Resources
 
-- [`references/`](references/) — research, source notes, and background reading relevant to the ecosystem.
+- [`research/`](research/) — research, source notes, and background reading relevant to the ecosystem.
 
 - [`docs/contributing.md`](docs/contributing.md) — how to participate in the ecosystem.
 
@@ -114,7 +114,7 @@ Thirteen external participants from ten affiliations are confirmed for the Septe
 ## How to contribute
 
 - Read the [draft technology](spec/draft-v0.1.md) and open an issue with feedback.
-- Run the [reference Python implementation](reference/) against your own memory workload.
+- Run the [reference Python implementation](prototypes/python-loader-validator/) against your own memory workload.
 - Explore the [ACP-based memory-server prototype](prototypes/acp_memory_server/).
 - Contact [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to join the ecosystem.
 

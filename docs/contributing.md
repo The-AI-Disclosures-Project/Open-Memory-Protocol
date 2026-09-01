@@ -5,7 +5,7 @@ Thanks for your interest in the Open Memory Protocol (OMPI). This document is th
 ## Ways to contribute
 
 - **Specification feedback.** Read [`spec/draft-v0.1.md`](../spec/draft-v0.1.md) and open an issue with feedback, questions, or proposed changes.
-- **Experimental code.** The Python sketch lives in [`reference/`](../reference/). Bug reports, patches, and additional loader / validator experiments are welcome.
+- **Experimental code.** The Python sketch lives in [`prototypes/python-loader-validator/`](../prototypes/python-loader-validator/). Bug reports, patches, and additional loader / validator experiments are welcome.
 - **Conformance tests.** The [`conformance/`](../conformance/) directory holds an executable test suite. If your memory system implements OMPI, run the suite and report results.
 - **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
 - **Adopter case studies.** If you have implemented OMPI in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
@@ -22,8 +22,8 @@ Substantive changes to the protocol move through open discussion, iteration, tes
 
 ## Experimental code development
 
-- Install: `pip install -e reference/`
-- Run tests: `pytest reference/tests/`
+- Install: `pip install -e prototypes/python-loader-validator/`
+- Run tests: `pytest prototypes/python-loader-validator/tests/`
 - Style: `ruff format` and `ruff check`
 
 The experimental code follows semantic versioning. Changes require two reviewer approvals and a passing test suite before merge.
