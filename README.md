@@ -18,6 +18,18 @@
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
 </p>
 
+<p align="center">
+  <sub><b>Hosted by</b></sub><br>
+  <a href="https://ai-disclosures.org/"><img src="media/aidp-logo.png" alt="AI Disclosures Project" height="72"></a>
+</p>
+
+<p align="center">
+  <sub><b>Co-hosted with</b></sub><br>
+  <a href="https://www.mozilla.org/"><img src="media/mozilla-logo.png" alt="Mozilla" height="40"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://www.ibm.com/"><img src="media/ibm-logo.png" alt="IBM" height="52"></a>
+</p>
+
 ---
 
 > **Current stage.** OMPI is an open-source ecosystem in early public development. The v0.1 draft technology and experimental Python implementation are open for community iteration, and the ecosystem's first public convening is **September 9, 2026** (online, co-hosted with Mozilla and IBM). All artifacts in this repository are developed openly for use, adoption, and iteration by contributors and implementers across the ecosystem.
