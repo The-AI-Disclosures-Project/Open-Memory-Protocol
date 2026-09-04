@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <sub><b>Hosted by</b></sub><br>
+  <sub><b>Hosted at</b></sub><br>
   <a href="https://ai-disclosures.org/"><img src="media/aidp-logo.png" alt="AI Disclosures Project" height="72"></a>
 </p>
 
