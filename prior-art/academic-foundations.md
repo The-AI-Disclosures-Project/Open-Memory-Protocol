@@ -37,12 +37,6 @@ This separates "who I am working with" from "what I know," a distinction
 several implementations make in practice (Claude Code's user memories,
 ChatGPT's personalization) without naming as a formal type.
 
-**Meta-memory** (AIDP draft, 2026): The AI Disclosures Project's draft OMP
-specification proposes a `meta` type for memories about the memory system
-itself, such as retrieval preferences and context-injection strategies. This
-concept appears in practice (Letta's system prompts about memory management)
-but is rarely formalized.
-
 ## Foundational Architectures
 
 ### Generative Agents (Stanford/Google, UIST 2023)

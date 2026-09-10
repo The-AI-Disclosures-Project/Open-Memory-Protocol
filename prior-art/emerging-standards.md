@@ -73,8 +73,9 @@ specified interchange standard. Cognee's four memory verbs (`remember`,
 loop (agent-rated responses update edge weights) is distinctive.
 
 **Adoption:** Cognee has $7.5M seed funding, 5M+ SDK runs/month, and 28K
-GitHub stars. An open PR on the OMP repository proposes a semantic core for
-portable agent memory based on COGX concepts.
+GitHub stars. [PR #1](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/1)
+on the OMP repository (by Cognee founder Vasilije Stepanovic) proposes a
+semantic core for portable agent memory based on COGX concepts.
 
 ### Engram
 
