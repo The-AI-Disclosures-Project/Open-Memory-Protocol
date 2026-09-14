@@ -58,6 +58,8 @@ accommodate all three memory types rather than privileging one.
 
 ### MemGPT / Letta (UC Berkeley, 2023)
 
+[arXiv:2310.08560](https://arxiv.org/abs/2310.08560)
+
 Introduced OS-inspired virtual context management with an explicit tool-call
 interface for memory operations. Three tiers:
 

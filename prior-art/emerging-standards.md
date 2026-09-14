@@ -9,7 +9,8 @@ practical format definitions to transcript normalization tools.
 ### Portable Agent Memory (PAM)
 
 **Author:** Santhosh Kumar Ravindran (Microsoft-affiliated). Published May 2026
-on arXiv. Apache-2.0.
+on arXiv ([2605.11032](https://arxiv.org/abs/2605.11032)). Apache-2.0.
+Repository: [santhoshravindran7/portable-agent-memory](https://github.com/santhoshravindran7/portable-agent-memory).
 
 **What it defines:** A file-centric protocol and Python SDK for exporting,
 transporting, verifying, and re-importing AI agent memory across models,
@@ -70,12 +71,62 @@ DataPoints are recursively unpacked and deduplicated.
 The format appears to be a practical export mechanism rather than a rigorously
 specified interchange standard. Cognee's four memory verbs (`remember`,
 `recall`, `forget`, `improve`) reflect a thoughtful design, and the feedback
-loop (agent-rated responses update edge weights) is distinctive.
+loop (agent-rated responses update edge weights) is distinctive. Related:
+[node sets](https://docs.cognee.ai/core-concepts/further-concepts/node-sets),
+named subgraphs that bound what a given query can reach.
 
 **Adoption:** Cognee has $7.5M seed funding, 5M+ SDK runs/month, and 28K
 GitHub stars. [PR #1](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/1)
 on the OMP repository (by Cognee founder Vasilije Stepanovic) proposes a
 semantic core for portable agent memory based on COGX concepts.
+
+### Context Nest
+
+**Author:** PromptOwl. Specification
+[Apache-2.0](https://github.com/PromptOwl/context-nest-spec); reference
+implementation (engine, MCP server) AGPL-3.0. Paper:
+[arXiv:2607.02116](https://arxiv.org/abs/2607.02116), with IBM Research and
+Emory University.
+
+**What it defines:** A governance layer beneath retrieval rather than a
+retrieval system. The stated scope is determining which artifacts are approved,
+current, attributable, and integrity-verified *before* a retrieval system
+operates over them. Nine areas: document format, selector grammar, context
+packs, addressable context via URI, indexing, version history, checkpoints,
+context injection, and validation, with defined extension points.
+
+**Data model:** Typed Markdown with YAML frontmatter (`title`, `type`, `tags`,
+`status`, `version`, `author`, `checksum`). Node types include document,
+snippet, glossary, persona, prompt, source, tool, and skill. Edges come from
+wikilink syntax in the prose and from a `contextnest://path[#anchor][@checkpoint]`
+URI scheme, both indexed into a generated `context.yaml` that distinguishes
+`reference` edges from `depends_on` edges.
+
+**Lifecycle:** Five states (`draft`, `pending_review`, `approved`, `published`,
+`rejected`). Only `published` is visible to an agent; drafts are invisible by
+default. Promotion is a separate, attributed act rather than a side effect of
+writing.
+
+**Integrity model:** SHA-256 hash chains across both document versions and
+graph-level checkpoints. Versioning uses keyframes plus diffs, so any prior
+state can be rebuilt rather than inferred. Selectors are deterministic set
+algebra, which is what makes a past retrieval replayable.
+
+**Reported results:** Two controlled experiments in the paper. In a
+stale-version scenario, governed selection outperformed BM25 sparse retrieval on
+answer quality (97% versus 93-90%) at roughly one third the input-token cost. In
+a determinism test over a 1,060-document corpus, deterministic selectors and
+BM25 returned stable document sets across repeated identical queries (Jaccard
+1.0) while a dense + HNSW baseline was non-deterministic on 80% of queries (mean
+Jaccard 0.611, worst case 0.210).
+
+**Current state:** The determinism result is close to definitional for a
+set-algebraic selector and is better read as a cost of dense retrieval than a
+feature of this one. Semantic retrieval is specified but gated off, so the
+shipped path is deterministic-only and paraphrase queries that a tag would miss
+are currently unserved. Adoption is small relative to others in this survey. The
+specification exists in two public locations whose license headers have drifted;
+the Apache-2.0 repository above is canonical.
 
 ### Engram
 

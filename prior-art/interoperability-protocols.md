@@ -149,6 +149,22 @@ and A2A (agent-to-agent).
 to users (displaying what memories exist, allowing edits), but the protocol
 does not define memory semantics.
 
+### Data Transfer Initiative (DTI)
+
+Non-profit continuing the Data Transfer Project, funded by Apple, Google, Meta
+and others. Focus is consumer-initiated portability between services rather than
+agent memory specifically, but the governance model (a neutral body maintaining
+adapters between proprietary formats) is the closest existing analogue to what
+portable memory would need. [dtinit.org](https://dtinit.org). Noted in the first
+OMP meeting as already in contact with the initiative.
+
+### Agent Plugins
+
+[agent-plugins.org/specification](https://agent-plugins.org/specification).
+Plugin specification for agent capability distribution. Adjacent to memory rather
+than about it, included because plugin and memory distribution face the same
+scope and permission questions.
+
 ## Standards body activity
 
 ### AAIF (Agentic AI Foundation, Linux Foundation)
