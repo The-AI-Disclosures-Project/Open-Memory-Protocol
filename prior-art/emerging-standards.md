@@ -128,18 +128,33 @@ are currently unserved. Adoption is small relative to others in this survey. The
 specification exists in two public locations whose license headers have drifted;
 the Apache-2.0 repository above is canonical.
 
-### Engram
+### EngramSpec
 
-**Author:** Multiple independent projects use this name, creating namespace
-confusion.
+**Author:** Ashish Verma (8mem), maintained by Engram Steering Group. RFC Draft
+v0.1, June 2026, CC-BY 4.0.
+[engramspec.org](https://engramspec.org).
+Repository: [engramspec/spec](https://github.com/engramspec/spec).
 
-**What it defines:** One variant (engramspec.org, v0.1, CC-BY 4.0, June 2026)
-describes itself as "the OAuth for AI Memory." Five-object JSON envelope
-(IDENTITY, BELIEFS, CONSTRAINTS, CORRECTIONS, EVOLUTION). Seven-endpoint API
-with Ed25519 signing.
+**What it defines:** An HTTP-based protocol for portable, governed AI memory.
+One required endpoint (`GET /v1/context`) returns an Ed25519-signed JSON
+envelope with four objects: IDENTITY (stable facts), BELIEFS (dynamic
+preferences with confidence scores), CORRECTIONS (explicit user overrides with
+audit trail), and EVOLUTION (append-only history of belief changes). Six
+optional endpoints cover corrections submission, discovery, incremental sync,
+and key distribution. Three conformance tiers: Reader, Writer, Full.
 
-**Current state:** Very early. The namespace confusion across multiple
-unrelated "Engram" projects makes assessment difficult.
+**Current state:** Three documented implementations (8mem reference
+implementation, OpenClaw, Hermes), all associated with the spec's creator.
+Academic paper on SSRN (ID 6878038). Official SDKs listed as "coming soon."
+Repository has 2 stars.
+
+**Namespace collision:** The term "engram" (from neuroscience: Semon's 1904
+hypothesis about memory traces) has been independently adopted by at least
+eight unrelated AI memory projects on PyPI and GitHub (engram-core,
+piia-engram, engramma-memory, Gentleman-Programming/engram, and others), none
+implementing EngramSpec. The reference implementation ecosystem (PLUR,
+plur.ai) uses a different data model (Engram and Episode objects with
+activation-weighted decay) than the published spec, adding to the confusion.
 
 ### SAIHM (Secure Agent Interoperable Hybrid Memory)
 
