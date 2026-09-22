@@ -74,6 +74,8 @@ This repository is the technical and governance home of the ecosystem.
 
 - **Python Implementation** — Draft loader, validator, and harness contract for the draft open memory protocol technology. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)
 
+- **LangChain Harness** — A `create_agent` middleware implementing the Packer v0.2 four-rule harness contract, with an offline test suite and CLI. [`prototypes/langchain-harness/`](prototypes/langchain-harness/)
+
 - **ACP-Based MCP Memory-Server Prototype** — An old experimental prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`. [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)
 
 ## Why an Open Protocol
@@ -108,6 +110,7 @@ Open-Memory-Protocol/
 │   └── scoping-note-2026-09.pdf    (Strauss & Rosenblat scoping note, Sept 2026)
 ├── prototypes/                 — experimental code
 │   ├── python-loader-validator/    (Python loader + validator sketch)
+│   ├── langchain-harness/          (LangChain create_agent harness, Packer v0.2 contract)
 │   └── acp_memory_server/          (ACP-based MCP memory-server prototype)
 ├── research/                   — research notes, background reading, essays
 ├── docs/                       — contributing guide and other docs

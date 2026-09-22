@@ -1,0 +1,255 @@
+"""OpenMemoryMiddleware: the OMP harness contract as LangChain `create_agent` middleware.
+
+Spec: spec/draft-v0.2-packer.pdf §Harness contract. A conforming harness:
+
+1. Keeps top-level .md files at least partially in context at all times.
+2. Defers nested .md files (not auto-loaded).
+3. Surfaces deferred memory one level down so the agent knows it exists.
+4. Supports selective reads of deferred files through a tool.
+
+Mapping onto create_agent middleware hooks:
+
+- `wrap_model_call` re-reads the memory directory from disk before every model call and
+  appends core memory (rule 1) plus the deferred index (rule 3) to the system message.
+  Re-reading each call means edits made mid-conversation (by the agent or a human) are
+  reflected on the next step, which the spec leaves to the harness.
+- `tools` registers `read_memory` (rule 4) and, optionally, `write_memory`, which enforces
+  the spec's size guidance at edit time (§Size guidance: "Harnesses can enforce size
+  limitations at edit time").
+- Rule 2 is satisfied by construction: nothing below the root is ever rendered by rule 1.
+"""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Literal
+
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
+from langchain.messages import SystemMessage
+from langchain.tools import tool
+from open_memory_protocol import MemoryDirectory, load_memory
+from open_memory_protocol.types import ROOT_INDEX_FILENAME
+
+from omp_langchain.memory_index import (
+    DEFAULT_MAX_FILE_CHARS,
+    DEFAULT_MAX_TOTAL_TOKENS,
+    estimate_tokens,
+    render_core_context,
+    render_deferred_index,
+    render_directory_listing,
+)
+
+logger = logging.getLogger(__name__)
+
+DEFAULT_SYSTEM_PROMPT = (
+    "You are an agent with persistent, file-based memory that follows the Open Memory "
+    "Protocol. Your core memory is shown below and is always available. Deferred memory "
+    "lives in subdirectories; it is NOT loaded automatically. When a task touches a topic "
+    "listed in the deferred index, call `read_memory` on the relevant path before answering."
+)
+
+MEMORY_SECTION_HEADER = "## Memory (Open Memory Protocol)"
+DEFERRED_SECTION_HEADER = "## Deferred memory (read on demand with `read_memory`)"
+
+
+class OpenMemoryMiddleware(AgentMiddleware):
+    """Implements the OMP four-rule harness contract for a LangChain agent."""
+
+    def __init__(
+        self,
+        memory_root: str | Path,
+        *,
+        max_file_chars: int | None = DEFAULT_MAX_FILE_CHARS,
+        max_total_tokens: int | None = DEFAULT_MAX_TOTAL_TOKENS,
+        writable: bool = False,
+        enforce_size_on_write: bool = True,
+    ) -> None:
+        self.memory_root = Path(memory_root).resolve()
+        self.max_file_chars = max_file_chars
+        self.max_total_tokens = max_total_tokens
+        self.writable = writable
+        self.enforce_size_on_write = enforce_size_on_write
+
+        # Validate eagerly so misconfiguration fails at construction, not first model call.
+        load_memory(self.memory_root)
+
+        # Tools are bound to this memory root, so they are built per instance rather than
+        # declared as a class attribute. create_agent reads `middleware.tools` at compile time.
+        self.tools = [self._build_read_tool()]
+        if writable:
+            self.tools.append(self._build_write_tool())
+
+    # ----------------------------------------------------------------- helpers
+
+    def _load(self) -> MemoryDirectory:
+        return load_memory(self.memory_root)
+
+    def _resolve(self, relative_path: str) -> Path:
+        """Resolve a path the model supplied, refusing anything outside the memory root."""
+        rel = relative_path.strip().lstrip("/")
+        target = (self.memory_root / rel).resolve()
+        if target != self.memory_root and self.memory_root not in target.parents:
+            raise ValueError(f"Path escapes memory root: {relative_path!r}")
+        return target
+
+    def render_memory_block(self) -> str:
+        """The exact text appended to the system prompt on every model call."""
+        memory = self._load()
+        core, warnings = render_core_context(memory, max_file_chars=self.max_file_chars)
+        for w in warnings:
+            logger.warning("OMP size guidance: %s", w)
+        if self.max_total_tokens is not None:
+            est = estimate_tokens(core)
+            if est > self.max_total_tokens:
+                logger.warning(
+                    "OMP size guidance: core memory ~%d tokens exceeds recommended %d",
+                    est,
+                    self.max_total_tokens,
+                )
+        deferred = render_deferred_index(memory)
+        return (
+            f"{MEMORY_SECTION_HEADER}\n\nMemory root: `{self.memory_root}`\n\n"
+            f"{core}\n{DEFERRED_SECTION_HEADER}\n\n{deferred}\n"
+        )
+
+    # ------------------------------------------------------------------- rule 4
+
+    def _build_read_tool(self):
+        middleware = self
+
+        @tool("read_memory")
+        def read_memory(path: str) -> str:
+            """Read a deferred memory file or directory by path relative to the memory root.
+
+            Pass a markdown file path (e.g. "notes/2026-08-12.md") to get its contents, or a
+            directory path (e.g. "projects") to get that directory's MEMORY.md and a listing
+            of what it contains, one level down. Use this whenever the deferred memory index
+            in your system prompt lists something relevant to the current task.
+            """
+            try:
+                target = middleware._resolve(path)
+            except ValueError as e:
+                return f"error: {e}"
+            memory = middleware._load()
+            if target.is_dir():
+                return render_directory_listing(memory, target)
+            if not target.exists():
+                return f"error: no memory at {path!r}. Check the deferred index for valid paths."
+            if target.suffix != ".md":
+                return f"error: {path!r} is not a markdown memory file."
+            return target.read_text(encoding="utf-8")
+
+        return read_memory
+
+    # ---------------------------------------------------------- optional writes
+
+    def _build_write_tool(self):
+        middleware = self
+
+        @tool("write_memory")
+        def write_memory(
+            path: str,
+            content: str,
+            mode: Literal["append", "replace"] = "append",
+        ) -> str:
+            """Append to or replace a markdown memory file, relative to the memory root.
+
+            Keep root-level files small: they are always in context. Put detailed or
+            historical material in a subdirectory (which must contain a MEMORY.md) so it is
+            progressively disclosed instead. Creates parent directories and a placeholder
+            MEMORY.md in new subdirectories so the memory stays spec-valid.
+            """
+            try:
+                target = middleware._resolve(path)
+            except ValueError as e:
+                return f"error: {e}"
+            if target.suffix != ".md":
+                return "error: memory files must end in .md"
+
+            existing = target.read_text(encoding="utf-8") if target.exists() else ""
+            new_text = (
+                (existing.rstrip("\n") + "\n\n" + content.strip() + "\n")
+                if (mode == "append" and existing)
+                else content.rstrip("\n") + "\n"
+            )
+
+            is_root_level = target.parent == middleware.memory_root
+            if (
+                is_root_level
+                and middleware.enforce_size_on_write
+                and middleware.max_file_chars is not None
+                and len(new_text) > middleware.max_file_chars
+            ):
+                return (
+                    f"error: write refused. {path!r} would be {len(new_text)} characters, over "
+                    f"the {middleware.max_file_chars}-character limit for root-level (always "
+                    "in-context) memory. Move detail into a subdirectory instead."
+                )
+
+            target.parent.mkdir(parents=True, exist_ok=True)
+            # Keep every directory spec-valid (each must have a MEMORY.md).
+            d = target.parent
+            while d != middleware.memory_root:
+                idx = d / ROOT_INDEX_FILENAME
+                if not idx.exists():
+                    idx.write_text(
+                        f"# {d.name}\n\nIndex of memory in this directory.\n", encoding="utf-8"
+                    )
+                d = d.parent
+            target.write_text(new_text, encoding="utf-8")
+            return f"ok: wrote {len(new_text)} characters to {path}"
+
+        return write_memory
+
+    # --------------------------------------------------------------- rules 1+3
+
+    def _inject(self, request: ModelRequest) -> ModelRequest:
+        block = self.render_memory_block()
+        if request.system_message is not None:
+            blocks = list(request.system_message.content_blocks)
+        else:
+            blocks = []
+        blocks.append({"type": "text", "text": "\n\n" + block})
+        return request.override(system_message=SystemMessage(content=blocks))
+
+    def wrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], ModelResponse],
+    ) -> ModelResponse:
+        return handler(self._inject(request))
+
+    async def awrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], Any],
+    ) -> ModelResponse:
+        return await handler(self._inject(request))
+
+
+def create_omp_agent(
+    memory_root: str | Path,
+    model: Any,
+    *,
+    tools: list | None = None,
+    system_prompt: str = DEFAULT_SYSTEM_PROMPT,
+    middleware: list | None = None,
+    writable: bool = False,
+    **kwargs: Any,
+):
+    """Build a `create_agent` harness whose memory follows the OMP contract.
+
+    `model` may be a model string like "anthropic:claude-sonnet-4-6" or a chat model instance.
+    Extra middleware runs after OpenMemoryMiddleware, so it sees the injected memory block.
+    """
+    omp = OpenMemoryMiddleware(memory_root, writable=writable)
+    return create_agent(
+        model,
+        tools=tools or [],
+        system_prompt=system_prompt,
+        middleware=[omp, *(middleware or [])],
+        **kwargs,
+    )
