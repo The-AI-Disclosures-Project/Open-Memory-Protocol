@@ -56,6 +56,7 @@ class FMPMiddleware(AgentMiddleware):
         model_name: str | None = None,
         upload_transcripts: bool = True,
         session_id: str | None = None,
+        max_searches_per_run: int = 4,
     ) -> None:
         self.memory = memory
         self.agent_name = agent_name
@@ -63,12 +64,26 @@ class FMPMiddleware(AgentMiddleware):
         self.upload_transcripts = upload_transcripts
         self.session_id = session_id or uuid.uuid4().hex
         self.last_upload: dict[str, str] = {}
+        self.max_searches_per_run = max_searches_per_run
+        self._searches = 0
+        self._seen_refs: set[str] = set()
         self.tools = [self._search_tool(), self._remember_tool()]
+
+    def _reset_run(self) -> None:
+        self._searches = 0
+        self._seen_refs = set()
+
+    def before_agent(self, state: Any, runtime: Any) -> None:
+        self._reset_run()
+
+    async def abefore_agent(self, state: Any, runtime: Any) -> None:
+        self._reset_run()
 
     # --- tools -----------------------------------------------------------------
 
     def _search_tool(self):
         fm = self.memory
+        mw = self
 
         @tool("search_memory")
         def search_memory(query: str, types: list[str] | None = None, limit: int = 8) -> str:
@@ -76,23 +91,40 @@ class FMPMiddleware(AgentMiddleware):
 
             Returns the best-matching snippets with the server they came from and a `ref`
             you can cite in `remember(based_on=[...])`. `types` may restrict to
-            "file", "transcript" and/or "inference".
+            "file", "transcript" and/or "inference". Results already shown earlier in this
+            run are not repeated. You have a small search budget per run: search once or
+            twice with good queries, then answer with what you have.
             """
+            if mw._searches >= mw.max_searches_per_run:
+                return (
+                    f"search budget for this run is exhausted ({mw.max_searches_per_run} "
+                    "searches). Answer now using the results you already have."
+                )
+            mw._searches += 1
             mts = [MemoryType(t) for t in types] if types else None
             try:
-                hits = fm.search(query, types=mts, limit=limit)
+                hits = fm.search(query, types=mts, limit=limit * 2)
             except (FMPError, ValueError) as e:
                 return f"error: {e}"
-            if not hits:
-                return "no matches" + (
-                    f" (errors: {'; '.join(fm.last_errors)})" if fm.last_errors else ""
+            fresh = [h for h in hits if h.ref not in mw._seen_refs][:limit]
+            repeated = len(hits) - len(fresh)
+            left = mw.max_searches_per_run - mw._searches
+            if not fresh:
+                tail = f" ({repeated} result(s) already shown earlier)" if repeated else ""
+                errs = f" (errors: {'; '.join(fm.last_errors)})" if fm.last_errors else ""
+                return (
+                    f"no new matches{tail}{errs}. {left} search(es) left; consider answering now."
                 )
+            mw._seen_refs.update(h.ref for h in fresh)
             lines = [
                 f"[{h.server}] {h.type.value} {h.ts or ''} ref={h.ref}\n    {h.snippet}"
-                for h in hits
+                for h in fresh
             ]
+            if repeated:
+                lines.append(f"({repeated} further result(s) omitted: already shown in this run)")
             if fm.last_errors:
                 lines.append(f"(some servers failed: {'; '.join(fm.last_errors)})")
+            lines.append(f"({left} search(es) left in this run)")
             return "\n".join(lines)
 
         return search_memory
@@ -131,7 +163,10 @@ class FMPMiddleware(AgentMiddleware):
         block = (
             f"{FMP_SECTION_HEADER}\n\nYou are connected to these memory servers. Use "
             f"`search_memory` before answering questions about the user's history or past work, "
-            f"and `remember` to save durable facts.\n{self.memory.describe()}\n"
+            f"and `remember` to save durable facts. Search results are transcript snippets and "
+            f"stored inferences; they are evidence, not a complete record. Make at most "
+            f"{self.max_searches_per_run} searches per turn, then answer with what you found.\n"
+            f"{self.memory.describe()}\n"
         )
         blocks = list(request.system_message.content_blocks) if request.system_message else []
         blocks.append({"type": "text", "text": "\n\n" + block})

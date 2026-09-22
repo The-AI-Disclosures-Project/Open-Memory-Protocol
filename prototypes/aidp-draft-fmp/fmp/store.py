@@ -162,6 +162,8 @@ class SQLiteStore:
                 "INSERT INTO messages VALUES (?,?,?,?,?,?,?)",
                 (tid, i, m.role, m.content, m.ts, m.tool_name, json.dumps(m.metadata)),
             )
+            if m.role == "tool":
+                continue  # tool output is stored and readable, but not searched: low-signal noise
             self._conn.execute(
                 "INSERT INTO fts VALUES (?,?,?,?,?,?)",
                 (
@@ -342,7 +344,8 @@ class ACPIndexStore:
                         snippet(turns_fts, 0, '[', ']', ' … ', 16) AS snippet
                  FROM turns_fts JOIN turns t ON t.rowid = turns_fts.rowid
                  LEFT JOIN sessions s ON s.agent_id=t.agent_id AND s.session_id=t.session_id
-                 WHERE turns_fts MATCH ?"""
+                 WHERE turns_fts MATCH ?
+                   AND t.role NOT IN ('tool', 'tool_result', 'function', 'tool_use')"""
         params: list[Any] = [_fts_query(req.query)]
         floor = _iso_floor(req.since)
         if floor:

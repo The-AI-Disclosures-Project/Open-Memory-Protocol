@@ -128,3 +128,53 @@ def test_middleware_survives_unreachable_server(personal):
     agent = create_agent(_model("ok"), tools=[], system_prompt="s", middleware=[mw])
     agent.invoke({"messages": [HumanMessage("hi")]})
     assert list(mw.last_upload) == ["personal"]
+
+
+def test_search_budget_and_dedup(federation):
+    federation.clients["personal"].upload_inferences(
+        [InferenceUpload(content="standup is at 9:30")]
+    )
+    calls = [
+        AIMessage(
+            content="",
+            tool_calls=[ToolCall(name="search_memory", args={"query": "standup"}, id=f"c{i}")],
+        )
+        for i in range(4)
+    ]
+    model = _model(*calls, "done")
+    mw = FMPMiddleware(federation, max_searches_per_run=2)
+    agent = create_agent(model, tools=[], system_prompt="s", middleware=[mw])
+    result = agent.invoke({"messages": [HumanMessage("when is standup?")]})
+    tools = [m.content for m in result["messages"] if isinstance(m, ToolMessage)]
+    assert "9:30" in tools[0] and "(1 search(es) left in this run)" in tools[0]
+    assert tools[1].startswith("no new matches (1 result(s) already shown")
+    assert tools[2].startswith("search budget for this run is exhausted") and tools[3].startswith(
+        "search budget"
+    )
+    # a new run resets the budget
+    mw2_model = _model(calls[0], "ok")
+    agent2 = create_agent(mw2_model, tools=[], system_prompt="s", middleware=[mw])
+    r2 = agent2.invoke({"messages": [HumanMessage("again")]})
+    assert "9:30" in next(m.content for m in r2["messages"] if isinstance(m, ToolMessage))
+
+
+def test_tool_turns_are_not_searchable(personal):
+    _, _, http = personal
+    from fmp.client import FMPClient
+    from fmp.schema import Message, SearchRequest, TranscriptUpload
+
+    c = FMPClient("http://personal", http=http)
+    c.upload_transcript(
+        TranscriptUpload(
+            source="t",
+            messages=[
+                Message(role="user", content="deploy the widget"),
+                Message(
+                    role="tool", content="Edit widget.py: widget widget widget", tool_name="Edit"
+                ),
+                Message(role="assistant", content="deployed the widget"),
+            ],
+        )
+    )
+    hits = c.search(SearchRequest(query="widget"))
+    assert {h.snippet.split(":")[0] for h in hits} == {"user", "assistant"}
