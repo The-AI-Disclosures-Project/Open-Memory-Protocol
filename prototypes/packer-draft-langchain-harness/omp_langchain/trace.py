@@ -45,6 +45,17 @@ class TraceEvent:
         return json.dumps(asdict(self), default=str)
 
 
+def _arg_summary(args: dict[str, Any]) -> str:
+    """The one argument a human wants to see: a path, a query, or the first string."""
+    for key in ("path", "query", "content"):
+        if key in args:
+            return _preview(args[key], 60)
+    for v in args.values():
+        if isinstance(v, str):
+            return _preview(v, 60)
+    return ""
+
+
 def _preview(text: Any, n: int) -> str:
     s = str(text).replace("\n", "⏎ ")
     return s if len(s) <= n else s[:n] + f"… (+{len(s) - n} chars)"
@@ -203,7 +214,7 @@ class ActivitySink:
             secs = d["latency_ms"] / 1000
             if d["tool_calls"]:
                 wants = ", ".join(
-                    f"{tc['name']}({tc['args'].get('path', '')})" for tc in d["tool_calls"]
+                    f"{tc['name']}({_arg_summary(tc['args'])})" for tc in d["tool_calls"]
                 )
                 self._line(f"  {secs:.1f}s → {self._c('magenta', 'wants')} {wants}")
             else:

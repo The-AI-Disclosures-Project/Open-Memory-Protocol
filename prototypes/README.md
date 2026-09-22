@@ -10,3 +10,6 @@ Initiative.
 - [`packer-draft-langchain-harness/`](packer-draft-langchain-harness/) — a LangChain
   `create_agent` harness whose middleware implements the four-rule harness contract
   from the Packer draft spec v0.2.
+- [`aidp-draft-fmp/`](aidp-draft-fmp/) — Federated Memory Protocol (AIDP draft v0.1):
+  reference `/fmp/*` server, a read-only FMP view over the ACP index, a federated
+  client, and LangChain middleware with transcript-capture hooks.
