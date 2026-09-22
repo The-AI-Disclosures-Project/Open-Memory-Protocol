@@ -242,3 +242,22 @@ def test_frontmatter_description_is_shown_and_stripped(tmp_path: Path):
     assert "_root desc_" in text and "body here" in text
     assert "description: root desc" not in text
     assert parse_frontmatter("no frontmatter") == ({}, "no frontmatter")
+
+
+# ---------------------------------------------------------------- models
+
+
+def test_resolve_model_openrouter(monkeypatch):
+    from omp_langchain.models import OPENROUTER_BASE_URL, resolve_model
+
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+        resolve_model("openrouter:moonshotai/kimi-k3")
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    m = resolve_model("openrouter:moonshotai/kimi-k3")
+    assert m.model_name == "moonshotai/kimi-k3"
+    assert m.openai_api_base == OPENROUTER_BASE_URL
+    # Model instances pass through untouched.
+    fake = _model("x")
+    assert resolve_model(fake) is fake

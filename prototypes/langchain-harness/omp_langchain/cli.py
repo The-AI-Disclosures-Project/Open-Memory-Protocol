@@ -5,9 +5,11 @@ from __future__ import annotations
 import argparse
 import sys
 
+from dotenv import load_dotenv
 from langchain.messages import HumanMessage
 
 from omp_langchain.middleware import OpenMemoryMiddleware, create_omp_agent
+from omp_langchain.models import DEFAULT_MODEL
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -15,8 +17,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--memory", default="./memory", help="OMP memory root (default ./memory)")
     p.add_argument(
         "--model",
-        default="anthropic:claude-sonnet-4-6",
-        help="LangChain model string, e.g. anthropic:claude-sonnet-4-6 or openai:gpt-5",
+        default=DEFAULT_MODEL,
+        help=(
+            f"model string (default {DEFAULT_MODEL}); openrouter:<model> uses "
+            "OPENROUTER_API_KEY, otherwise any init_chat_model string like "
+            "anthropic:claude-sonnet-4-6"
+        ),
     )
     p.add_argument("--writable", action="store_true", help="expose the write_memory tool")
     p.add_argument(
@@ -26,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("prompt", nargs="*", help="one-shot prompt; omit for an interactive loop")
     args = p.parse_args(argv)
+    load_dotenv()  # picks up OPENROUTER_API_KEY etc. from ./.env if present
 
     if args.show_context:
         print(OpenMemoryMiddleware(args.memory, writable=args.writable).render_memory_block())

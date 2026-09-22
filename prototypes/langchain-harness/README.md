@@ -28,12 +28,20 @@ uv sync --extra dev
 (`uv` resolves the sibling loader package from `../python-loader-validator` as an editable
 path dependency. With plain pip: `pip install -e ../python-loader-validator -e '.[dev]'`.)
 
+## Models
+
+The default model is **Kimi K3 via OpenRouter** (`openrouter:moonshotai/kimi-k3`). Set
+`OPENROUTER_API_KEY` in your environment or in a `.env` file in this directory. Any
+`openrouter:<model>` string works, and so does any LangChain `init_chat_model` string such
+as `anthropic:claude-sonnet-4-6` or `openai:gpt-5` (with that provider's key).
+
 ## Use
 
 ```python
 from omp_langchain import create_omp_agent
 
-agent = create_omp_agent("./memory", "anthropic:claude-sonnet-4-6")
+agent = create_omp_agent("./memory")                      # Kimi K3 via OpenRouter
+# agent = create_omp_agent("./memory", "anthropic:claude-sonnet-4-6")
 result = agent.invoke({"messages": [{"role": "user", "content": "what do you know about me?"}]})
 print(result["messages"][-1].content)
 ```
@@ -58,16 +66,25 @@ agent = create_agent(
 # See exactly what the harness injects, without calling a model
 uv run omp-agent --memory examples/memory --show-context
 
-# One-shot (needs ANTHROPIC_API_KEY, or pass --model openai:... etc.)
+# One-shot against Kimi K3 (needs OPENROUTER_API_KEY)
 uv run omp-agent --memory examples/memory "What is the OMP project's secret handshake?"
+
+# Another provider
+uv run omp-agent --memory examples/memory --model anthropic:claude-sonnet-4-6 "..."
 
 # Interactive, with the write_memory tool enabled
 uv run omp-agent --memory examples/memory --writable
 ```
 
 The example memory under [`examples/memory/`](examples/memory/) is the spec's "expanded"
-layout. In the one-shot example above, a conforming run should call `read_memory` on
-`projects/omp/MEMORY.md` before answering, because the handshake is not in core memory.
+layout. In the one-shot example above the handshake is not in core memory, so a conforming
+run has to disclose progressively. A live run with Kimi K3 did exactly that:
+
+```
+AI tool_calls: [('read_memory', {'path': 'projects/MEMORY.md'})]
+AI tool_calls: [('read_memory', {'path': 'projects/omp'})]
+FINAL: Secret handshake: "progressive disclosure" (per projects/omp/MEMORY.md) ...
+```
 
 ## Test
 

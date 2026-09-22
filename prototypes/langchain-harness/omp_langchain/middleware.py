@@ -41,6 +41,7 @@ from omp_langchain.memory_index import (
     render_deferred_index,
     render_directory_listing,
 )
+from omp_langchain.models import DEFAULT_MODEL, resolve_model
 
 logger = logging.getLogger(__name__)
 
@@ -232,7 +233,7 @@ class OpenMemoryMiddleware(AgentMiddleware):
 
 def create_omp_agent(
     memory_root: str | Path,
-    model: Any,
+    model: Any = DEFAULT_MODEL,
     *,
     tools: list | None = None,
     system_prompt: str = DEFAULT_SYSTEM_PROMPT,
@@ -242,12 +243,14 @@ def create_omp_agent(
 ):
     """Build a `create_agent` harness whose memory follows the OMP contract.
 
-    `model` may be a model string like "anthropic:claude-sonnet-4-6" or a chat model instance.
+    `model` may be a chat model instance or a string: "openrouter:<model>" (e.g. the default
+    "openrouter:moonshotai/kimi-k3", needs OPENROUTER_API_KEY) or any `init_chat_model`
+    string like "anthropic:claude-sonnet-4-6".
     Extra middleware runs after OpenMemoryMiddleware, so it sees the injected memory block.
     """
     omp = OpenMemoryMiddleware(memory_root, writable=writable)
     return create_agent(
-        model,
+        resolve_model(model),
         tools=tools or [],
         system_prompt=system_prompt,
         middleware=[omp, *(middleware or [])],

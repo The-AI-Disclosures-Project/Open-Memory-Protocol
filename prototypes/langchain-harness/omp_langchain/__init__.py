@@ -6,6 +6,7 @@ Public API:
 """
 
 from omp_langchain.middleware import OpenMemoryMiddleware, create_omp_agent
+from omp_langchain.models import resolve_model
 
 __version__ = "0.1.0"
-__all__ = ["OpenMemoryMiddleware", "create_omp_agent"]
+__all__ = ["OpenMemoryMiddleware", "create_omp_agent", "resolve_model"]

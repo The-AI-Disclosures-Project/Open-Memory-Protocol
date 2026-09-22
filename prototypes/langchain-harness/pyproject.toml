@@ -11,6 +11,8 @@ authors = [
 dependencies = [
     "langchain>=1.0",
     "langchain-anthropic>=1.0",
+    "langchain-openai>=1.0",
+    "python-dotenv>=1.0",
     "open-memory-protocol",
 ]
 
