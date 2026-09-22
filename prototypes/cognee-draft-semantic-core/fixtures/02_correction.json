@@ -1,0 +1,107 @@
+{
+  "exchange": {
+    "manifest": {
+      "format_version": "cognee-draft-0.1",
+      "source_system": "source",
+      "exported_at": "2026-09-22T16:24:06+00:00",
+      "exchange_id": "81aae578b0994a7dbad6cc72af4920a7",
+      "profiles": [],
+      "object_kinds": [
+        "human_assertion"
+      ],
+      "scope_coverage": [],
+      "complete_snapshot": true,
+      "required_extensions": [],
+      "transfer_intent": "copy",
+      "notes": []
+    },
+    "objects": [
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "home"
+        },
+        "revision_id": "rev-home",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "Lives in Boston",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "home"
+        },
+        "revision_id": "rev-home-2",
+        "predecessor": "rev-home",
+        "role": "human_assertion",
+        "text": "Lives in Brooklyn",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-03T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      }
+    ],
+    "events": [
+      {
+        "event_id": "ev-sup-1",
+        "kind": "supersede",
+        "target": "rev-home",
+        "actor": "alice",
+        "effective_at": "2026-09-03T00:00:00+00:00",
+        "reason": null,
+        "replacement": "rev-home-2",
+        "coverage": []
+      }
+    ]
+  },
+  "expect": {
+    "statuses": {
+      "rev-home": "accepted",
+      "rev-home-2": "accepted"
+    },
+    "current_texts": [
+      "Lives in Brooklyn"
+    ],
+    "validator_errors": 0
+  }
+}

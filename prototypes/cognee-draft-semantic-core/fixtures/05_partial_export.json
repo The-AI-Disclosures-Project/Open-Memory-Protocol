@@ -1,0 +1,116 @@
+{
+  "exchange": {
+    "manifest": {
+      "format_version": "cognee-draft-0.1",
+      "source_system": "source",
+      "exported_at": "2026-09-22T16:24:06+00:00",
+      "exchange_id": "ac5973ac78334b3384b23c54fc51cf47",
+      "profiles": [],
+      "object_kinds": [
+        "human_assertion"
+      ],
+      "scope_coverage": [],
+      "complete_snapshot": false,
+      "required_extensions": [],
+      "transfer_intent": "copy",
+      "notes": []
+    },
+    "objects": [
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "y"
+        },
+        "revision_id": "rev-y",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "New arrival",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-02T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      }
+    ],
+    "events": []
+  },
+  "expect": {
+    "pre": {
+      "manifest": {
+        "format_version": "cognee-draft-0.1",
+        "source_system": "source",
+        "exported_at": "2026-09-22T16:24:06+00:00",
+        "exchange_id": "d73aff4f2d6c447bbf7795acf231bc12",
+        "profiles": [],
+        "object_kinds": [
+          "human_assertion"
+        ],
+        "scope_coverage": [],
+        "complete_snapshot": true,
+        "required_extensions": [],
+        "transfer_intent": "copy",
+        "notes": []
+      },
+      "objects": [
+        {
+          "ref": {
+            "authority": "source",
+            "namespace": "memory",
+            "local_id": "x"
+          },
+          "revision_id": "rev-x",
+          "predecessor": null,
+          "role": "human_assertion",
+          "text": "Keep me",
+          "media": null,
+          "scope": {
+            "subject": "alice",
+            "owner": "alice",
+            "author": null,
+            "agent": null,
+            "origin_system": "source",
+            "context": {
+              "user": "alice"
+            }
+          },
+          "policy": {
+            "rules": [],
+            "required": false
+          },
+          "derivation": null,
+          "recorded_at": "2026-09-01T00:00:00+00:00",
+          "applies_from": null,
+          "applies_until": null,
+          "expires_at": null,
+          "extensions": {}
+        }
+      ],
+      "events": []
+    },
+    "statuses": {
+      "rev-y": "accepted"
+    },
+    "current_texts": [
+      "Keep me",
+      "New arrival"
+    ],
+    "validator_errors": 0
+  }
+}

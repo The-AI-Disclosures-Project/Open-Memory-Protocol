@@ -1,0 +1,179 @@
+{
+  "exchange": {
+    "manifest": {
+      "format_version": "cognee-draft-0.1",
+      "source_system": "source",
+      "exported_at": "2026-09-22T16:24:06+00:00",
+      "exchange_id": "8278f65ff22a4e61a98d240e3d17b1b6",
+      "profiles": [],
+      "object_kinds": [
+        "human_assertion"
+      ],
+      "scope_coverage": [],
+      "complete_snapshot": true,
+      "required_extensions": [],
+      "transfer_intent": "copy",
+      "notes": []
+    },
+    "objects": [
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "c"
+        },
+        "revision_id": "rev-c",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "Version A",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "c"
+        },
+        "revision_id": "rev-c",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "Version B",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "c"
+        },
+        "revision_id": "rev-c-r1",
+        "predecessor": "rev-c",
+        "role": "human_assertion",
+        "text": "Replacement 1",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-02T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "c"
+        },
+        "revision_id": "rev-c-r2",
+        "predecessor": "rev-c",
+        "role": "human_assertion",
+        "text": "Replacement 2",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-02T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      }
+    ],
+    "events": [
+      {
+        "event_id": "ev-c-1",
+        "kind": "supersede",
+        "target": "rev-c",
+        "actor": "alice",
+        "effective_at": "2026-09-02T00:00:00+00:00",
+        "reason": null,
+        "replacement": "rev-c-r1",
+        "coverage": []
+      },
+      {
+        "event_id": "ev-c-2",
+        "kind": "supersede",
+        "target": "rev-c",
+        "actor": "bob",
+        "effective_at": "2026-09-02T00:00:00+00:00",
+        "reason": null,
+        "replacement": "rev-c-r2",
+        "coverage": []
+      }
+    ]
+  },
+  "expect": {
+    "statuses": {
+      "rev-c-r1": "accepted",
+      "rev-c-r2": "accepted"
+    },
+    "conflicts": true,
+    "validator_errors": 2
+  }
+}

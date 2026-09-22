@@ -1,7 +1,7 @@
 """Offline tests for the OMP LangChain harness.
 
 Uses GenericFakeChatModel so no API key is needed. Each test maps to a rule of the
-harness contract in spec/draft-v0.2-packer.pdf.
+harness contract in early-draft-specs/draft-v0.2-packer.pdf.
 """
 
 from __future__ import annotations

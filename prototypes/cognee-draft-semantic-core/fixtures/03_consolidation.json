@@ -1,0 +1,166 @@
+{
+  "exchange": {
+    "manifest": {
+      "format_version": "cognee-draft-0.1",
+      "source_system": "source",
+      "exported_at": "2026-09-22T16:24:06+00:00",
+      "exchange_id": "87793c3efe044c739e075a2d6fde1845",
+      "profiles": [],
+      "object_kinds": [
+        "machine_derived"
+      ],
+      "scope_coverage": [],
+      "complete_snapshot": true,
+      "required_extensions": [],
+      "transfer_intent": "copy",
+      "notes": []
+    },
+    "objects": [
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "a"
+        },
+        "revision_id": "rev-a",
+        "predecessor": null,
+        "role": "machine_derived",
+        "text": "Standup Tuesday",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": {
+          "activity": "extraction",
+          "used": [],
+          "spans": [],
+          "agent": null,
+          "at": null,
+          "config_id": null,
+          "unknown": true
+        },
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "b"
+        },
+        "revision_id": "rev-b",
+        "predecessor": null,
+        "role": "machine_derived",
+        "text": "Standup moved to Friday",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": {
+          "activity": "extraction",
+          "used": [],
+          "spans": [],
+          "agent": null,
+          "at": null,
+          "config_id": null,
+          "unknown": true
+        },
+        "recorded_at": "2026-09-02T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "sum"
+        },
+        "revision_id": "rev-sum",
+        "predecessor": null,
+        "role": "machine_derived",
+        "text": "Standup is Friday (was Tuesday)",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": {
+          "activity": "consolidation",
+          "used": [
+            "rev-a",
+            "rev-b"
+          ],
+          "spans": [],
+          "agent": "model-x",
+          "at": "2026-09-03T00:00:00+00:00",
+          "config_id": null,
+          "unknown": false
+        },
+        "recorded_at": "2026-09-03T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      }
+    ],
+    "events": [
+      {
+        "event_id": "ev-sup-a",
+        "kind": "supersede",
+        "target": "rev-a",
+        "actor": "model-x",
+        "effective_at": "2026-09-02T00:00:00+00:00",
+        "reason": null,
+        "replacement": "rev-b",
+        "coverage": []
+      }
+    ]
+  },
+  "expect": {
+    "statuses": {
+      "rev-sum": "accepted"
+    },
+    "current_texts": [
+      "Standup moved to Friday",
+      "Standup is Friday (was Tuesday)"
+    ],
+    "validator_errors": 0
+  }
+}

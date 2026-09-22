@@ -1,0 +1,95 @@
+{
+  "exchange": {
+    "manifest": {
+      "format_version": "cognee-draft-0.1",
+      "source_system": "source",
+      "exported_at": "2026-09-22T16:24:06+00:00",
+      "exchange_id": "61f5846661cd45a4bd19904d751b11c6",
+      "profiles": [],
+      "object_kinds": [
+        "human_assertion"
+      ],
+      "scope_coverage": [],
+      "complete_snapshot": true,
+      "required_extensions": [],
+      "transfer_intent": "copy",
+      "notes": []
+    },
+    "objects": [
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "f"
+        },
+        "revision_id": "rev-f",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "Still valid",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": null,
+        "extensions": {}
+      },
+      {
+        "ref": {
+          "authority": "source",
+          "namespace": "memory",
+          "local_id": "s"
+        },
+        "revision_id": "rev-s",
+        "predecessor": null,
+        "role": "human_assertion",
+        "text": "Expired promo code",
+        "media": null,
+        "scope": {
+          "subject": "alice",
+          "owner": "alice",
+          "author": null,
+          "agent": null,
+          "origin_system": "source",
+          "context": {
+            "user": "alice"
+          }
+        },
+        "policy": {
+          "rules": [],
+          "required": false
+        },
+        "derivation": null,
+        "recorded_at": "2026-09-01T00:00:00+00:00",
+        "applies_from": null,
+        "applies_until": null,
+        "expires_at": "2026-09-02T00:00:00+00:00",
+        "extensions": {}
+      }
+    ],
+    "events": []
+  },
+  "expect": {
+    "statuses": {
+      "rev-f": "accepted",
+      "rev-s": "accepted"
+    },
+    "current_texts": [
+      "Still valid"
+    ]
+  }
+}
