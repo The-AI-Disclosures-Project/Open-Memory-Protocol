@@ -122,10 +122,11 @@ def render_core_context(
             body = (
                 body[:max_file_chars].rstrip()
                 + f"\n\n[... truncated by harness at {max_file_chars} characters; "
-                f"read_memory('{f.relative_path}') for the full file ...]"
+                f"call read_memory('{f.relative_path}') for the full file ...]"
             )
             warnings.append(f"{f.relative_path} exceeds {max_file_chars} chars; truncated")
-        header = f"### {f.relative_path}"
+        truncated = bool(warnings) and warnings[-1].startswith(str(f.relative_path))
+        header = f"### {f.relative_path} ({'truncated' if truncated else 'loaded in full'})"
         if desc := fields.get("description"):
             header += f"\n_{desc}_"
         parts.append(f"{header}\n\n{body}\n")

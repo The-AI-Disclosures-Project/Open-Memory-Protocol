@@ -48,13 +48,23 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_SYSTEM_PROMPT = (
     "You are an agent with persistent, file-based memory that follows the Open Memory "
-    "Protocol. Your core memory is shown below and is always available. Deferred memory "
-    "lives in subdirectories; it is NOT loaded automatically. When a task touches a topic "
-    "listed in the deferred index, call `read_memory` on the relevant path before answering."
+    "Protocol. Memory comes in two tiers:\n"
+    "1. CORE memory: every root-level file is reproduced IN FULL below. You already have "
+    "their complete contents; never call `read_memory` on a root-level file.\n"
+    "2. DEFERRED memory: files in subdirectories are NOT loaded. Only an index of them is "
+    "shown. When a task touches something in that index, call `read_memory` on the path "
+    "(a directory path returns its MEMORY.md plus a listing of what is inside).\n"
+    "If asked what you can see without tool use, the answer is exactly the core files' "
+    "full contents plus the deferred index, nothing more."
 )
 
-MEMORY_SECTION_HEADER = "## Memory (Open Memory Protocol)"
-DEFERRED_SECTION_HEADER = "## Deferred memory (read on demand with `read_memory`)"
+MEMORY_SECTION_HEADER = (
+    "## Core memory (root-level files, FULL CONTENTS, already loaded; do not read_memory these)"
+)
+DEFERRED_SECTION_HEADER = (
+    "## Deferred memory index (NOT loaded; only paths and descriptions are visible; "
+    "call `read_memory` to load)"
+)
 
 
 class OpenMemoryMiddleware(AgentMiddleware):
@@ -164,7 +174,13 @@ class OpenMemoryMiddleware(AgentMiddleware):
                 return f"error: no memory at {path!r}. Check the deferred index for valid paths."
             if target.suffix != ".md":
                 return f"error: {path!r} is not a markdown memory file."
-            return target.read_text(encoding="utf-8")
+            text = target.read_text(encoding="utf-8")
+            if target.parent == middleware.memory_root:
+                return (
+                    f"note: {path!r} is a root-level core file; it is already in your context "
+                    f"in full unless marked truncated.\n\n{text}"
+                )
+            return text
 
         return read_memory
 

@@ -69,8 +69,9 @@ def test_rule1_root_files_always_in_context():
     agent.invoke({"messages": [HumanMessage("hello")]})
     sys_text = _system_text(RecordingFakeModel.calls[0])
     # Every root file appears, including its body.
-    assert "### MEMORY.md" in sys_text
+    assert "### MEMORY.md (loaded in full)" in sys_text
     assert "### persona.md" in sys_text and "Concise, direct" in sys_text
+    assert "FULL CONTENTS, already loaded" in sys_text and "NOT loaded" in sys_text
     assert "### human.md" in sys_text and "likes short answers" in sys_text
     # The base system prompt is preserved ahead of the memory block.
     assert sys_text.index("Open Memory Protocol") < sys_text.index("### MEMORY.md")
@@ -81,6 +82,7 @@ def test_rule1_truncation_is_visible(tmp_path: Path):
     mw = OpenMemoryMiddleware(tmp_path, max_file_chars=100)
     block = mw.render_memory_block()
     assert "truncated by harness at 100 characters" in block
+    assert "### MEMORY.md (truncated)" in block
     assert "x" * 101 not in block
 
 
@@ -188,6 +190,8 @@ def test_rule4_rejects_escape_and_non_markdown(tmp_path: Path):
     assert read.invoke({"path": "../../etc/passwd"}).startswith("error: Path escapes")
     assert read.invoke({"path": "sub/data.json"}).startswith("error:")
     assert read.invoke({"path": "sub/missing.md"}).startswith("error: no memory")
+    # Reading a root file works but reminds the model it was already in context.
+    assert read.invoke({"path": "MEMORY.md"}).startswith("note: 'MEMORY.md' is a root-level")
 
 
 # ------------------------------------------------------- writes + size guidance

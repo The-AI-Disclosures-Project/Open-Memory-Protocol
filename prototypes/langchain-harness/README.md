@@ -116,7 +116,7 @@ from omp_langchain import ConsoleSink, JsonlSink, ListSink, create_omp_agent
 sink = ListSink()
 agent = create_omp_agent("./memory", trace=[sink, ConsoleSink(), JsonlSink("run.jsonl")])
 agent.invoke(...)
-sink.events              # list[TraceEvent]: model_call / model_response / tool_call / tool_result
+sink.events  # list[TraceEvent]: model_call / model_response / tool_call / tool_result
 agent.omp_trace.summary  # totals: calls, latency, tokens
 ```
 
