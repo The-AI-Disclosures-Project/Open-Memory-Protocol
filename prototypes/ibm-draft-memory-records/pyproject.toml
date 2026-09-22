@@ -1,0 +1,40 @@
+[project]
+name = "ibm-draft-memory-records"
+version = "0.1.0"
+description = "Immutable memory records, import/export, scope ACLs and the Remember/Recall/Observe/Decorate verbs from the IBM OMPI draft v0.1, as a Python library and LangChain middleware"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Open Memory Protocol Initiative", email = "ompi@aidisclosures.org" },
+]
+dependencies = [
+    "pydantic>=2.7",
+    "langchain>=1.0",
+    "langchain-openai>=1.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+packer = ["packer-draft-langchain-harness"]
+
+[project.scripts]
+ibm-memory = "ibm_memory.cli:main"
+
+[tool.uv.sources]
+packer-draft-langchain-harness = { path = "../packer-draft-langchain-harness", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ibm_memory"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
