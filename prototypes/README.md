@@ -27,4 +27,5 @@ Initiative.
 
 Model calls in the prototypes default to OpenRouter. Put the key once in `prototypes/.env`
 (copy [`.env.example`](.env.example)); every prototype's CLI loads it. A `.env` inside a
-prototype folder overrides the shared one, and variables already in the environment win.
+prototype folder overrides the shared one, a `.env` at the repo root is the last fallback,
+and variables already in the environment win.

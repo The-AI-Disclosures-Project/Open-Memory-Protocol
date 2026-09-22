@@ -16,9 +16,9 @@ DEFAULT_MODEL = "openrouter:nvidia/nemotron-3-nano-30b-a3b"
 
 
 def load_env() -> None:
-    """Load environment from the prototype's own ./.env, then the shared prototypes/.env.
+    """Load environment from ./.env, the prototype's .env, prototypes/.env, then the repo root.
 
-    Values already set in the process win; a local .env wins over the shared one.
+    Values already set in the process win; a more local .env wins over a more shared one.
     """
     from dotenv import load_dotenv
 
@@ -26,6 +26,7 @@ def load_env() -> None:
     load_dotenv(Path.cwd() / ".env")
     load_dotenv(here.parents[1] / ".env")  # this prototype's folder
     load_dotenv(here.parents[2] / ".env")  # prototypes/.env (shared)
+    load_dotenv(here.parents[3] / ".env")  # repo root .env, if present
 
 
 def resolve_model(spec: Any, **kwargs: Any) -> Any:

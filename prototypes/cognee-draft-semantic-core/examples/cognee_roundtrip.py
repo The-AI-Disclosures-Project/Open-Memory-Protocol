@@ -27,12 +27,15 @@ async def main() -> int:
     # Cognee reads LLM_API_KEY; fall back to the shared prototypes/.env OpenRouter key.
     import os
 
-    shared = Path(__file__).resolve().parents[2] / ".env"
-    if shared.exists():
-        for line in shared.read_text().splitlines():
-            if "=" in line and not line.startswith("#"):
-                k, _, v = line.partition("=")
-                os.environ.setdefault(k.strip(), v.strip().strip("\"'"))
+    for shared in (
+        Path(__file__).resolve().parents[2] / ".env",
+        Path(__file__).resolve().parents[3] / ".env",
+    ):
+        if shared.exists():
+            for line in shared.read_text().splitlines():
+                if "=" in line and not line.startswith("#"):
+                    k, _, v = line.partition("=")
+                    os.environ.setdefault(k.strip(), v.strip().strip("\"'"))
     if "LLM_API_KEY" not in os.environ and os.environ.get("OPENROUTER_API_KEY"):
         os.environ["LLM_API_KEY"] = os.environ["OPENROUTER_API_KEY"]
 
