@@ -8,7 +8,8 @@
   <a href="prototypes/python-loader-validator/"><strong>Python code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
-  <a href="docs/contributing.md"><strong>Contribute</strong></a>
+  <a href="docs/contributing.md"><strong>Contribute</strong></a> ·
+  <a href="https://discord.gg/7DbzzxZ9y"><strong>Discord</strong></a>
 </p>
 
 <p align="center">
@@ -16,6 +17,7 @@
   <img src="https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey" alt="Documentation license: CC BY 4.0">
   <img src="https://img.shields.io/badge/code-Apache%202.0-lightgrey" alt="Code license: Apache 2.0">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
+  <a href="https://discord.gg/7DbzzxZ9y"><img src="https://img.shields.io/badge/Discord-apply%20to%20join-5865F2?logo=discord&logoColor=white" alt="Discord: apply to join"></a>
 </p>
 
 <p align="center">
@@ -33,6 +35,14 @@
 ---
 
 > **Current stage.** OMPI is an open-source ecosystem in early public development. The v0.1 draft technology and experimental Python implementation are open for community iteration, and the ecosystem's first public convening is **September 9, 2026** (online, co-hosted with Mozilla and IBM). All artifacts in this repository are developed openly for use, adoption, and iteration by contributors and implementers across the ecosystem.
+
+<p align="center">
+  <a href="https://discord.gg/7DbzzxZ9y">
+    <img src="https://img.shields.io/badge/%F0%9F%92%AC%20Join%20the%20OMPI%20Discord-apply%20for%20access-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join the OMPI Discord: apply for access">
+  </a>
+  <br>
+  <sub>Working-group discussion, implementer Q&amp;A, and convening coordination. Membership is by application; tell us who you are and what you are building.</sub>
+</p>
 
 ---
 
@@ -154,6 +164,7 @@ Thirteen external participants from ten affiliations are confirmed for the Septe
 - Read the [draft technology](early-draft-specs/) and open an issue with feedback.
 - Run the [experimental Python implementation](prototypes/python-loader-validator/) against your own memory workload.
 - Explore the [ACP-based memory-server prototype](prototypes/acp_memory_server/).
+- Apply to join the [OMPI Discord](https://discord.gg/7DbzzxZ9y) for working-group discussion and implementer support.
 - Contact [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to join the ecosystem.
 
 ## License
