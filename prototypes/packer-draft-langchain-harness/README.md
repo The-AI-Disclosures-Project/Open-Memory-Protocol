@@ -1,4 +1,4 @@
-# OMP — LangChain harness
+# OMP — Packer draft (v0.2) LangChain harness
 
 A [LangChain `create_agent`](https://docs.langchain.com/oss/python/langchain/agents) harness
 that implements the **harness contract** from the Packer draft spec v0.2

@@ -1,7 +1,7 @@
 [project]
-name = "omp-langchain-harness"
+name = "packer-draft-langchain-harness"
 version = "0.1.0"
-description = "LangChain create_agent harness implementing the Open Memory Protocol (Packer draft v0.2) harness contract"
+description = "LangChain create_agent harness implementing the harness contract from the Packer draft spec v0.2 of the Open Memory Protocol"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
