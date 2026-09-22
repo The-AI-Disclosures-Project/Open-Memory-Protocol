@@ -1,7 +1,7 @@
 # OMP — Federated Memory Protocol (AIDP draft v0.1) reference implementation
 
 A working implementation of the Federated Memory Protocol from
-[`spec/draft-v0.1-aidp.pdf`](../../spec/draft-v0.1-aidp.pdf): a **memory server** exposing
+[`early-draft-specs/draft-v0.1-aidp.pdf`](../../early-draft-specs/draft-v0.1-aidp.pdf): a **memory server** exposing
 the `/fmp/*` endpoints, a **federated client** that treats many servers as one view, and a
 **LangChain `create_agent` middleware** (the draft's tier 2: plugin with hooks + tools).
 

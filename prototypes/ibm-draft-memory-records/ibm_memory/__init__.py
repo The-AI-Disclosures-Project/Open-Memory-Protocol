@@ -1,4 +1,4 @@
-"""IBM OMPI draft v0.1 (spec/draft-v0.1-ibm.pdf) as code.
+"""IBM OMPI draft v0.1 (early-draft-specs/draft-v0.1-ibm.pdf) as code.
 
 - ibm_memory.schema        : MemoryRecord (body, identifier, lifecycle, semantic + scope tags)
 - ibm_memory.store         : immutable store with override/invalidate, time travel, scope ACLs,

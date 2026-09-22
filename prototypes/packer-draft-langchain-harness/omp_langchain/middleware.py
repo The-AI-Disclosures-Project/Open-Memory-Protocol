@@ -1,6 +1,6 @@
 """OpenMemoryMiddleware: the OMP harness contract as LangChain `create_agent` middleware.
 
-Spec: spec/draft-v0.2-packer.pdf §Harness contract. A conforming harness:
+Spec: early-draft-specs/draft-v0.2-packer.pdf §Harness contract. A conforming harness:
 
 1. Keeps top-level .md files at least partially in context at all times.
 2. Defers nested .md files (not auto-loaded).

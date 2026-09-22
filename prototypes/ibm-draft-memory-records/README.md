@@ -1,7 +1,7 @@
 # OMP — IBM draft (v0.1) memory records, lifecycle and runtime verbs
 
 A working implementation of the two protocol surfaces in
-[`spec/draft-v0.1-ibm.pdf`](../../spec/draft-v0.1-ibm.pdf):
+[`early-draft-specs/draft-v0.1-ibm.pdf`](../../early-draft-specs/draft-v0.1-ibm.pdf):
 
 **1. Interoperability between memory systems (import/export).** `MemoryRecord` carries
 every interface element the draft names: body, identifier, lifecycle (author, AI

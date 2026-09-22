@@ -2,7 +2,7 @@
 
 A [LangChain `create_agent`](https://docs.langchain.com/oss/python/langchain/agents) harness
 that implements the **harness contract** from the Packer draft spec v0.2
-([`spec/draft-v0.2-packer.pdf`](../../spec/draft-v0.2-packer.pdf)). It builds on the
+([`early-draft-specs/draft-v0.2-packer.pdf`](../../early-draft-specs/draft-v0.2-packer.pdf)). It builds on the
 [`python-loader-validator`](../python-loader-validator/) package for directory validation
 and adds the part that package deliberately leaves out: an actual agent loop.
 
