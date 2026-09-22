@@ -261,3 +261,89 @@ def test_resolve_model_openrouter(monkeypatch):
     # Model instances pass through untouched.
     fake = _model("x")
     assert resolve_model(fake) is fake
+
+
+# ---------------------------------------------------------------- trace
+
+
+def test_trace_records_every_model_and_tool_event():
+    from omp_langchain import ListSink
+
+    sink = ListSink()
+    model = _model(
+        AIMessage(
+            content="",
+            tool_calls=[
+                ToolCall(name="read_memory", args={"path": "notes/2026-08-12.md"}, id="c1")
+            ],
+        ),
+        "Reviewed the draft.",
+    )
+    agent = create_omp_agent(EXAMPLE, model, trace=sink)
+    agent.invoke({"messages": [HumanMessage("what happened on 2026-08-12?")]})
+
+    kinds = [(e.step, e.kind) for e in sink.events]
+    assert kinds == [
+        (1, "model_call"),
+        (1, "model_response"),
+        (1, "tool_call"),
+        (1, "tool_result"),
+        (2, "model_call"),
+        (2, "model_response"),
+    ]
+    first = sink.events[0].data
+    assert first["memory"]["core_files"][0]["path"] == "MEMORY.md"
+    assert first["memory"]["deferred_dirs"] == 2 and first["memory"]["truncated"] is False
+    assert "### persona.md" in first["memory"]["block"]
+    assert sink.events[1].data["tool_calls"] == [
+        {"name": "read_memory", "args": {"path": "notes/2026-08-12.md"}}
+    ]
+    tool_result = sink.events[3].data
+    assert tool_result["name"] == "read_memory" and not tool_result["is_error"]
+    assert "Reviewed the Packer draft" in tool_result["result"]
+    assert sink.events[-1].data["text"] == "Reviewed the draft."
+    assert agent.omp_trace.summary["model_calls"] == 2
+    assert agent.omp_trace.summary["tool_calls"] == 1
+
+
+def test_trace_flags_tool_errors_and_writes_jsonl(tmp_path: Path):
+    import json
+
+    from omp_langchain import JsonlSink, ListSink
+
+    sink, jsonl = ListSink(), JsonlSink(tmp_path / "trace.jsonl")
+    model = _model(
+        AIMessage(
+            content="", tool_calls=[ToolCall(name="read_memory", args={"path": "nope.md"}, id="c1")]
+        ),
+        "sorry",
+    )
+    agent = create_omp_agent(EXAMPLE, model, trace=[sink, jsonl])
+    agent.invoke({"messages": [HumanMessage("x")]})
+    err = next(e for e in sink.events if e.kind == "tool_result")
+    assert err.data["is_error"] is True
+    lines = (tmp_path / "trace.jsonl").read_text().splitlines()
+    assert len(lines) == len(sink.events)
+    assert json.loads(lines[0])["kind"] == "model_call"
+
+
+def test_console_sink_renders_without_crashing(capsys):
+    import io
+
+    from omp_langchain import ConsoleSink
+
+    buf = io.StringIO()
+    sink = ConsoleSink(buf, level=2, color=False)
+    model = _model(
+        AIMessage(
+            content="",
+            tool_calls=[ToolCall(name="read_memory", args={"path": "projects"}, id="c1")],
+        ),
+        "done",
+    )
+    create_omp_agent(EXAMPLE, model, trace=sink).invoke({"messages": [HumanMessage("x")]})
+    out = buf.getvalue()
+    assert (
+        "→ model" in out and "⚙ tool read_memory" in out and "--- injected memory block ---" in out
+    )
+    assert "### projects/MEMORY.md" in out  # level 2 shows the tool result

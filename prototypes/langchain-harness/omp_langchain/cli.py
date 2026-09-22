@@ -10,6 +10,7 @@ from langchain.messages import HumanMessage
 
 from omp_langchain.middleware import OpenMemoryMiddleware, create_omp_agent
 from omp_langchain.models import DEFAULT_MODEL
+from omp_langchain.trace import ConsoleSink, JsonlSink
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -26,6 +27,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--writable", action="store_true", help="expose the write_memory tool")
     p.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="live trace on stderr: -v = model/tool calls + memory stats, -vv = full payloads",
+    )
+    p.add_argument("--trace", metavar="FILE.jsonl", help="append a machine-readable trace here")
+    p.add_argument(
         "--show-context",
         action="store_true",
         help="print the memory block the harness injects, then exit (no model call)",
@@ -38,7 +47,13 @@ def main(argv: list[str] | None = None) -> int:
         print(OpenMemoryMiddleware(args.memory, writable=args.writable).render_memory_block())
         return 0
 
-    agent = create_omp_agent(args.memory, args.model, writable=args.writable)
+    sinks: list = []
+    if args.verbose:
+        sinks.append(ConsoleSink(level=args.verbose))
+    if args.trace:
+        sinks.append(JsonlSink(args.trace))
+
+    agent = create_omp_agent(args.memory, args.model, writable=args.writable, trace=sinks or None)
     messages: list = []
 
     def turn(text: str) -> None:
@@ -47,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
         messages[:] = result["messages"]
         final = result["messages"][-1]
         print(final.text if hasattr(final, "text") else final.content)
+        if args.verbose and agent.omp_trace is not None:
+            print(f"--- {agent.omp_trace.format_summary()}", file=sys.stderr)
 
     if args.prompt:
         turn(" ".join(args.prompt))

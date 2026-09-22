@@ -30,7 +30,7 @@ path dependency. With plain pip: `pip install -e ../python-loader-validator -e '
 
 ## Models
 
-The default model is **Kimi K3 via OpenRouter** (`openrouter:moonshotai/kimi-k3`). Set
+The default model is **NVIDIA Nemotron 3 Nano via OpenRouter** (`openrouter:nvidia/nemotron-3-nano-30b-a3b`). Set
 `OPENROUTER_API_KEY` in your environment or in a `.env` file in this directory. Any
 `openrouter:<model>` string works, and so does any LangChain `init_chat_model` string such
 as `anthropic:claude-sonnet-4-6` or `openai:gpt-5` (with that provider's key).
@@ -40,7 +40,7 @@ as `anthropic:claude-sonnet-4-6` or `openai:gpt-5` (with that provider's key).
 ```python
 from omp_langchain import create_omp_agent
 
-agent = create_omp_agent("./memory")                      # Kimi K3 via OpenRouter
+agent = create_omp_agent("./memory")  # Kimi K3 via OpenRouter
 # agent = create_omp_agent("./memory", "anthropic:claude-sonnet-4-6")
 result = agent.invoke({"messages": [{"role": "user", "content": "what do you know about me?"}]})
 print(result["messages"][-1].content)
@@ -66,7 +66,7 @@ agent = create_agent(
 # See exactly what the harness injects, without calling a model
 uv run omp-agent --memory examples/memory --show-context
 
-# One-shot against Kimi K3 (needs OPENROUTER_API_KEY)
+# One-shot against the default OpenRouter model (needs OPENROUTER_API_KEY)
 uv run omp-agent --memory examples/memory "What is the OMP project's secret handshake?"
 
 # Another provider
@@ -85,6 +85,44 @@ AI tool_calls: [('read_memory', {'path': 'projects/MEMORY.md'})]
 AI tool_calls: [('read_memory', {'path': 'projects/omp'})]
 FINAL: Secret handshake: "progressive disclosure" (per projects/omp/MEMORY.md) ...
 ```
+
+## Seeing what the harness does
+
+Pass `-v` for a live trace on stderr (`-vv` also dumps the full injected memory block and
+full tool results), and `--trace FILE.jsonl` for a machine-readable log of the same events:
+
+```bash
+uv run omp-agent --memory examples/memory -v --trace run.jsonl "What is the secret handshake?"
+```
+
+```
+[step 1] → model nvidia/nemotron-3-nano-30b-a3b  messages=1  ~prompt_tokens=412
+         memory: core=[MEMORY.md(404c), human.md(172c), persona.md(153c)] ~179 tok; deferred=2 dirs / 3 files listed
+[step 1] ← model 2702ms  tokens in/out=782/600
+         wants read_memory({"path": "projects"})
+[step 1] ⚙ tool read_memory({"path": "projects"})
+[step 1] ⚙ done read_memory ok 1ms  192 chars
+...
+--- 4 model call(s) in 5025ms, 3 tool call(s) in 5ms, tokens in/out=3692/970
+```
+
+Each model call line shows exactly which root files were injected (with sizes, and `*` if
+truncated) and how much deferred memory was surfaced, so you can check the four rules are
+being honoured on every step. Programmatically, pass `trace=` to `create_omp_agent`:
+
+```python
+from omp_langchain import ConsoleSink, JsonlSink, ListSink, create_omp_agent
+
+sink = ListSink()
+agent = create_omp_agent("./memory", trace=[sink, ConsoleSink(), JsonlSink("run.jsonl")])
+agent.invoke(...)
+sink.events              # list[TraceEvent]: model_call / model_response / tool_call / tool_result
+agent.omp_trace.summary  # totals: calls, latency, tokens
+```
+
+The trace is also a cheap way to compare models. In the run above, Nemotron 3 Nano spent a
+tool call re-reading `human.md` even though it was already in context as core memory;
+Kimi K3 on the same prompt went straight to `projects/MEMORY.md` then `projects/omp`.
 
 ## Test
 

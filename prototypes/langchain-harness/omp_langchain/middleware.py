@@ -36,6 +36,7 @@ from open_memory_protocol.types import ROOT_INDEX_FILENAME
 from omp_langchain.memory_index import (
     DEFAULT_MAX_FILE_CHARS,
     DEFAULT_MAX_TOTAL_TOKENS,
+    deferred_entries,
     estimate_tokens,
     render_core_context,
     render_deferred_index,
@@ -73,6 +74,8 @@ class OpenMemoryMiddleware(AgentMiddleware):
         self.max_total_tokens = max_total_tokens
         self.writable = writable
         self.enforce_size_on_write = enforce_size_on_write
+        self.last_stats: dict[str, Any] | None = None
+        """Statistics from the most recent render (consumed by TraceMiddleware)."""
 
         # Validate eagerly so misconfiguration fails at construction, not first model call.
         load_memory(self.memory_root)
@@ -111,10 +114,30 @@ class OpenMemoryMiddleware(AgentMiddleware):
                     self.max_total_tokens,
                 )
         deferred = render_deferred_index(memory)
-        return (
+        block = (
             f"{MEMORY_SECTION_HEADER}\n\nMemory root: `{self.memory_root}`\n\n"
             f"{core}\n{DEFERRED_SECTION_HEADER}\n\n{deferred}\n"
         )
+        entries = deferred_entries(memory)
+        truncated_paths = {w.split(" ")[0] for w in warnings}
+        self.last_stats = {
+            "core_files": [
+                {
+                    "path": str(f.relative_path),
+                    "chars": len(f.read()),
+                    "truncated": str(f.relative_path) in truncated_paths,
+                }
+                for f in memory.core_files
+            ],
+            "core_tokens_est": estimate_tokens(core),
+            "truncated": bool(warnings),
+            "deferred_dirs": sum(1 for e in entries if e.is_dir),
+            "deferred_files": sum(1 for e in entries if not e.is_dir),
+            "external_files_total": len(memory.external_files),
+            "block_chars": len(block),
+            "block": block,
+        }
+        return block
 
     # ------------------------------------------------------------------- rule 4
 
@@ -239,20 +262,36 @@ def create_omp_agent(
     system_prompt: str = DEFAULT_SYSTEM_PROMPT,
     middleware: list | None = None,
     writable: bool = False,
+    trace: list | Any | None = None,
     **kwargs: Any,
 ):
     """Build a `create_agent` harness whose memory follows the OMP contract.
 
     `model` may be a chat model instance or a string: "openrouter:<model>" (e.g. the default
-    "openrouter:moonshotai/kimi-k3", needs OPENROUTER_API_KEY) or any `init_chat_model`
-    string like "anthropic:claude-sonnet-4-6".
+    "openrouter:nvidia/nemotron-3-nano-30b-a3b", needs OPENROUTER_API_KEY) or any
+    `init_chat_model` string like "anthropic:claude-sonnet-4-6".
     Extra middleware runs after OpenMemoryMiddleware, so it sees the injected memory block.
+    `trace` is a sink or list of sinks (see omp_langchain.trace) that receive a live trace of
+    model calls, tool calls, and memory statistics. The TraceMiddleware is exposed on the
+    returned agent as `agent.omp_trace` (None if no trace was requested), and the memory
+    middleware as `agent.omp_memory`.
     """
+    from omp_langchain.trace import TraceMiddleware
+
     omp = OpenMemoryMiddleware(memory_root, writable=writable)
-    return create_agent(
+    stack: list = [omp]
+    tracer = None
+    if trace is not None:
+        tracer = TraceMiddleware(trace, memory=omp)
+        stack.append(tracer)
+    stack.extend(middleware or [])
+    agent = create_agent(
         resolve_model(model),
         tools=tools or [],
         system_prompt=system_prompt,
-        middleware=[omp, *(middleware or [])],
+        middleware=stack,
         **kwargs,
     )
+    agent.omp_trace = tracer
+    agent.omp_memory = omp
+    return agent

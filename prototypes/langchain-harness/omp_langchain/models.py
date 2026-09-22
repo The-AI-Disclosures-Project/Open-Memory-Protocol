@@ -11,7 +11,7 @@ import os
 from typing import Any
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-DEFAULT_MODEL = "openrouter:moonshotai/kimi-k3"
+DEFAULT_MODEL = "openrouter:nvidia/nemotron-3-nano-30b-a3b"
 
 
 def resolve_model(spec: Any, **kwargs: Any) -> Any:
