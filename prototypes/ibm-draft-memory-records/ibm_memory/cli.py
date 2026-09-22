@@ -6,7 +6,6 @@ import argparse
 import os
 import sys
 
-
 from ibm_memory.models import load_env
 from ibm_memory.packer_bridge import memory_dir_from_records, records_from_memory_dir
 from ibm_memory.store import MemoryStore, ScopePolicy, dump_bundle, load_bundle
