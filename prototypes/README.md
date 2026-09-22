@@ -22,3 +22,9 @@ Initiative.
   tombstone, policy-mapping and receipt rules, a COGX 0.1 reader/writer with no Cognee
   dependency, adapters that express the other prototypes as exchanges, and the fixtures
   §6 of the draft asks for.
+
+## Configuration
+
+Model calls in the prototypes default to OpenRouter. Put the key once in `prototypes/.env`
+(copy [`.env.example`](.env.example)); every prototype's CLI loads it. A `.env` inside a
+prototype folder overrides the shared one, and variables already in the environment win.

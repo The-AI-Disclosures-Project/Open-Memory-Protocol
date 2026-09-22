@@ -3,20 +3,37 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+
+
+def load_env() -> None:
+    """Load environment from the prototype's own ./.env, then the shared prototypes/.env.
+
+    Values already set in the process win; a local .env wins over the shared one.
+    """
+    from dotenv import load_dotenv
+
+    here = Path(__file__).resolve()
+    load_dotenv(Path.cwd() / ".env")
+    load_dotenv(here.parents[1] / ".env")  # this prototype's folder
+    load_dotenv(here.parents[2] / ".env")  # prototypes/.env (shared)
 
 
 def resolve_model(spec: Any, **kwargs: Any) -> Any:
     if not isinstance(spec, str):
         return spec
     if spec.startswith("openrouter:"):
+        load_env()
         from langchain_openai import ChatOpenAI
 
         api_key = os.environ.get("OPENROUTER_API_KEY")
         if not api_key:
-            raise RuntimeError("OPENROUTER_API_KEY is not set (export it or put it in .env)")
+            raise RuntimeError(
+                "OPENROUTER_API_KEY is not set (export it, or put it in prototypes/.env; see prototypes/.env.example)"
+            )
         return ChatOpenAI(
             model=spec.removeprefix("openrouter:"),
             base_url=OPENROUTER_BASE_URL,

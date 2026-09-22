@@ -7,7 +7,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-from dotenv import load_dotenv
+from fmp.models import load_env
 
 
 def server_main(argv: list[str] | None = None) -> int:
@@ -86,7 +86,7 @@ def agent_main(argv: list[str] | None = None) -> int:
     p.add_argument("-q", "--quiet", action="store_true")
     p.add_argument("prompt", nargs="*")
     args = p.parse_args(argv)
-    load_dotenv()
+    load_env()
 
     from langchain.agents import create_agent
     from langchain.messages import HumanMessage

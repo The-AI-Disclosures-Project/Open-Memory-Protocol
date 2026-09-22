@@ -51,7 +51,7 @@ uv run ibm-memory --store /tmp/m.json show --as-of 2026-01-01T00:00:00+00:00
 uv run ibm-memory --store /tmp/m.json export /tmp/a.json
 uv run ibm-memory --store /tmp/n.json --system sysB import /tmp/a.json --map-scope user:sruly=acct:42
 
-# agent with all four verbs (needs OPENROUTER_API_KEY)
+# agent with all four verbs (needs OPENROUTER_API_KEY, e.g. in prototypes/.env)
 uv run ibm-memory --store /tmp/m.json agent --principal sruly "I moved to Brooklyn last month"
 ```
 

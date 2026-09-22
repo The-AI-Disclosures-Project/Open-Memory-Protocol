@@ -255,6 +255,7 @@ def test_resolve_model_openrouter(monkeypatch):
     from omp_langchain.models import OPENROUTER_BASE_URL, resolve_model
 
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr("omp_langchain.models.load_env", lambda: None)  # ignore prototypes/.env
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
         resolve_model("openrouter:moonshotai/kimi-k3")
 

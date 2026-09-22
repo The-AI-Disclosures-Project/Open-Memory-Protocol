@@ -6,8 +6,8 @@ import argparse
 import os
 import sys
 
-from dotenv import load_dotenv
 
+from ibm_memory.models import load_env
 from ibm_memory.packer_bridge import memory_dir_from_records, records_from_memory_dir
 from ibm_memory.store import MemoryStore, ScopePolicy, dump_bundle, load_bundle
 
@@ -77,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("prompt", nargs="*")
 
     args = p.parse_args(argv)
-    load_dotenv()
+    load_env()
     store = _store(args)
 
     if args.cmd == "show":

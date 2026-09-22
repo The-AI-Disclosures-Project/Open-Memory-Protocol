@@ -31,7 +31,8 @@ path dependency. With plain pip: `pip install -e ../python-loader-validator -e '
 ## Models
 
 The default model is **NVIDIA Nemotron 3 Nano via OpenRouter** (`openrouter:nvidia/nemotron-3-nano-30b-a3b`). Set
-`OPENROUTER_API_KEY` in your environment or in a `.env` file in this directory. Any
+`OPENROUTER_API_KEY` in your environment or in the shared `prototypes/.env` (copy
+`prototypes/.env.example`). Any
 `openrouter:<model>` string works, and so does any LangChain `init_chat_model` string such
 as `anthropic:claude-sonnet-4-6` or `openai:gpt-5` (with that provider's key).
 

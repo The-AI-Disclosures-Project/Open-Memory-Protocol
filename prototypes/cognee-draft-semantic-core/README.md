@@ -49,7 +49,8 @@ uv run semantic-core validate ./some_export_from_cognee        # a COGX dir or .
 
 ## A recorded two-way exchange with Cognee 1.5.3
 
-[`examples/cognee_roundtrip.py`](examples/cognee_roundtrip.py) sends an exchange (the
+[`examples/cognee_roundtrip.py`](examples/cognee_roundtrip.py) (uses `OPENROUTER_API_KEY` from
+`prototypes/.env` as Cognee's `LLM_API_KEY` when that is unset) sends an exchange (the
 Packer example directory plus a transcript and two derived memories, 10 objects) to a local
 Cognee as COGX, exports the dataset back as COGX, and reads it with this codec. Results on
 2026-09-22 with Cognee 1.5.3:

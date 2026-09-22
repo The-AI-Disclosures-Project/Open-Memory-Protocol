@@ -33,7 +33,7 @@ uv run fmp-server --name work     --port 8802 --disable delete
 uv run fmp-server --name history  --port 8803 --acp-index ~/.local/share/acp-memory/db.sqlite
 ```
 
-Then, with `OPENROUTER_API_KEY` set (or in `.env`):
+Then, with `OPENROUTER_API_KEY` set (or in the shared `prototypes/.env`):
 
 ```bash
 uv run fmp-agent --config examples/fmp.toml "what have I been working on in claude code lately?"
