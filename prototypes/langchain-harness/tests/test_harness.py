@@ -351,3 +351,26 @@ def test_console_sink_renders_without_crashing(capsys):
         "→ model" in out and "⚙ tool read_memory" in out and "--- injected memory block ---" in out
     )
     assert "### projects/MEMORY.md" in out  # level 2 shows the tool result
+
+
+def test_activity_sink_narrates_steps():
+    import io
+
+    from omp_langchain import ActivitySink
+
+    buf = io.StringIO()
+    model = _model(
+        AIMessage(
+            content="", tool_calls=[ToolCall(name="read_memory", args={"path": "notes"}, id="c1")]
+        ),
+        "done",
+    )
+    create_omp_agent(EXAMPLE, model, trace=ActivitySink(buf, color=False)).invoke(
+        {"messages": [HumanMessage("x")]}
+    )
+    out = buf.getvalue()
+    assert "memory: 3 core file(s) [MEMORY.md, human.md, persona.md]" in out
+    assert out.count("memory: 3 core file(s)") == 1  # announced once, not per model call
+    assert "wants read_memory(notes)" in out
+    assert "reading deferred memory: notes" in out
+    assert "final answer" in out

@@ -157,6 +157,76 @@ class ConsoleSink:
                 )
 
 
+class ActivitySink:
+    """Compact, plain-language narration of what the agent is doing. On by default in the CLI.
+
+    One line per action, prefixed with a bullet, so a user watching the terminal can follow
+    the loop without reading a full trace:
+
+        ● memory: 3 core files (~192 tok) in context · 2 deferred dirs indexed
+        ● model thinking (nvidia/nemotron-3-nano-30b-a3b) … 2.4s → wants read_memory
+        ● reading deferred memory: projects (192 chars)
+        ● model thinking … 0.8s → answer
+    """
+
+    def __init__(self, stream: TextIO | None = None, *, color: bool | None = None) -> None:
+        self.stream = stream or sys.stderr
+        self.color = self.stream.isatty() if color is None else color
+        self._memory_announced: str | None = None
+
+    def _c(self, name: str, text: str) -> str:
+        return f"{ConsoleSink._C[name]}{text}{ConsoleSink._C['reset']}" if self.color else text
+
+    def _line(self, text: str) -> None:
+        print(self._c("dim", "● ") + text, file=self.stream, flush=True)
+
+    def __call__(self, e: TraceEvent) -> None:
+        d = e.data
+        if e.kind == "model_call":
+            mem = d.get("memory")
+            if mem:
+                key = (
+                    f"{[(f['path'], f['chars']) for f in mem['core_files']]}{mem['deferred_dirs']}"
+                )
+                if key != self._memory_announced:  # only re-announce when memory changed
+                    self._memory_announced = key
+                    names = ", ".join(f["path"] for f in mem["core_files"])
+                    trunc = self._c("yellow", " (some truncated)") if mem["truncated"] else ""
+                    self._line(
+                        f"{self._c('bold', 'memory:')} {len(mem['core_files'])} core file(s) "
+                        f"[{names}] ~{mem['core_tokens_est']} tok in context{trunc} · "
+                        f"{mem['deferred_dirs']} deferred dir(s), {mem['external_files_total']} "
+                        f"file(s) not loaded"
+                    )
+            self._line(f"{self._c('cyan', 'model thinking')} ({d['model']}) …")
+        elif e.kind == "model_response":
+            secs = d["latency_ms"] / 1000
+            if d["tool_calls"]:
+                wants = ", ".join(
+                    f"{tc['name']}({tc['args'].get('path', '')})" for tc in d["tool_calls"]
+                )
+                self._line(f"  {secs:.1f}s → {self._c('magenta', 'wants')} {wants}")
+            else:
+                self._line(f"  {secs:.1f}s → {self._c('green', 'final answer')}")
+        elif e.kind == "tool_call":
+            if d["name"] == "read_memory":
+                self._line(
+                    f"{self._c('green', 'reading deferred memory:')} {d['args'].get('path')}"
+                )
+            elif d["name"] == "write_memory":
+                self._line(
+                    f"{self._c('yellow', 'writing memory:')} {d['args'].get('path')} "
+                    f"({d['args'].get('mode', 'append')})"
+                )
+            else:
+                self._line(f"{self._c('green', 'tool:')} {d['name']}({json.dumps(d['args'])})")
+        elif e.kind == "tool_result":
+            if d["is_error"]:
+                self._line(f"  {self._c('red', 'error:')} {_preview(d['result'], 200)}")
+            else:
+                self._line(self._c("dim", f"  ok, {d['result_chars']} chars"))
+
+
 # ---------------------------------------------------------------------- middleware
 
 

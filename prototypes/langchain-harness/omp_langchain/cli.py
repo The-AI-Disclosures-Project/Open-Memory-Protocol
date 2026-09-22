@@ -10,7 +10,7 @@ from langchain.messages import HumanMessage
 
 from omp_langchain.middleware import OpenMemoryMiddleware, create_omp_agent
 from omp_langchain.models import DEFAULT_MODEL
-from omp_langchain.trace import ConsoleSink, JsonlSink
+from omp_langchain.trace import ActivitySink, ConsoleSink, JsonlSink
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -31,7 +31,10 @@ def main(argv: list[str] | None = None) -> int:
         "--verbose",
         action="count",
         default=0,
-        help="live trace on stderr: -v = model/tool calls + memory stats, -vv = full payloads",
+        help="detailed trace on stderr: -v = per-call stats and token usage, -vv = full payloads",
+    )
+    p.add_argument(
+        "-q", "--quiet", action="store_true", help="print only the answer (no activity lines)"
     )
     p.add_argument("--trace", metavar="FILE.jsonl", help="append a machine-readable trace here")
     p.add_argument(
@@ -50,10 +53,24 @@ def main(argv: list[str] | None = None) -> int:
     sinks: list = []
     if args.verbose:
         sinks.append(ConsoleSink(level=args.verbose))
+    elif not args.quiet:
+        sinks.append(ActivitySink())
     if args.trace:
         sinks.append(JsonlSink(args.trace))
 
     agent = create_omp_agent(args.memory, args.model, writable=args.writable, trace=sinks or None)
+    if not args.quiet:
+        mem = agent.omp_memory
+        mem.render_memory_block()
+        st = mem.last_stats
+        print(
+            f"omp-agent · model {args.model} · memory {mem.memory_root}\n"
+            f"           {len(st['core_files'])} core file(s) always in context, "
+            f"{st['external_files_total']} deferred file(s) readable via read_memory"
+            + (" · writes enabled" if args.writable else "")
+            + "\n",
+            file=sys.stderr,
+        )
     messages: list = []
 
     def turn(text: str) -> None:
@@ -61,9 +78,12 @@ def main(argv: list[str] | None = None) -> int:
         result = agent.invoke({"messages": messages})
         messages[:] = result["messages"]
         final = result["messages"][-1]
-        print(final.text if hasattr(final, "text") else final.content)
-        if args.verbose and agent.omp_trace is not None:
-            print(f"--- {agent.omp_trace.format_summary()}", file=sys.stderr)
+        answer = (final.text if hasattr(final, "text") else str(final.content)).strip()
+        if not args.quiet:
+            print(file=sys.stderr, flush=True)
+        print(answer, flush=True)
+        if not args.quiet and agent.omp_trace is not None:
+            print(f"\n--- {agent.omp_trace.format_summary()}", file=sys.stderr, flush=True)
 
     if args.prompt:
         turn(" ".join(args.prompt))

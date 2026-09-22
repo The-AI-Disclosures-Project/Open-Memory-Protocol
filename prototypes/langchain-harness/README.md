@@ -88,8 +88,33 @@ FINAL: Secret handshake: "progressive disclosure" (per projects/omp/MEMORY.md) .
 
 ## Seeing what the harness does
 
-Pass `-v` for a live trace on stderr (`-vv` also dumps the full injected memory block and
-full tool results), and `--trace FILE.jsonl` for a machine-readable log of the same events:
+By default the CLI narrates each step on stderr, so the answer on stdout stays clean:
+
+```
+$ uv run omp-agent --memory examples/memory "What is the OMP project's secret handshake?"
+omp-agent · model openrouter:nvidia/nemotron-3-nano-30b-a3b · memory .../examples/memory
+           3 core file(s) always in context, 4 deferred file(s) readable via read_memory
+
+● memory: 3 core file(s) [MEMORY.md, human.md, persona.md] ~192 tok in context · 2 deferred dir(s), 4 file(s) not loaded
+● model thinking (nvidia/nemotron-3-nano-30b-a3b) …
+●   1.9s → wants read_memory(projects)
+● reading deferred memory: projects
+●   ok, 192 chars
+● model thinking (nvidia/nemotron-3-nano-30b-a3b) …
+●   1.0s → wants read_memory(projects/omp)
+● reading deferred memory: projects/omp
+●   ok, 344 chars
+● model thinking (nvidia/nemotron-3-nano-30b-a3b) …
+●   0.8s → final answer
+
+The OMP project's secret handshake is "progressive disclosure." (see projects/omp/MEMORY.md)
+
+--- 3 model call(s) in 3717ms, 2 tool call(s) in 4ms, tokens in/out=2982/575
+```
+
+`-q` prints only the answer. `-v` switches to a detailed per-step trace (`-vv` also dumps
+the full injected memory block and full tool results), and `--trace FILE.jsonl` writes a
+machine-readable log of the same events:
 
 ```bash
 uv run omp-agent --memory examples/memory -v --trace run.jsonl "What is the secret handshake?"
@@ -111,10 +136,10 @@ truncated) and how much deferred memory was surfaced, so you can check the four 
 being honoured on every step. Programmatically, pass `trace=` to `create_omp_agent`:
 
 ```python
-from omp_langchain import ConsoleSink, JsonlSink, ListSink, create_omp_agent
+from omp_langchain import ActivitySink, ConsoleSink, JsonlSink, ListSink, create_omp_agent
 
 sink = ListSink()
-agent = create_omp_agent("./memory", trace=[sink, ConsoleSink(), JsonlSink("run.jsonl")])
+agent = create_omp_agent("./memory", trace=[sink, ActivitySink(), JsonlSink("run.jsonl")])
 agent.invoke(...)
 sink.events  # list[TraceEvent]: model_call / model_response / tool_call / tool_result
 agent.omp_trace.summary  # totals: calls, latency, tokens

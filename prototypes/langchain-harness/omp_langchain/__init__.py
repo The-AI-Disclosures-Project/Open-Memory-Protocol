@@ -7,10 +7,11 @@ Public API:
 
 from omp_langchain.middleware import OpenMemoryMiddleware, create_omp_agent
 from omp_langchain.models import resolve_model
-from omp_langchain.trace import ConsoleSink, JsonlSink, ListSink, TraceMiddleware
+from omp_langchain.trace import ActivitySink, ConsoleSink, JsonlSink, ListSink, TraceMiddleware
 
 __version__ = "0.1.0"
 __all__ = [
+    "ActivitySink",
     "ConsoleSink",
     "JsonlSink",
     "ListSink",
