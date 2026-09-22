@@ -56,7 +56,7 @@ class FMPMiddleware(AgentMiddleware):
         model_name: str | None = None,
         upload_transcripts: bool = True,
         session_id: str | None = None,
-        max_searches_per_run: int = 4,
+        max_searches_per_run: int | None = None,
     ) -> None:
         self.memory = memory
         self.agent_name = agent_name
@@ -92,10 +92,10 @@ class FMPMiddleware(AgentMiddleware):
             Returns the best-matching snippets with the server they came from and a `ref`
             you can cite in `remember(based_on=[...])`. `types` may restrict to
             "file", "transcript" and/or "inference". Results already shown earlier in this
-            run are not repeated. You have a small search budget per run: search once or
-            twice with good queries, then answer with what you have.
+            run are not repeated, so a query that returns "no new matches" means you already
+            have everything for that topic; answer with what you have instead of rephrasing.
             """
-            if mw._searches >= mw.max_searches_per_run:
+            if mw.max_searches_per_run is not None and mw._searches >= mw.max_searches_per_run:
                 return (
                     f"search budget for this run is exhausted ({mw.max_searches_per_run} "
                     "searches). Answer now using the results you already have."
@@ -108,7 +108,9 @@ class FMPMiddleware(AgentMiddleware):
                 return f"error: {e}"
             fresh = [h for h in hits if h.ref not in mw._seen_refs][:limit]
             repeated = len(hits) - len(fresh)
-            left = mw.max_searches_per_run - mw._searches
+            left = (
+                None if mw.max_searches_per_run is None else mw.max_searches_per_run - mw._searches
+            )
             if not fresh:
                 tail = f" ({repeated} result(s) already shown earlier)" if repeated else ""
                 errs = f" (errors: {'; '.join(fm.last_errors)})" if fm.last_errors else ""
@@ -124,7 +126,8 @@ class FMPMiddleware(AgentMiddleware):
                 lines.append(f"({repeated} further result(s) omitted: already shown in this run)")
             if fm.last_errors:
                 lines.append(f"(some servers failed: {'; '.join(fm.last_errors)})")
-            lines.append(f"({left} search(es) left in this run)")
+            if left is not None:
+                lines.append(f"({left} search(es) left in this run)")
             return "\n".join(lines)
 
         return search_memory
@@ -160,13 +163,18 @@ class FMPMiddleware(AgentMiddleware):
     # --- hooks -----------------------------------------------------------------
 
     def _inject(self, request: ModelRequest) -> ModelRequest:
+        limit_line = (
+            f"Make at most {self.max_searches_per_run} searches per turn.\n"
+            if self.max_searches_per_run is not None
+            else ""
+        )
         block = (
             f"{FMP_SECTION_HEADER}\n\nYou are connected to these memory servers. Use "
             f"`search_memory` before answering questions about the user's history or past work, "
             f"and `remember` to save durable facts. Search results are transcript snippets and "
-            f"stored inferences; they are evidence, not a complete record. Make at most "
-            f"{self.max_searches_per_run} searches per turn, then answer with what you found.\n"
-            f"{self.memory.describe()}\n"
+            f"stored inferences; they are evidence, not a complete record. Results are not "
+            f"repeated within a turn, so stop searching once queries return nothing new.\n"
+            f"{limit_line}{self.memory.describe()}\n"
         )
         blocks = list(request.system_message.content_blocks) if request.system_message else []
         blocks.append({"type": "text", "text": "\n\n" + block})

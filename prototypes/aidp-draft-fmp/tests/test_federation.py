@@ -130,7 +130,29 @@ def test_middleware_survives_unreachable_server(personal):
     assert list(mw.last_upload) == ["personal"]
 
 
-def test_search_budget_and_dedup(federation):
+def test_search_dedup_unlimited_by_default(federation):
+    federation.clients["personal"].upload_inferences(
+        [InferenceUpload(content="standup is at 9:30")]
+    )
+    calls = [
+        AIMessage(
+            content="",
+            tool_calls=[ToolCall(name="search_memory", args={"query": "standup"}, id=f"c{i}")],
+        )
+        for i in range(3)
+    ]
+    mw = FMPMiddleware(federation)
+    agent = create_agent(_model(*calls, "done"), tools=[], system_prompt="s", middleware=[mw])
+    result = agent.invoke({"messages": [HumanMessage("when is standup?")]})
+    tools = [m.content for m in result["messages"] if isinstance(m, ToolMessage)]
+    assert "9:30" in tools[0] and "left in this run" not in tools[0]
+    assert (
+        tools[1].startswith("no new matches (1 result(s) already shown")
+        and "budget" not in tools[2]
+    )
+
+
+def test_search_budget_when_configured(federation):
     federation.clients["personal"].upload_inferences(
         [InferenceUpload(content="standup is at 9:30")]
     )
