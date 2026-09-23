@@ -64,6 +64,8 @@ This repository is the technical and governance home of the ecosystem.
 
 - **Cognee / COGX Proposal v0.1** — A semantic core for portable agent memory: identity, evidence, authority, lineage, lifecycle, and exchange fidelity. Uses COGX as an implemented reference input, distinguishes current capabilities from proposed guarantees, and positions Markdown as a profile and runtime APIs and federation as bindings. [PDF](early-draft-specs/draft-v0.1-cognee.pdf) · [Markdown source](early-draft-specs/draft-v0.1-cognee.md)
 
+- **Context Nest Proposal v0.1** — A governed Markdown profile for portable agent memory: eight front-matter keys and in-prose links as the atomic unit, `contextnest://` addressing with checkpoint-pinned replay, a selector grammar for scoped memory views, append-only hash-chained version history, and a proposed forget protocol that erases content while keeping verification intact. Separates implemented from proposed. [Markdown](early-draft-specs/draft-v0.1-contextnest.md)
+
 - **Agent Memory System Card (AMS Card)** — A structured documentation format for agent memory systems, by [Mila](https://mila.quebec/) and [Mozilla](https://mozilla.org). Model cards made language models legible; dataset cards did the same for training data — memory systems had no equivalent until now. Template, reference card, and evaluation framework: [`mila-iqia/agent-memory-system-card`](https://github.com/mila-iqia/agent-memory-system-card/) (goes live Sep 9). Draft, open for comment. [`early-draft-specs/ams-card.md`](early-draft-specs/ams-card.md)
 
 - **`me.md`** — Draft personal-sovereignty memory protocol authored by David Hamilton (Block / goose). A user-owned, plain-file protocol for what agents know about you: files live on the user's machine, agents may only *propose* additions, and the user decides what becomes memory. Complementary discussion draft in the OMP ecosystem. Canonical source: [`github.com/block/me.md`](https://github.com/block/me.md)
@@ -104,6 +106,7 @@ Open-Memory-Protocol/
 │   ├── draft-v0.1-aidp.pdf         (AI Disclosures Project draft, v0.1)
 │   ├── draft-v0.1-cognee.pdf       (Cognee / COGX exchange proposal, v0.1)
 │   ├── draft-v0.1-cognee.md        (editable source of the Cognee proposal)
+│   ├── draft-v0.1-contextnest.md   (Context Nest proposal, v0.1)
 │   ├── ams-card.md                 (Agent Memory System Card — Mila & Mozilla)
 │   └── scoping-note-2026-09.pdf    (Strauss & Rosenblat scoping note, Sept 2026)
 ├── prototypes/                 — experimental code
