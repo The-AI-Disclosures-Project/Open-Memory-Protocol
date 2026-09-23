@@ -249,7 +249,7 @@ Synonyms from other systems (`active`, `live`, `archived`, `in_review`, `superse
 
 ### A.2 Storage model (CN §6.1)
 
-History lives in `.versions/<doc>/` beside the live file. Version 1 and every `keyframe_interval`-th version (default 10) are stored as full snapshots (`v1.md`, `v10.md`); every other version is a unified diff from its predecessor, stored inline in `history.yaml`. Any version is reconstructed by applying diffs forward from the nearest keyframe, and implementations MUST be able to do so. The live file is always the authoritative latest version; `.versions/` is history only.
+History lives in `.versions/<doc>/` beside the live file. Version 1 and every version *n* where (*n* − 1) is a multiple of `keyframe_interval` (default 10: versions 1, 11, 21, ...) are stored as full snapshots (`v1.md`, `v11.md`); every other version is a unified diff from its predecessor, stored inline in `history.yaml`. Any version is reconstructed by applying diffs forward from the nearest keyframe, and implementations MUST be able to do so. The live file is always the authoritative latest version; `.versions/` is history only.
 
 ### A.3 Version entries (CN §6.2)
 
@@ -308,7 +308,7 @@ checkpoint_hash[n] = SHA-256(checkpoint_hash[n-1] ":" checkpoint[n] ":" at[n] ":
                              canonical_versions[n] ":" canonical_chain_hashes[n])
 ```
 
-The genesis value for both chains is `contextnest:genesis:v1`. The two maps are serialized as JSON with sorted keys and no whitespace. Inputs are UTF-8; output is `sha256:<64 lowercase hex>`. Verifiers MUST reject an unknown algorithm prefix rather than pass it.
+The genesis value for both chains is `contextnest:genesis:v1`. The two maps are serialized as JSON with sorted keys and no whitespace. Inputs are UTF-8, and content is normalized before hashing (a leading byte-order mark removed; CRLF and CR line endings become LF) so hashes survive editors and sync tools that rewrite line endings. Output is `sha256:<64 lowercase hex>`. Verifiers MUST reject an unknown algorithm prefix rather than pass it.
 
 Writers MUST compute both hashes for every new entry; hash fields MUST NOT be modified once written. Checkpoints bind to the document chains through `document_chain_hashes`, so rewriting a document's history after a checkpoint is detectable even if the rewritten chain is internally consistent.
 
