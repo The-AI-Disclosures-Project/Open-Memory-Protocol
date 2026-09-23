@@ -17,6 +17,10 @@ Initiative.
   memory records (body, lifecycle, provenance, semantic + scope tags), override and
   invalidate with time travel, scope ACLs, export/import between systems, a Packer
   round-trip bridge, and Remember / Recall / Observe / Decorate as LangChain middleware.
+- [`contextnest-draft-adapter/`](contextnest-draft-adapter/) — Context Nest draft v0.1:
+  middleware that plugs an agent into a nest (local directory or hosted) through `ctx`, the
+  draft's reference implementation. Pack preloading, selector queries, published-only
+  serving, propose-for-review writes, and a per-read trace.
 
 ## Configuration
 

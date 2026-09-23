@@ -80,6 +80,8 @@ This repository is the technical and governance home of the ecosystem.
 
 - **IBM Draft Memory Records** — Immutable memory records with lifecycle and provenance, override/invalidate time travel, scope-tag ACLs, export/import with tag mapping, a Packer-directory round-trip bridge, and the Remember/Recall/Observe/Decorate verbs as LangChain middleware. [`prototypes/ibm-draft-memory-records/`](prototypes/ibm-draft-memory-records/)
 
+- **Context Nest Draft Adapter** — LangChain middleware that plugs an agent into a Context Nest, local or hosted, through `ctx`, the draft's reference implementation: pack preloading, selector queries, published-only serving, and propose-for-review writes. [`prototypes/contextnest-draft-adapter/`](prototypes/contextnest-draft-adapter/)
+
 
 - **ACP-Based MCP Memory-Server Prototype** — An old experimental prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`. [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)
 
@@ -118,6 +120,7 @@ Open-Memory-Protocol/
 │   ├── packer-draft-langchain-harness/  (LangChain harness for the Packer draft v0.2 contract)
 │   ├── aidp-draft-fmp/             (FMP server, federated client, middleware; AIDP draft v0.1)
 │   ├── ibm-draft-memory-records/   (immutable records, ACLs, import/export, 4 verbs; IBM draft v0.1)
+│   ├── contextnest-draft-adapter/  (agent plug for a local or hosted nest via ctx; Context Nest draft v0.1)
 │   └── acp_memory_server/          (ACP-based MCP memory-server prototype)
 ├── research/                   — research notes, background reading, essays
 ├── docs/                       — contributing guide and other docs
