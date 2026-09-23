@@ -2,7 +2,7 @@
 
 **Discussion draft v0.1 | September 22, 2026 | PromptOwl contribution to OMPI**
 
-**Status:** Proposed for discussion; not an adopted OMP standard. Context Nest 1.0 is a published, Apache-2.0 specification with a reference implementation (the `ctx` CLI, the ContextNest desktop app, and a hosted nest server). Everything in §§3–5 is implemented and in daily use. §6.3 (the forget protocol) and the items marked *proposed* are not yet implemented and are offered here for the working group to shape.
+**Status:** Proposed for discussion; not an adopted OMP standard. Context Nest 1.0 is a published specification with a reference implementation (the `ctx` CLI, an MCP server, the ContextNest desktop app, and a hosted nest server). Everything in §§3–5 is implemented and in daily use. §6.3 (the forget protocol) and the items marked *proposed* are not yet implemented and are offered here for the working group to shape.
 
 **Spec:** [`github.com/PromptOwl/context-nest-spec`](https://github.com/PromptOwl/context-nest-spec) (`CONTEXT_NEST_SPEC.md`, Apache-2.0). The working copy in [`PromptOwl/ContextNest`](https://github.com/PromptOwl/ContextNest/blob/main/CONTEXT_NEST_SPEC.md) is ahead of it on the status lifecycle and client metadata; references of the form CN §n point at that copy, and Appendix A reproduces its version-history, checkpoint, and integrity sections.
 
@@ -77,7 +77,7 @@ Supersedes the v2 rules pinned at [checkpoint 7](contextnest://engineering/api-d
 | Key | Type | Role |
 |---|---|---|
 | `title` | string | Human name; resolution falls back to the filename |
-| `type` | enum | **Structural** classification: `document`, `snippet`, `glossary`, `persona`, `prompt`, `source`, `tool`, `reference` (CN §1.6) |
+| `type` | enum | **Structural** classification: `document`, `snippet`, `glossary`, `persona`, `prompt`, `source`, `tool`, `reference`, `skill` (CN §1.6) |
 | `tags` | string[] | **Semantic** classification, `#`-prefixed, shared taxonomy |
 | `status` | `draft` \| `pending_review` \| `approved` \| `published` \| `rejected` | Approval state (Appendix A.1); by default the resolver serves `published` only |
 | `version` | integer ≥ 1 | Monotonic; bumped on publish |
@@ -98,7 +98,7 @@ Edges are written in the prose, not in a ninth key:
 [Title](contextnest://path@N)            pinned: the version at nest checkpoint N
 ```
 
-Implementations MAY accept Obsidian-style `[[path]]` / `[[path#anchor]]` shorthand and, if they do, MUST normalize it to the URI form before indexing so that both spellings produce the same edge. `derived_from` (front matter, list of URIs) records lineage separately from reference, so "this summary was made from that transcript" is distinguishable from "this doc mentions that doc."
+Obsidian-style wikilinks (`[[Title]]`, `[[Title#anchor]]`, `[[Title|alias]]`, `[[nodes/id]]`) produce the same `reference` edge as a `contextnest://` link (CN §1.7, §5.1). The target resolves against document titles first, case-insensitively, then paths; aliases and anchors are display-only, and a target that matches no published document produces no edge. `derived_from` (front matter, list of URIs) records lineage separately from reference, so "this summary was made from that transcript" is distinguishable from "this doc mentions that doc."
 
 ### 3.3 Why the graph lives in the prose
 
@@ -112,7 +112,7 @@ A separate edge index can fall out of sync with the content it describes; a link
 
 ### 4.2 Selection (CN §2)
 
-A selector names a set: atoms (`#tag`, `type:x`, `status:x`, a URI, `pack:id`) combined with `+` (AND), `|` (OR), `-` (NOT), and parentheses. A **pack** (CN §3) is a saved selector with a name and its own version history.
+A selector names a set: atoms (`#tag`, `type:x`, `status:x`, a URI, `pack:id`) combined with `+` (AND), `|` (OR), `-` (NOT), and parentheses. A **pack** (CN §3) is a named, saved selector, stored as a YAML file in `packs/`, with optional includes, excludes, and agent instructions.
 
 This is the protocol's answer to **context bleed**, the failure where a memory system silently mixes the user's roles and a question asked as a parent is answered as if asked by an executive. People are multitudes; the fix is not more context but *scoped* context:
 
@@ -122,7 +122,7 @@ pack:standup                   three docs + two live sources, and nothing else
 type:persona + #support        the agent's own role, isolated from the user's
 ```
 
-Packs are the concrete form of what the field has been calling "memory views," "node sets," and "per-scope toggles." Because a pack is a published, versioned node, *which* view the agent used is itself on the record. More context does not mean better outcomes; a bounded, named, replayable set does.
+Packs are the concrete form of what the field has been calling "memory views," "node sets," and "per-scope toggles." Because every access is traced with the document, version, and checkpoint it resolved to (CN §9.2), *which* view the agent used is on the record and can be rebuilt. More context does not mean better outcomes; a bounded, named, replayable set does.
 
 ### 4.3 Bindings
 
@@ -173,15 +173,17 @@ Export *is* the directory. A nest is a folder of Markdown with two regenerable Y
 
 **6.3.2 Tombstones preserve the chain.** For each forgotten version entry in `history.yaml`: the keyframe file is deleted and the `diff` field removed; `content_hash` and `chain_hash` are retained unchanged; the entry gains `tombstone: true`, `forgotten_at`, `forgotten_by`, `reason_code`. Because `chain_hash[n]` is computed from `content_hash[n]` and not from the content, every later entry still verifies. Verification treats a tombstoned entry as *hash-only*: it checks the chain, skips content recomputation, and reports the entry as `tombstoned` rather than `content_hash_mismatch`. The chain proves that something existed, when, and by whom; it no longer proves what.
 
-**6.3.3 Node-level forget.** The live file is replaced by a stub carrying the eight keys with `status: forgotten` and an empty body. Resolution of any `contextnest://` URI for that path, floating *or* pinned `@N`, returns `forgotten`, not `null`. An agent learns the memory was deliberately removed, which is different information from "never existed," and MUST NOT treat the stub as content. Selectors exclude `forgotten` nodes unless asked for them explicitly (`status:forgotten`). `forgotten` differs from `rejected` (Appendix A.1): a rejected node is hidden but its content and history remain, while a forgotten node keeps only its hashes.
+**Storage consequence.** History is stored as keyframes plus forward diffs (Appendix A.2), so erasing one version touches its neighbours. Forgetting a version range MUST (a) write a fresh keyframe for the first retained version after the range, so later versions stay reconstructible without the erased content, and (b) re-express that retained version's diff so no context lines from the forgotten versions survive. The retained entries' `content_hash` values refer to their original stored form, so the re-keyframed entry is marked `rekeyed: true` with the new snapshot's hash alongside, and verification checks the new hash for that entry while the chain continues from the retained `chain_hash`. Node-level forget sidesteps this by tombstoning every version.
+
+**6.3.3 Node-level forget.** The live file is replaced by a stub carrying the eight keys with `status: forgotten` and an empty body. Resolution of any `contextnest://` URI for that path, floating *or* pinned `@N`, returns `forgotten`, not `null`. An agent learns the memory was deliberately removed, which is different information from "never existed," and MUST NOT treat the stub as content. Selectors exclude `forgotten` nodes unless asked for them explicitly (`status:forgotten`). `forgotten` differs from `rejected` (Appendix A.1): a rejected node is hidden but its content and history remain, while a forgotten node keeps only its hashes. `forgotten` is a proposed sixth status value. An implementation that predates it normalizes the unknown value to `draft` (CN §1.5.1), which keeps the stub out of default retrieval, so the failure mode of an old reader is a hidden empty draft, not resurrected content.
 
 **6.3.4 Anti-resurrection.** A forget MUST propagate:
 
 - *Lineage.* Every node whose `derived_from` includes the forgotten URI is flagged `review_required: true` *(proposed key)* and listed in the forget result. The protocol does not auto-delete derived content (a summary of ten transcripts is not erased because one was), but it does refuse to let the derivation go unreviewed. Clearing the flag is a human publish.
 - *Caches.* Any cached hydration or resolution keyed by a `result_hash` or `checksum` of the forgotten content is invalidated.
-- *Packs.* Packs re-evaluate; a pack that pinned the forgotten node records the tombstone in its own history.
+- *Packs.* Packs are selectors and re-evaluate on the next read. A pack whose `includes` names the forgotten URI resolves that entry to `forgotten`.
 - *Exports and federation.* An exported nest carries tombstones; an importing implementation MUST honor them and MUST NOT reconstruct forgotten versions from a pre-forget copy it holds. A federated resolver returns `forgotten` across namespaces.
-- *Checkpoints.* Existing checkpoints are not rewritten; a checkpoint that references a forgotten version resolves that document to `forgotten`. A new checkpoint is taken immediately after the forget so the boundary is on the record.
+- *Checkpoints.* Existing checkpoints are not rewritten; a checkpoint that references a forgotten version resolves that document to `forgotten`. A forget is a content-publishing operation (the stub replaces the body), so it cuts a checkpoint like any publish (CN §7.1), and the boundary is on the record.
 
 **6.3.5 Retention and lifespan.** Two optional front-matter keys *(proposed)*: `expires_at` (ISO 8601) triggers an automatic `forget` with `reason_code: retention_expiry`; `retain_until` blocks `forget` for non-`legal` reasons before that date. Decay, scoring, and consolidation are implementation-defined; the protocol fixes only the terminal state.
 
@@ -193,7 +195,7 @@ Export *is* the directory. A nest is a folder of Markdown with two regenerable Y
 
 - **Harness that writes Markdown with front matter today:** add the missing keys, default `status: published`, compute `checksum`. One small change; no runtime change.
 - **Harness with an MCP memory server:** expose `resolve(uri)` and `query(selector)`; the resolver contract is CN §9.1.
-- **Reference implementation:** the `ctx` CLI (npm `@promptowl/contextnest-cli`, Apache-2.0) implements §§3–5 today as a CLI binding. A second, independent implementation in a general-purpose harness is the right next test, and this proposal is written so that one can be built from the canonical spec without reading PromptOwl code.
+- **Reference implementation:** the `ctx` CLI (npm `@promptowl/contextnest-cli`) implements §§3–5 today as a CLI binding. A second, independent implementation in a general-purpose harness is the right next test, and this proposal is written so that one can be built from the canonical spec without reading PromptOwl code.
 - **Procurement.** A regulated buyer can require, and test: *memories are eight-key Markdown; `verify` passes; export is the directory; `forget` leaves `verify` passing.* Those four sentences are the enforceable form of the right to leave and the right to be forgotten.
 
 **Conformance levels** *(proposed)*: **L0** eight keys + links · **L1** addressing + selectors · **L2** versions, chains, checkpoints, `verify` · **L3** forget protocol + federation.
@@ -203,7 +205,7 @@ Export *is* the directory. A nest is a folder of Markdown with two regenerable Y
 | Item | Status |
 |---|---|
 | Eight-key front matter, node types, `contextnest://` links | Implemented (CN 1.0 §1, §4) |
-| `[[wikilink]]` shorthand normalized to URI edges | Proposed (optional) |
+| `[[wikilink]]` edges, title-first resolution | Implemented (CN §1.7, §5.1) |
 | Selector grammar, packs | Implemented (CN §2, §3) |
 | Version history, hash chain, checkpoints, `ctx verify` | Implemented (CN §6–§8) |
 | Five-value status lifecycle with alias normalization | Implemented (CN §1.5.1; `ctx` 2.6.0) |
@@ -318,4 +320,4 @@ Reads and writes SHOULD accept an optional `client` object (`agent`, `session_id
 
 ## Review basis
 
-Context Nest Specification 1.0 at `PromptOwl/context-nest-spec` `main` as of 2026-09-22; OMP repository `main` as of 2026-09-22. This document is contributed under CC BY 4.0 per OMPI governance; the Context Nest specification and reference implementation remain Apache-2.0.
+Context Nest Specification 1.0 at `PromptOwl/context-nest-spec` `main` as of 2026-09-22; OMP repository `main` as of 2026-09-22. This document is contributed under CC BY 4.0 per OMPI governance; the Context Nest specification and reference implementation keep their own licences.
