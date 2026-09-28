@@ -2,7 +2,7 @@
 
 > Working notes from the exchange-and-runtime sub-thread. A styled version of this page is in [`2026-09-28-common-ground.html`](2026-09-28-common-ground.html) (download to view).
 
-A working matrix of every draft in `early-draft-specs/` on `main` (commit 7beb260), plus notes from the Sep 28 exchange-and-runtime call, for the draft due Oct 2, 2026. Discussion draft, 2026-09-28.
+A working matrix of every draft in `early-draft-specs/` on `main` (commit 7beb260), plus notes from the Sep 28 exchange-and-runtime call: where the data shapes overlap and where the proposals don't align (yet). For the draft due Oct 2, 2026. Discussion draft, 2026-09-28.
 
 ## What's in main
 
@@ -41,7 +41,7 @@ Cells rate what each draft *specifies*, not what is implemented. Cognee and Cont
 | Tombstone / anti-resurrection | — | — | — | — | ● §3.5 | ● §6.3; imports must honor | — |
 | **Exchange** | | | | | | | |
 | Import / export | ● | ◐ portable directory | ● defined schema | ● read_* endpoints | ● manifest + receipts | ◐ export is the directory | — |
-| Copy vs move vs federation | ◐ [not raised on the call] | ◐ drag-and-drop move | ◐ one system at a time | ● federation is the core | ● distinct, explicit intent | ◐ namespace modes incl. federated | — |
+| Copy vs move vs federation | ◐ [federation discussed; copy/move not raised] | ◐ drag-and-drop move | ◐ one system at a time | ● federation is the core | ● distinct, explicit intent | ◐ namespace modes incl. federated | — |
 | Integrity / self-verification | — | — | — | — | ◐ typed media integrity | ● hash chain; verify | — |
 | Capability declaration | — | — | — | ● /fmp/info required | ● manifest | — | ● the card |
 | **Runtime** | | | | | | | |
@@ -50,9 +50,15 @@ Cells rate what each draft *specifies*, not what is implemented. Cognee and Cont
 | What loads into context | ◐ | ● the main job | — | — | ◐ via Markdown profile | ◐ selectors and packs | — |
 | Documentation / disclosure | — | — | — | — | ◐ implemented vs proposed | ◐ implemented vs proposed | ● |
 
+## Context: the #exchange-and-runtime thread
+
+- **Before the call (9/22–9/25).** Misha suggested adding fidelity to Gabe's list: when a memory moves between systems, the receiving side should be able to check it is the same memory with the same history (see #8 and #9). Sruly backed Gabe's third point, working without a disk. He proposed the Skills-over-MCP extension (SEP-2640) as a natural way to get progressive disclosure over MCP, noting memory may update more often than skills. He also questioned markdown as the carrier for metadata: provenance, scope, revisions and embeddings needn't be in the agent's view, so a markdown body plus separately stored structured metadata may work better.
+- **After the call (9/28).** Ben Labaschin pointed out the heavy overlap between the memory-model-and-context (MM&C) group, which defines the structure of the data, and this exchange-and-runtime (E&R) group, and suggested merging them. Gabe agreed, noted the call covered the shape of the data (header fields, body, linkage) and its use at export/import and at runtime, and asked Ben and Drew Breunig (MM&C) whether they object to a single workstream.
+- **What this summary is for.** As Gabe framed it: where the data shapes overlap significantly, and where the existing proposals don't align (yet).
+
 ## Call notes: exchange and runtime, Sep 28
 
-Attendees: Gabe Goodhart (IBM), Sruly Rosenblat (AIDP), Vasilije Markovic (Cognee), Alex Hancock (Block), Misha Sulpovar (Context Nest). Scope: data format and runtime only. User scope and candidate implementations were set aside. The method was to read the drafts, find what they have in common, check it against the constraints of implementations we know, and distill one abstract representation.
+Attendees: Gabe Goodhart (IBM), Sruly Rosenblat (AIDP), Vasilije Markovic (Cognee), Alex Hancock (Block), Misha Sulpovar (Context Nest). Scope: data format and runtime only. User scope and candidate implementations were set aside. The method: go through the drafts, find what they have in common, check it against the constraints of implementations people know, and distill one abstract representation.
 
 ## Convergence
 
@@ -63,50 +69,53 @@ Attendees: Gabe Goodhart (IBM), Sruly Rosenblat (AIDP), Vasilije Markovic (Cogne
 - **Scope feeds access control, and the system sets it, not the agent.** IBM, AIDP, Cognee and Context Nest.
 - **Change by adding, not overwriting, where the implementation can.** IBM, Cognee and Context Nest. Delete exists in IBM, AIDP, Cognee and Context Nest.
 
-### What the call agreed
+### What the call converged on
 
-- **Header schema + any body.** The header is a rigorous schema that can be rendered into anything that renders schemas. The body can be any format, declared by `type`. Markdown is the assumed common case, but the spec has to support others: plain text, XML (e.g. PubMed), DocLang (IBM Docling), CSV, HTML. This matches Vasilije's "data contract": a stable transport header plus a free-form payload.
-- **Two representations.** The *interchange* format (export/import) is a superset of the *runtime* format. Operational fields such as scope tags, ACL bindings and status/visibility travel in interchange. They stay out of the agent's context, where they would add noise or leak how the store is organized.
-- **Recall signature is not standardized.** Implementations need room to provide their own flavors of recall and guidance on using them. Fixing one function signature "would inevitably fail."
-- **Federation sits behind the agent.** A federation or governance layer merges sources and takes the union of their scopes. The agent can stay deliberately unaware of that and see one unified memory. Identity has to pass through. The merge protocol comes second; start with what the agent sees.
-- **Lineage as a graph, depth up to the implementation.** Evidence and lineage are graph edges. A system that must pass audits can reconstruct the full chain; others can leave nodes as disconnected islands. The spec doesn't require full provenance on every object.
-- **What "auditable" means.** A memory is auditable if it can be traced to one or more accountable humans. Full audit is a multi-user enterprise requirement, not a single-user one.
-- **Field tiers.** Annotate each header field as **required**, **audit-required** or **optional**. That avoids MCP-auth's failure mode, where optional meant unimplemented.
+[agreed] means at least two participants explicitly agreed and nobody objected. [proposed] means someone put it forward and it wasn't contested, but nobody explicitly signed on.
+
+- **Header schema + any body [agreed].** Gabe's strawman: the header is a rigorous schema that can be rendered into anything that renders schemas, and the body is a string in any format, with markdown or plain text recommended as agent-friendly. Vasilije: "I completely agree." Other formats need room: DocLang (IBM Docling), CSV and XML (e.g. PubMed) were named, and Gabe's phrasing was "allow for that without requiring it." This matches Vasilije's "data contract": a stable transport header plus a free-form payload.
+- **Export/import vs runtime representations [agreed].** Gabe distinguished a representation for export/import (migration) from one for runtime use. Export/import is likely a superset that carries operational fields the agent doesn't need, and that could "pollute or give hints to how the thing is organized." Vasilije called it "very important" and tied it to data contracts. It lines up with Sruly's thread point about keeping metadata out of the agent's view.
+- **Don't standardize the recall signature [agreed].** Gabe: implementations need room for different flavors of recall and their own guidance on using it, and a fixed signature "would inevitably fail." Misha: "Fair enough."
+- **Federation sits behind the agent [agreed].** Gabe's read-back: a federation or governance layer merges sources and takes the union of their scopes, and the agent can stay deliberately unaware of that and see one unified memory. Sruly: yes, and the merge logic needn't be specified. Misha: identity has to pass through. Vasilije: identity federation is part of the protocol, not the whole of it. Gabe: start from what the agent sees; the merge protocol comes second.
+- **Lineage as a graph, depth up to the implementation [agreed].** Vasilije: full provenance on every object is too heavy, but people want to know where an object came from at a point in time, and some industries (finance) need exact detail. Gabe's strawman: model lineage as a graph; audit-grade systems can reconstruct it fully, and others can leave nodes as disconnected islands. Vasilije: "a great middle ground."
+- **What "auditable" means [agreed].** Misha: from a regulatory standpoint, what matters is which human is accountable. Gabe: so auditable means you can trace a memory to one or more accountable humans. Misha: "Yep." Gabe: full audit is a multi-user enterprise requirement, not an individual-user one.
+- **Annotate header fields by requirement [proposed].** Gabe: when this becomes a real draft, annotate header fields as audit-required, ACL-required or fully optional. He cautioned that optional fields tend to go unimplemented, as happened with MCP auth.
+
 ### The header, field by field
 
-At Gabe's suggestion, the call walked Context Nest v0.1's front matter as a starting strawman and checked it against IBM's record and Cognee's core.
+At Gabe's suggestion, the call walked Context Nest v0.1's front matter as a starting strawman. Gabe recapped the direction as a tightly scoped metadata header, with author extended into a provenance list and an identifier that supports evidence linkage. The call did not assign fields to tiers.
 
-| Field | Where the call landed | Tier (proposed) | Status |
-|---|---|---|---|
-| identifier | Rename `title` to `identifier`. It can be a readable title, a UUID or a path, carries no required meaning, and must be unique within a bulk export. It's needed for evidence links and for moving memories between systems. | required | [agreed] |
-| type | The content/media type of the body (markdown, HTML, skill, structured data, DocLang…), not a semantic ontology. | required | [agreed] |
-| tags | Semantic tags: a list or set of strings, free-form or drawn from an ontology (IBM's semantic tags). | optional | [agreed] |
-| scope tags | Kept in interchange (ACLs need them) and left out at runtime. | interchange only | [agreed] |
-| created_at | Straightforward. | required | [agreed] |
-| version / updated | Gabe floated a sequence number or comparator instead of wall-clock time, with immutable revisions as a recommendation ("time travel") rather than a hard contract, since a hard rule breaks markdown-on-disk stores. `updated_at` came out of the first meeting. Not settled. Whatever lands, the header keeps a `version` slot with a declared comparator. Implementations with richer history (immutable revisions, hash chains, as-of reads) expose it there, possibly as an audit-required tier. | — | [open] |
-| checksum | An integrity hash of the memory. | audit-required | [agreed] |
-| provenance (was author) | A list of contributors, human and agent. It may replace `author`. | required, with the accountable human audit-required | [shape open] |
-| evidence | A link back to source material (Cognee). It can be a reference to another identifier or a flat string. | optional, audit-required | [shape open] |
-| links / edges | Raised on the call (Context Nest's wiki-syntax links form graph edges) and flagged by Gabe as "a really interesting topic" that many formats are working on. Nothing agreed yet. The identifier rename is partly there to make linking possible. | — | [open] |
-| status / visibility | Published/unpublished and visibility inside a store. Possibly specific to one implementation. It would only belong in interchange, never at runtime. | — | [parked] |
+| Field | What was said | Status |
+|---|---|---|
+| identifier | Gabe proposed renaming `title` to `identifier`. It can be a readable title, a UUID or a path, carries no required meaning, and is unique among the memories in a bulk export. Sruly: an identifier is useful in general, especially for moving between systems. It is also what makes evidence links possible. Misha is still weighing how it fits path-plus-version identities. | [proposed] |
+| type | The content type of the body (markdown, HTML, skills, structured data), not a semantic ontology. Misha: "that may be too constrained." | [discussed] |
+| tags | Where the ontology lives: a list or set of strings, free-form or ontology-backed. | [discussed] |
+| scope tags | Gabe: omit from the runtime format but keep in interchange, because ACLs attach to them. Authorship can cover cases like "what has Misha been up to." | [proposed] |
+| created_at | "Pretty obvious." | [no objection] |
+| version / updated | Gabe: all-immutable memory (a change creates a new superseding version) is too implementation-specific to be a hard contract, because it breaks markdown-on-disk. It may be a good recommendation for "zooming around in time." He also suggested a sequence number rather than real-world timestamps for versioning. Misha: that is how Context Nest implements it, and `updated_at` was added after the first meeting. Not settled. Whatever lands, the header keeps a `version` slot where richer history can live. | [open] |
+| checksum | A quick hash for integrity. Gabe: "I like all of those." | [no objection] |
+| provenance (was author) | Sruly: a list of everyone who contributed. Gabe: provenance may supersede author, and he recapped it as a provenance list of contributors. Its exact shape is open (see divergence). | [proposed] |
+| evidence | Vasilije: evidence (where this came from) was missing. Gabe: it could be a reference to another memory's identifier, or flattened to a plain string. | [open] |
+| links / edges | Misha: Context Nest's wiki-syntax links form graph edges, and it may be worth adding. Gabe: "linking is going to be a really interesting topic to discuss," since many formats are working on it. Not resolved. | [open] |
+| status / visibility | Misha: published/unpublished and visibility inside a store. Gabe: it probably doesn't belong in the runtime format and may have a role in export/import; it overlaps with versioning. Put in the parking lot. | [parked] |
 
 ## Divergence: still under discussion
 
-- **Markdown: common body format, not the base object (leaning).** The call is leaning toward markdown as the common body format rather than the base memory object. The base object is the header schema plus a body of any declared type. Vasilije argued base objects shouldn't be markdown; Gabe agreed markdown is too simple for the object but is where agents are today; Sruly noted exchange can be JSON that renders to markdown. Still open: what this means for a markdown-first loading profile (Packer).
-- **What is the atomic unit?.** Vasilije: the smallest semantic unit that carries meaning and can be judged true or false ("Vasilije left the cab"). The title/author framing fits a document store better than a collection of facts, and at fact size a title may just repeat the body.
-- **The shape of provenance.** Options raised: an enumerated AI-usage value (none / draft / full, close to the EU AI Act's three-way split); a plain list of contributors; separate optional human and agent fields. There's also the case of an agent acting on a person's instructions with a second person approving — who is recorded?
-- **Versioning and updates.** Is a version required, and what form does it take (sequence, comparator, semver)? Can a memory be updated in place, or is every change a new revision that supersedes the old one? Immutability suits audit and as-of reads; mutable files are how markdown stores work today. Does `updated_at` belong in the header at all? Proposed floor: keep a `version` slot whatever the answer, so richer history has somewhere to live.
-- **Edges and cross-document linking.** How does one memory point to another? Options: links written inline in the body (wiki syntax, so they work across any format), a typed list of edges in the header (derived-from, supersedes, relates-to), or both. Open questions: what a link targets (identifier, identifier plus version, an origin-qualified ID), whether edges are typed, and what happens to a link when its target isn't in the export or is deleted. This connects to evidence, lineage-as-a-graph and identifier uniqueness.
-- **Status and visibility.** Is lifecycle state (draft/published, visibility) general enough to standardize, or specific to one implementation? It overlaps with versioning and forget times. Parked.
-- **Lineage depth.** n hops back versus the full chain. Most users want "where did this come from at that point in time"; finance and hedge funds want exact, fine-grained provenance. Where should the required floor sit?
-- **Runtime surface: is MCP the home?.** Gabe proposed MCP as the logical home for the runtime: tools (MCP), hooks (MCP interceptors) and file-system access, with the spec standardizing the shape of what passes through rather than a new transport. Not agreed. Vasilije: MCP hasn't shown much promise, and hooks are the new standard because they give control. Misha: a CLI has been more reliable than MCP for retrieval isolation (e.g. hop limits during graph traversal).
-- **Identity and scope granularity.** Is the spec partly doing identity provisioning and federation? One server for work and one for personal breaks quickly; per-workspace may not be enough either. What is the lowest granularity for scope? Identity federation should be part of the protocol, not all of it.
-- **Identifier uniqueness.** Unique within an export is agreed. Open: how it lines up with path-plus-version identities and with origin-qualified identity (Cognee §3.1) after import.
-- **Delivering several memories at runtime.** When the memory layer returns several memories, are they compiled into one payload or passed raw? Can memories nest? If they can, each one carries its own metadata and provenance. Raised; not answered.
+- **Markdown: common body format, not the base object (leaning).** Leaning toward markdown as the common body format rather than the base memory object. Vasilije doesn't think base memory objects should be markdown. Gabe finds markdown too simplistic for memory, but "it's what all the agents are doing today," and diverging too far risks irrelevance. Sruly: if this is exchange, you could hand over JSON and render it to markdown. Still open: what this means for a markdown-first loading profile.
+- **What is the atomic unit?.** Vasilije: the base object is the smallest semantic unit that carries meaning and can be evaluated true or false ("Vasily left the cab"). Gabe: title and author fit a document store, less so a fact collection, and at that size a title may duplicate the body.
+- **The shape of provenance.** Gabe: an AI-usage trailer with none / draft / full, similar to the EU AI Act's human / AI / mixed split. Sruly: when an assistant rewrites what you asked it to save, is that AI-generated? A plain list of contributors avoids grading it. Misha: separate optional human and agent fields. Misha's case: an agent updates memory on one person's instructions and another person approves. Whose name shows up? Ideally both. Misha: regulators care about who the accountable human is.
+- **Versioning and updates.** Is a version required, and in what form? Can a memory change in place, or does every change create a new revision that supersedes the old one? Immutability suits audit and time travel; mutable files are how markdown stores work today. Does `updated_at` belong? Proposed floor: keep a `version` slot whatever the answer.
+- **Edges and cross-document linking.** Raised on the call, not resolved. Options for discussion (not from the call): links written inline in the body (wiki syntax), a typed list of edges in the header (derived-from, supersedes, relates-to), or both. Questions: what a link targets (identifier, or identifier plus version), whether edges are typed, and what happens when the target isn't in the export or has been deleted.
+- **Status and visibility.** Parked. Is lifecycle state (draft/published, visibility) general enough to standardize, or implementation-specific? It overlaps with versioning and forgetting times.
+- **Lineage depth.** n hops back versus the full chain. Most users want "where did this come from at that point in time"; hedge funds and other financial firms want exact, fine-grained provenance. Where should the floor sit?
+- **Runtime surface: is MCP the home?.** Gabe laid out three extremes: memory as local files the agent reads with shell tools; memory behind a server reachable only through tools; and a supervisor that uses hooks to decorate sessions and capture memories without the agent knowing. He proposed MCP (tools, interceptors for hooks, file access) as the logical home, standardizing only the shape of what passes through. Not agreed. Vasilije: MCP hasn't shown much promise; hooks are the new golden standard because they give control. Misha: a CLI has been more reliable than MCP for retrieval isolation (e.g. limiting graph hops), and they instrument hooks for consistency.
+- **Identity and scope granularity.** Vasilije: is this partly identity provisioning and federation? One server for the organization and one personal breaks quickly, and even per-workspace may not be granular enough. What is the lowest granularity for scope?
+- **Delivering several memories at runtime.** Misha: at runtime, is more than one memory passed? Compiled or raw? Can memories nest (each then carrying its own metadata and provenance)? His answer for Context Nest: no nested memories, compiled at runtime. Gabe took it into the three runtime extremes above. Not settled for the spec.
+- **Writes.** Misha asked whether this covers writes. Gabe: defining the read shape constrains writes. A write needs author, date and time, and whether it updates something or creates something new; a title is optional. Misha: writes from a human, a webhook or an agent (e.g. a forget or "dream" agent) may need different authorship tagging.
 
 ## Whitespace: new ground to decide on
 
-Rows tagged "not raised on the call" come from the drafts and are proposed for discussion. Each item needs a call: **discuss** (it belongs in the spec and isn't settled), **out of spec** (leave it to implementers to compete on) or **answered** (proposed resolution below). Items are judged against three goals: _adoption_, easy to implement on today's stores; _auditability_, traceable to an accountable human when required; and _innovation_, which means standardizing the interface and leaving room for people to build better solutions rather than locking one in.
+Rows tagged "not raised on the call" (or raised only in the thread) come from the drafts or the channel and are proposed for discussion. Each item needs a call: **discuss** (it belongs in the spec and isn't settled), **out of spec** (leave it to implementers to compete on) or **answered** (proposed resolution below). Items are judged against three goals: _adoption_, easy to implement on today's stores; _auditability_, traceable to an accountable human when required; and _innovation_, which means standardizing the interface and leaving room for people to build better solutions rather than locking one in.
 
 | Area | Call | Proposed resolution / question | Goals |
 |---|---|---|---|
@@ -116,25 +125,26 @@ Rows tagged "not raised on the call" come from the drafts and are proposed for d
 | Retrieval isolation (hop limits, traversal depth) | [out of spec] | Implementation behavior behind recall. It's one reason CLI and MCP implementations differ. | _innovation_ |
 | Audit log storage and delivery | [out of spec] | Logs live apart from the memory and don't travel with every retrieval. Agreed on the call to leave this to implementers. | _innovation_ |
 | Auditable flag on memories and retrievals | [discuss] | Should the header or retrieval response be able to mark something auditable or not, so a consumer knows whether it traces to an accountable human? This is the small hook that makes the audit layer above possible. | _auditability_ _adoption_ |
-| Definition of "auditable" | [answered] | Traceable to one or more accountable humans. Adopt as the definition. | _auditability_ |
-| Field tiers | [answered] | Required / audit-required / optional on every header field. Next step: fill in the tier column above. | _adoption_ _auditability_ |
-| Body formats | [answered] | Any body, with its format declared in `type`. Markdown is the assumed common case; XML, DocLang, CSV, HTML and plain text must also be supported. | _adoption_ _innovation_ |
+| Definition of "auditable" | [answered] | Traceable to one or more accountable humans (Gabe and Misha on the call). Adopt as the definition. | _auditability_ |
+| Field tiers | [proposed] | Proposed by Gabe: audit-required, ACL-required or fully optional on header fields. Next step: assign fields to tiers. | _adoption_ _auditability_ |
+| Body formats | [answered] | Any body, with its format declared in `type`. Markdown is the common case; DocLang, CSV and XML were named as formats to allow ("allow for that without requiring it"). | _adoption_ _innovation_ |
 | Legacy stores with no metadata (e.g. a folder of .md memories) | [discuss] | Allow heuristic backfill (the agent authored it, the local user is the human), but the export must say the information is lossy or not auditable. How is that declared? | _adoption_ _auditability_ |
 | Split accountability (initiator, agent, approver) | [discuss] | An agent writes on one person's instructions and another person approves. Does the provenance list need roles, or is naming the accountable human enough? | _auditability_ |
 | Delete, forget and resurrection on import | [discuss] [not raised on the call] | If a re-import creates a new memory, an invalidated or deleted memory can come back from an old archive. Is a tombstone needed in interchange (Cognee §3.5, Context Nest §6.3)? | _auditability_ |
 | Copy vs move vs federation | [discuss] | IBM: valid in one system at a time. Cognee: three distinct intents that keep origin identity. The answer decides what `identifier` means after import. | _adoption_ _auditability_ |
-| Import fidelity and receipts | [discuss] [not raised on the call] | How does a receiver confirm it got the same memory with the same history, and report what was transformed or dropped? The checksum is part of this; a manifest or receipt may be the rest. | _auditability_ |
-| Change notification at runtime | [discuss] [not raised on the call] | When a memory changes mid-session, how does the harness find out? MCP resource subscriptions are one candidate. Implementations would fill in the details. | _adoption_ _innovation_ |
+| Import fidelity and receipts | [discuss] [raised in the thread (Misha), not on the call] | How does a receiver confirm it got the same memory with the same history, and report what was transformed or dropped? The checksum is part of this; a manifest or receipt may be the rest. | _auditability_ |
+| Change notification at runtime | [discuss] [raised in the thread (Sruly: memory updates often), not on the call] | When a memory changes mid-session, how does the harness find out? MCP resource subscriptions are one candidate. Implementations would fill in the details. | _adoption_ _innovation_ |
 | Conformance floor and profiles | [discuss] [not raised on the call] | AIDP makes every endpoint optional except `/info`; Cognee argues for a floor. Is there a minimum profile, with a Markdown loading profile (Packer) and a federation binding (AIDP) layered on top? | _adoption_ |
 | Identity pass-through for federation | [discuss] | Point to existing auth (OAuth, MCP auth) rather than define our own? The spec probably only needs the identity fields the union view must carry. | _adoption_ |
 | Dangling links on export | [discuss] [not raised on the call] | In a partial export, a link may point to a memory that wasn't included or was deleted. Keep it as an unresolved reference, drop it, or report it in the import results? | _adoption_ _auditability_ |
 | Credentials in exports | [answered] [not raised on the call] | Excluded from memory exchange (Cognee §3.3), handled as a separate administrative operation. | _auditability_ |
 
-## Actions from the call
+## Actions
 
-- **Misha:** build this table and the call notes and share them on Discord (possibly also as a PR to the repo).
-- **Vasilije:** review v1 and send back what's missing from the header.
-- **Everyone:** settle the "discuss" rows and the field tiers ahead of the Oct 2 draft.
+- **Misha:** summarize the discussion, where the data shapes overlap and where the proposals don't align yet. Done as this document (PR #10). Sruly asked for the notes.
+- **Vasilije:** once he has the first version, come back with the elements missing from the higher-level representation.
+- **Ben Labaschin and Drew Breunig:** respond to Gabe's question on merging MM&C and E&R into a single workstream.
+- **Everyone:** settle the open header fields and tiers ahead of the Oct 2 draft.
 
 Sources: The-AI-Disclosures-Project/Open-Memory-Protocol, `main` @ 7beb260, `early-draft-specs/`.
 
