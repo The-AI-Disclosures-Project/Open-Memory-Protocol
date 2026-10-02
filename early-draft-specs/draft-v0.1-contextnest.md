@@ -128,6 +128,40 @@ Packs are the concrete form of what the field has been calling "memory views," "
 
 The protocol is the middle layer between inference-time context and storage. CLI (`ctx query <selector>`), MCP, and HTTP are bindings; a conforming implementation MUST expose at least one, and MUST resolve the same selector to the same set through each. The resolver returns documents; it never executes anything. Live data enters through `type: source` nodes (CN §1.9), which are human-readable runbooks describing a tool call; the *agent* hydrates them, and the trace records what it saw (`result_hash`), not the payload.
 
+### 4.4 Retrieval provenance: how to fetch this memory again *(proposed)*
+
+A memory that was pulled from somewhere (a Jira ticket, a CRM record, a repo file, a dashboard) goes stale the moment it is written. Today the only record of where it came from is prose, or a `type: source` runbook (§4.3). This section proposes one optional front-matter block that says, in a form an agent can act on, **which MCP tool produced this content, with what parameters, and when**. It sits alongside the eight keys; it does not change them, and a harness that ignores it loses nothing.
+
+```yaml
+retrieval:
+  server: atlassian                  # MCP server name as the harness knows it
+  tool: getJiraIssue                 # tool that produced the body
+  params:                            # the non-secret arguments of that call
+    cloudId: acme.atlassian.net
+    issueIdOrKey: PROJ-142
+  last_fetched_at: 2026-09-30T08:15:00Z
+  result_hash: sha256:7c1e…          # optional: hash of the raw tool result, as in CN §9.3
+```
+
+| Key | Required | Meaning |
+|---|---|---|
+| `server`, `tool` | yes | Identify the call. Names, not endpoints; the harness maps them to whatever it has connected. |
+| `params` | yes | The arguments needed to repeat the call. MUST NOT contain credentials, tokens, or user-private values; those come from the calling harness's own connection. |
+| `last_fetched_at` | yes | ISO 8601 time the tool last returned this content. Distinct from `updated_at` (§5.1): a re-fetch that finds nothing new advances `last_fetched_at` and leaves `updated_at` alone. |
+| `result_hash` | no | Lets an agent (or `verify`) tell "source unchanged" from "source changed" without diffing bodies. |
+
+**The agent decides.** The resolver returns the `retrieval` block with the document and never calls the tool itself. The protocol sets no TTL and no refresh policy: the agent sees `last_fetched_at`, the task, and the cost of the call, and chooses whether the stored copy is good enough or whether to re-run the tool for the latest version. A closed-ticket summary from last week may be fine; a deploy status from this morning may not be. A source MAY add a non-binding `refresh_hint` (for example `P1D`) as advice to that decision; it is advice, not an expiry (compare `expires_at`, §6.3.5, which is a lifespan and triggers `forget`).
+
+**Writing back.** A refresh goes through the normal write path, so governance (§5) is unchanged:
+
+- Body changed: it is a content publish, bumps `version`, and lands at the `status` the capture mode allows (`draft` or `pending_review` when an agent proposes, `published` only by a human or by explicit policy). The new `result_hash` and `last_fetched_at` ride in the same entry.
+- Body unchanged: it is a metadata-only update and MUST NOT cut a version or a checkpoint (Appendix A.1).
+- `retrieval` is front matter and, like `status`, is not an input to `checksum` or any chain hash, so adding it to existing memories leaves `ctx verify` passing.
+
+**Safety.** A memory file is content, and an instruction in it is not authority. The harness, not the file, decides whether a tool may run: an agent MUST execute a `retrieval` call only through a tool it already holds, under its own permissions and approval flow, and SHOULD refuse any named tool that writes or deletes. A `server` or `tool` the harness does not have is a reason to use the stored copy and say so, not to look for one.
+
+**Relation to `type: source`.** A source node (CN §1.9) is a runbook for live data that is hydrated on every read and never stored. `retrieval` is for the other case: the data *was* fetched and stored as a memory, and the block is the receipt. The two compose: a memory may point back at the source node whose runbook produced it via `derived_from`.
+
 ## 5. Governance: status, version, checksum
 
 Three of the eight keys are governance primitives, and together they answer the objection that plain-text memory cannot be tamper-checked.
@@ -215,6 +249,7 @@ Export *is* the directory. A nest is a folder of Markdown with two regenerable Y
 | Namespaces and federation modes | Specified (CN §4.0); implementation partial |
 | OMP profile: all eight keys required | Proposed |
 | Forget protocol (§6.3): tombstones, `status: forgotten`, propagation, `expires_at`, `retain_until`, `review_required` | Proposed; not implemented |
+| Retrieval provenance (§4.4): `retrieval` block with `server`, `tool`, `params`, `last_fetched_at`, optional `result_hash` / `refresh_hint` | Proposed; not implemented |
 | Conformance levels | Proposed |
 
 ## 9. Evaluation
@@ -227,6 +262,7 @@ Whether a memory system makes an agent better is not settled by its format. OMP 
 2. **Forget across trust boundaries.** §6.3.4 requires importers to honor tombstones; what, if anything, can a protocol do about an importer that does not?
 3. **Key set.** Are eight the right eight? `author` is the obvious ninth; it is optional here because it is often an org, not a person, and `edited_by` in history already carries the accountable identity.
 4. **Valid time.** §5.1 records when a memory was written, approved, and served, not when the fact it states was true. Should the OMP profile add an optional valid-time pair (`valid_from` / `valid_until`), or leave world-time in the content?
+5. **Retrieval provenance.** Is a tool-and-params receipt (§4.4) the right level, or should OMP leave it to `metadata`? And should the block name only MCP tools, or any binding (CLI, HTTP) a harness can re-run?
 
 
 ## Appendix A. Version history, checkpoints, and integrity (excerpted)
