@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OMP Common Ground</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#6b6a64;--line:#e4e1d8;--head:#f1eee6;--full:#1f6f4a;--part:#b7791f;--none:#b9b6ad;--accent:#2d4f8a;--hl:#eef3fb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#e8e6e1;--muted:#9a978f;--line:#2e3033;--head:#212326;--full:#5fbf8f;--part:#e0a84a;--none:#55575b;--accent:#8fb0e8;--hl:#1e2633}}
+:root[data-theme="dark"]{--bg:#17181a;--fg:#e8e6e1;--muted:#9a978f;--line:#2e3033;--head:#212326;--full:#5fbf8f;--part:#e0a84a;--none:#55575b;--accent:#8fb0e8;--hl:#1e2633}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:19px;margin:44px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
+.sub{color:var(--muted);margin:0 0 20px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:12px 0}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+thead th{background:var(--head);position:sticky;top:0;font-weight:600;white-space:nowrap}
+tbody th{font-weight:600;width:190px}
+tr.group td,tr.group th{background:var(--head);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.f,.p,.n{font-weight:700;margin-right:4px}
+.o{color:var(--accent)}.f{color:var(--full)}.p{color:var(--part)}.n{color:var(--none)}
+td small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--bg)}
+.card h3{margin:0 0 6px;font-size:15px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.pos{background:var(--hl);border-left:3px solid var(--accent)}
+ol,ul{padding-left:20px}li{margin:5px 0}
+code{font-size:12.5px;background:var(--head);padding:1px 4px;border-radius:3px}
+.foot{color:var(--muted);font-size:12.5px;margin-top:40px}
+.h3{font-size:15px;margin:22px 0 8px}
+.note{color:var(--muted);font-size:14px}
+.agree{border-left:3px solid var(--full)}.open{border-left:3px solid var(--part)}
+.st{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;border:1px solid currentColor}
+.st-a{color:var(--full)}.st-d{color:var(--part)}.st-o{color:var(--accent)}.st-p{color:var(--muted)}
+.goal{display:inline-block;font-size:11px;padding:1px 6px;margin:1px 2px 1px 0;border-radius:4px;background:var(--head);color:var(--fg);white-space:nowrap}
+table.fm,table.ws{min-width:760px}
+table.fm tbody th,table.ws tbody th{width:200px}
+</style>
+</head>
+<body>
+<main>
+<h1>Open Memory Protocol: where the drafts agree</h1>
+<p class="sub">A working matrix of every draft in <code>early-draft-specs/</code> on <code>main</code> (commit 7beb260), plus notes from the Sep 28 exchange-and-runtime call: where the data shapes overlap and where the proposals don't align (yet). For the draft due Oct 2, 2026. Discussion draft, 2026-09-28.</p>
+
+<h2>What's in main</h2>
+<div class="grid">
+<div class="card"><h3>Scoping note</h3><p>Strauss &amp; Rosenblat (AIDP). Shared features across harnesses, assistants and enterprise systems; the "narrow waist" is a portable record plus consolidation lineage.</p></div>
+<div class="card"><h3>Packer v0.2 (Letta)</h3><p>A <code>MEMORY.md</code> directory with progressive disclosure and a four-rule harness contract. Ownership, versioning and sync are explicitly out of scope.</p></div>
+<div class="card"><h3>IBM v0.1</h3><p>Immutable record (body, id, author, AI provenance, created/invalidated, version comparator, source, semantic + scope tags). Runtime verbs: remember, recall, observe, decorate.</p></div>
+<div class="card"><h3>AIDP / FMP v0.1</h3><p>Federated Memory Protocol: many memory servers behind one plugin, with <code>/fmp/*</code> endpoints over native, plugin + MCP, or plain MCP. Three types: ground truth, transcripts, inferences.</p></div>
+<div class="card"><h3>Cognee v0.1</h3><p>Six-part semantic core: identity/revision, evidence, scope/authority, PROV lineage, lifecycle/deletion, exchange manifest and receipts. COGX as workbench.</p></div>
+<div class="card"><h3>Context Nest v0.1</h3><p>Governed Markdown profile: version history, hash chain, checkpoints, status lifecycle, selectors, MCP binding. Forget protocol specified in §6.3.</p></div>
+<div class="card"><h3>AMS Card (Mila / Mozilla)</h3><p>Structured documentation for memory systems, scoring performance and privacy separately. Documentation, not interchange.</p></div>
+</div>
+
+<h2>The matrix</h2>
+<div class="legend"><span><span class="f">●</span>the draft specifies it</span><span><span class="p">◐</span>partial or mentioned</span><span><span class="o">○</span>out of scope by design</span><span><span class="n">—</span>not addressed</span></div>
+<p class="note">Cells rate what each draft <em>specifies</em>, not what is implemented. Cognee and Context Nest both say which parts are implemented and which are proposed. The scoping note is a survey, so its column shows what it identifies. Authors: please correct your own column.</p>
+<div class="wrap"><table>
+<thead><tr><th>Primitive</th><th>Scoping</th><th>Packer</th><th>IBM</th><th>AIDP</th><th>Cognee</th><th>Context Nest</th><th>AMS</th></tr></thead>
+<tbody>
+<tr class="group"><th colspan="8">The object</th></tr>
+<tr><th>Body format</th><td><span class="f">●</span><small>.md as common syntax</small></td><td><span class="f">●</span><small>MEMORY.md dir</small></td><td><span class="p">◐</span><small>raw text body</small></td><td><span class="p">◐</span><small>files of any type</small></td><td><span class="f">●</span><small>text baseline + typed media</small></td><td><span class="f">●</span><small>markdown + front matter</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Stable identifier</th><td><span class="p">◐</span></td><td><span class="p">◐</span><small>file path</small></td><td><span class="f">●</span><small>unique in origin system</small></td><td><span class="p">◐</span><small>id for delete</small></td><td><span class="f">●</span><small>origin-qualified</small></td><td><span class="f">●</span><small>URI, pinnable @version</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Immutable revisions / versioning</th><td><span class="p">◐</span></td><td><span class="o">○</span><small>version control out of scope</small></td><td><span class="f">●</span><small>no update; override + invalidate; comparator</small></td><td><span class="n">—</span></td><td><span class="f">●</span><small>specified; not yet in COGX</small></td><td><span class="f">●</span><small>append-only version chain</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Semantic tags / ontology</th><td><span class="p">◐</span></td><td><span class="p">◐</span><small>description field</small></td><td><span class="f">●</span><small>tag schema; JSON-LD suggested</small></td><td><span class="p">◐</span><small>nested JSON metadata</small></td><td><span class="p">◐</span><small>deferred to domain profiles</small></td><td><span class="f">●</span><small>type + tags; ontology shape</small></td><td><span class="n">—</span></td></tr>
+<tr class="group"><th colspan="8">Provenance and authority</th></tr>
+<tr><th>Author; human vs AI origin</th><td><span class="p">◐</span></td><td><span class="o">○</span><small>ownership out of scope</small></td><td><span class="f">●</span><small>author + AI usage (EU AI Act)</small></td><td><span class="p">◐</span><small>"how it was created"</small></td><td><span class="f">●</span><small>W3C PROV</small></td><td><span class="f">●</span><small>author + client per version</small></td><td><span class="p">◐</span><small>documents it</small></td></tr>
+<tr><th>Source / evidence link</th><td><span class="p">◐</span></td><td><span class="p">◐</span><small>session_evidence metadata</small></td><td><span class="f">●</span><small>source material (optional)</small></td><td><span class="f">●</span><small>"exactly what it's based on"</small></td><td><span class="f">●</span><small>epistemic roles</small></td><td><span class="p">◐</span><small>derived_from; source type</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Lineage / consolidation</th><td><span class="f">●</span><small>narrow waist</small></td><td><span class="n">—</span></td><td><span class="p">◐</span><small>override chain</small></td><td><span class="p">◐</span><small>"based on"</small></td><td><span class="f">●</span><small>all inputs named</small></td><td><span class="p">◐</span><small>derived_from + versions</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Links / edges between memories</th><td><span class="n">—</span></td><td><span class="p">◐</span><small>MEMORY.md points to nested files</small></td><td><span class="p">◐</span><small>source material link</small></td><td><span class="p">◐</span><small>"based on"</small></td><td><span class="p">◐</span><small>derivation references</small></td><td><span class="f">●</span><small>[[wikilinks]] in prose</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Scope tied to access control</th><td><span class="f">●</span><small>surveyed</small></td><td><span class="o">○</span><small>who may write: out of scope</small></td><td><span class="f">●</span><small>scope tags → ACLs, system-set</small></td><td><span class="p">◐</span><small>server-local permissions</small></td><td><span class="f">●</span><small>subject / owner / authority / policy</small></td><td><span class="o">○</span><small>RBAC left out by design; scoping via selectors</small></td><td><span class="p">◐</span></td></tr>
+<tr><th>Human review / governed writes</th><td><span class="p">◐</span></td><td><span class="o">○</span><small>out of scope</small></td><td><span class="p">◐</span><small>scope tags system-set</small></td><td><span class="f">●</span><small>approval URL, admin sign-off</small></td><td><span class="p">◐</span><small>authorized actor on events</small></td><td><span class="f">●</span><small>draft → published; approver recorded</small></td><td><span class="p">◐</span></td></tr>
+<tr class="group"><th colspan="8">Time and lifecycle</th></tr>
+<tr><th>Created vs valid time</th><td><span class="p">◐</span></td><td><span class="n">—</span></td><td><span class="f">●</span><small>created + invalidated</small></td><td><span class="p">◐</span><small>date field</small></td><td><span class="f">●</span><small>record ≠ apply time</small></td><td><span class="f">●</span><small>four clocks; pinned reads</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Invalidation / supersession</th><td><span class="p">◐</span></td><td><span class="n">—</span></td><td><span class="f">●</span><small>invalidation timestamp; override</small></td><td><span class="n">—</span></td><td><span class="f">●</span><small>distinct states</small></td><td><span class="p">◐</span><small>new version supersedes; status</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Delete</th><td><span class="f">●</span></td><td><span class="n">—</span></td><td><span class="f">●</span><small>write / invalidate / delete</small></td><td><span class="f">●</span><small>/fmp/delete</small></td><td><span class="f">●</span><small>coverage + receipts</small></td><td><span class="f">●</span><small>forget protocol §6.3</small></td><td><span class="p">◐</span></td></tr>
+<tr><th>Tombstone / anti-resurrection</th><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="f">●</span><small>§3.5</small></td><td><span class="f">●</span><small>§6.3; imports must honor</small></td><td><span class="n">—</span></td></tr>
+<tr class="group"><th colspan="8">Exchange</th></tr>
+<tr><th>Import / export</th><td><span class="f">●</span></td><td><span class="p">◐</span><small>portable directory</small></td><td><span class="f">●</span><small>defined schema</small></td><td><span class="f">●</span><small>read_* endpoints</small></td><td><span class="f">●</span><small>manifest + receipts</small></td><td><span class="p">◐</span><small>export is the directory</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Copy vs move vs federation</th><td><span class="p">◐</span> <span class="st st-p">federation discussed; copy/move not raised</span></td><td><span class="p">◐</span><small>drag-and-drop move</small></td><td><span class="p">◐</span><small>one system at a time</small></td><td><span class="f">●</span><small>federation is the core</small></td><td><span class="f">●</span><small>distinct, explicit intent</small></td><td><span class="p">◐</span><small>namespace modes incl. federated</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Integrity / self-verification</th><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="p">◐</span><small>typed media integrity</small></td><td><span class="f">●</span><small>hash chain; verify</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Capability declaration</th><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="f">●</span><small>/fmp/info required</small></td><td><span class="f">●</span><small>manifest</small></td><td><span class="n">—</span></td><td><span class="f">●</span><small>the card</small></td></tr>
+<tr class="group"><th colspan="8">Runtime</th></tr>
+<tr><th>Read / write verbs</th><td><span class="p">◐</span></td><td><span class="f">●</span><small>4-rule harness contract</small></td><td><span class="f">●</span><small>remember / recall / observe / decorate</small></td><td><span class="f">●</span><small>upload / search / read / delete / info</small></td><td><span class="o">○</span><small>deferred to bindings</small></td><td><span class="p">◐</span><small>query by selector</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Transport: MCP / hooks</th><td><span class="p">◐</span></td><td><span class="p">◐</span><small>file tools</small></td><td><span class="f">●</span><small>MCP; hooks proposed</small></td><td><span class="f">●</span><small>native / plugin + MCP / MCP</small></td><td><span class="o">○</span><small>deferred to bindings</small></td><td><span class="f">●</span><small>CLI / MCP / HTTP bindings</small></td><td><span class="n">—</span></td></tr>
+<tr><th>What loads into context</th><td><span class="p">◐</span></td><td><span class="f">●</span><small>the main job</small></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="p">◐</span><small>via Markdown profile</small></td><td><span class="p">◐</span><small>selectors and packs</small></td><td><span class="n">—</span></td></tr>
+<tr><th>Documentation / disclosure</th><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="p">◐</span><small>implemented vs proposed</small></td><td><span class="p">◐</span><small>implemented vs proposed</small></td><td><span class="f">●</span></td></tr>
+</tbody></table></div>
+
+<h2>Context: the #exchange-and-runtime thread</h2>
+<ul>
+<li><strong>Before the call (9/22–9/25).</strong> Misha suggested adding fidelity to Gabe's list: when a memory moves between systems, the receiving side should be able to check it is the same memory with the same history (see #8 and #9). Sruly backed Gabe's third point, working without a disk. He proposed the Skills-over-MCP extension (SEP-2640) as a natural way to get progressive disclosure over MCP, noting memory may update more often than skills. He also questioned markdown as the carrier for metadata: provenance, scope, revisions and embeddings needn't be in the agent's view, so a markdown body plus separately stored structured metadata may work better.</li>
+<li><strong>After the call (9/28).</strong> Ben Labaschin pointed out the heavy overlap between the memory-model-and-context (MM&amp;C) group, which defines the structure of the data, and this exchange-and-runtime (E&amp;R) group, and suggested merging them. Gabe agreed, noted the call covered the shape of the data (header fields, body, linkage) and its use at export/import and at runtime, and asked Ben and Drew Breunig (MM&amp;C) whether they object to a single workstream.</li>
+<li><strong>What this summary is for.</strong> As Gabe framed it: where the data shapes overlap significantly, and where the existing proposals don't align (yet).</li>
+</ul>
+
+<h2>Call notes: exchange and runtime, Sep 28</h2>
+<p>Attendees: Gabe Goodhart (IBM), Sruly Rosenblat (AIDP), Vasilije Markovic (Cognee), Alex Hancock (Block), Misha Sulpovar (Context Nest). Scope: data format and runtime only. User scope and candidate implementations were set aside. The method: go through the drafts, find what they have in common, check it against the constraints of implementations people know, and distill one abstract representation.</p>
+
+<h2>Convergence</h2>
+<h3 class="h3">Where the drafts already agree</h3>
+<ol>
+<li><strong>A memory is a portable object: a body plus metadata.</strong> Storage, retrieval and internal mutation stay with the implementation. Every draft except the AMS Card says this.</li>
+<li><strong>Provenance matters.</strong> IBM, AIDP, Cognee and Context Nest all want the author, human or AI origin, and a link to the source evidence.</li>
+<li><strong>Scope feeds access control, and the system sets it, not the agent.</strong> IBM, AIDP, Cognee and Context Nest.</li>
+<li><strong>Change by adding, not overwriting, where the implementation can.</strong> IBM, Cognee and Context Nest. Delete exists in IBM, AIDP, Cognee and Context Nest.</li>
+</ol>
+
+<h3 class="h3">What the call converged on</h3>
+<p class="note"><span class="st st-a">agreed</span> means at least two participants explicitly agreed and nobody objected. <span class="st st-o">proposed</span> means someone put it forward and it wasn't contested, but nobody explicitly signed on.</p>
+<div class="grid">
+<div class="card agree"><h3>Header schema + any body <span class="st st-a">agreed</span></h3><p>Gabe's strawman: the header is a rigorous schema that can be rendered into anything that renders schemas, and the body is a string in any format, with markdown or plain text recommended as agent-friendly. Vasilije: "I completely agree." Other formats need room: DocLang (IBM Docling), CSV and XML (e.g. PubMed) were named, and Gabe's phrasing was "allow for that without requiring it." This matches Vasilije's "data contract": a stable transport header plus a free-form payload.</p></div>
+<div class="card agree"><h3>Export/import vs runtime representations <span class="st st-a">agreed</span></h3><p>Gabe distinguished a representation for export/import (migration) from one for runtime use. Export/import is likely a superset that carries operational fields the agent doesn't need, and that could "pollute or give hints to how the thing is organized." Vasilije called it "very important" and tied it to data contracts. It lines up with Sruly's thread point about keeping metadata out of the agent's view.</p></div>
+<div class="card agree"><h3>Don't standardize the recall signature <span class="st st-a">agreed</span></h3><p>Gabe: implementations need room for different flavors of recall and their own guidance on using it, and a fixed signature "would inevitably fail." Misha: "Fair enough."</p></div>
+<div class="card agree"><h3>Federation sits behind the agent <span class="st st-a">agreed</span></h3><p>Gabe's read-back: a federation or governance layer merges sources and takes the union of their scopes, and the agent can stay deliberately unaware of that and see one unified memory. Sruly: yes, and the merge logic needn't be specified. Misha: identity has to pass through. Vasilije: identity federation is part of the protocol, not the whole of it. Gabe: start from what the agent sees; the merge protocol comes second.</p></div>
+<div class="card agree"><h3>Lineage as a graph, depth up to the implementation <span class="st st-a">agreed</span></h3><p>Vasilije: full provenance on every object is too heavy, but people want to know where an object came from at a point in time, and some industries (finance) need exact detail. Gabe's strawman: model lineage as a graph; audit-grade systems can reconstruct it fully, and others can leave nodes as disconnected islands. Vasilije: "a great middle ground."</p></div>
+<div class="card agree"><h3>What "auditable" means <span class="st st-a">agreed</span></h3><p>Misha: from a regulatory standpoint, what matters is which human is accountable. Gabe: so auditable means you can trace a memory to one or more accountable humans. Misha: "Yep." Gabe: full audit is a multi-user enterprise requirement, not an individual-user one.</p></div>
+<div class="card"><h3>Annotate header fields by requirement <span class="st st-o">proposed</span></h3><p>Gabe: when this becomes a real draft, annotate header fields as audit-required, ACL-required or fully optional. He cautioned that optional fields tend to go unimplemented, as happened with MCP auth.</p></div>
+</div>
+
+<h3 class="h3">The header, field by field</h3>
+<p class="note">At Gabe's suggestion, the call walked Context Nest v0.1's front matter as a starting strawman. Gabe recapped the direction as a tightly scoped metadata header, with author extended into a provenance list and an identifier that supports evidence linkage. The call did not assign fields to tiers.</p>
+<div class="wrap"><table class="fm">
+<thead><tr><th>Field</th><th>What was said</th><th>Status</th></tr></thead>
+<tbody>
+<tr><th>identifier</th><td>Gabe proposed renaming <code>title</code> to <code>identifier</code>. It can be a readable title, a UUID or a path, carries no required meaning, and is unique among the memories in a bulk export. Sruly: an identifier is useful in general, especially for moving between systems. It is also what makes evidence links possible. Misha is still weighing how it fits path-plus-version identities.</td><td><span class="st st-o">proposed</span></td></tr>
+<tr><th>type</th><td>The content type of the body (markdown, HTML, skills, structured data), not a semantic ontology. Misha: "that may be too constrained."</td><td><span class="st st-p">discussed</span></td></tr>
+<tr><th>tags</th><td>Where the ontology lives: a list or set of strings, free-form or ontology-backed.</td><td><span class="st st-p">discussed</span></td></tr>
+<tr><th>scope tags</th><td>Gabe: omit from the runtime format but keep in interchange, because ACLs attach to them. Authorship can cover cases like "what has Misha been up to."</td><td><span class="st st-o">proposed</span></td></tr>
+<tr><th>created_at</th><td>"Pretty obvious."</td><td><span class="st st-a">no objection</span></td></tr>
+<tr><th>version / updated</th><td>Gabe: all-immutable memory (a change creates a new superseding version) is too implementation-specific to be a hard contract, because it breaks markdown-on-disk. It may be a good recommendation for "zooming around in time." He also suggested a sequence number rather than real-world timestamps for versioning. Misha: that is how Context Nest implements it, and <code>updated_at</code> was added after the first meeting. Not settled. Whatever lands, the header keeps a <code>version</code> slot where richer history can live.</td><td><span class="st st-d">open</span></td></tr>
+<tr><th>checksum</th><td>A quick hash for integrity. Gabe: "I like all of those."</td><td><span class="st st-a">no objection</span></td></tr>
+<tr><th>provenance (was author)</th><td>Sruly: a list of everyone who contributed. Gabe: provenance may supersede author, and he recapped it as a provenance list of contributors. Its exact shape is open (see divergence).</td><td><span class="st st-o">proposed</span></td></tr>
+<tr><th>evidence</th><td>Vasilije: evidence (where this came from) was missing. Gabe: it could be a reference to another memory's identifier, or flattened to a plain string.</td><td><span class="st st-d">open</span></td></tr>
+<tr><th>links / edges</th><td>Misha: Context Nest's wiki-syntax links form graph edges, and it may be worth adding. Gabe: "linking is going to be a really interesting topic to discuss," since many formats are working on it. Not resolved.</td><td><span class="st st-d">open</span></td></tr>
+<tr><th>status / visibility</th><td>Misha: published/unpublished and visibility inside a store. Gabe: it probably doesn't belong in the runtime format and may have a role in export/import; it overlaps with versioning. Put in the parking lot.</td><td><span class="st st-p">parked</span></td></tr>
+</tbody></table></div>
+
+<h2>Divergence: still under discussion</h2>
+<div class="grid">
+<div class="card open"><h3>Markdown: common body format, not the base object (leaning)</h3><p>Leaning toward markdown as the common body format rather than the base memory object. Vasilije doesn't think base memory objects should be markdown. Gabe finds markdown too simplistic for memory, but "it's what all the agents are doing today," and diverging too far risks irrelevance. Sruly: if this is exchange, you could hand over JSON and render it to markdown. Still open: what this means for a markdown-first loading profile.</p></div>
+<div class="card open"><h3>What is the atomic unit?</h3><p>Vasilije: the base object is the smallest semantic unit that carries meaning and can be evaluated true or false ("Vasily left the cab"). Gabe: title and author fit a document store, less so a fact collection, and at that size a title may duplicate the body.</p></div>
+<div class="card open"><h3>The shape of provenance</h3><p>Gabe: an AI-usage trailer with none / draft / full, similar to the EU AI Act's human / AI / mixed split. Sruly: when an assistant rewrites what you asked it to save, is that AI-generated? A plain list of contributors avoids grading it. Misha: separate optional human and agent fields. Misha's case: an agent updates memory on one person's instructions and another person approves. Whose name shows up? Ideally both. Misha: regulators care about who the accountable human is.</p></div>
+<div class="card open"><h3>Versioning and updates</h3><p>Is a version required, and in what form? Can a memory change in place, or does every change create a new revision that supersedes the old one? Immutability suits audit and time travel; mutable files are how markdown stores work today. Does <code>updated_at</code> belong? Proposed floor: keep a <code>version</code> slot whatever the answer.</p></div>
+<div class="card open"><h3>Edges and cross-document linking</h3><p>Raised on the call, not resolved. Options for discussion (not from the call): links written inline in the body (wiki syntax), a typed list of edges in the header (derived-from, supersedes, relates-to), or both. Questions: what a link targets (identifier, or identifier plus version), whether edges are typed, and what happens when the target isn't in the export or has been deleted.</p></div>
+<div class="card open"><h3>Status and visibility</h3><p>Parked. Is lifecycle state (draft/published, visibility) general enough to standardize, or implementation-specific? It overlaps with versioning and forgetting times.</p></div>
+<div class="card open"><h3>Lineage depth</h3><p>n hops back versus the full chain. Most users want "where did this come from at that point in time"; hedge funds and other financial firms want exact, fine-grained provenance. Where should the floor sit?</p></div>
+<div class="card open"><h3>Runtime surface: is MCP the home?</h3><p>Gabe laid out three extremes: memory as local files the agent reads with shell tools; memory behind a server reachable only through tools; and a supervisor that uses hooks to decorate sessions and capture memories without the agent knowing. He proposed MCP (tools, interceptors for hooks, file access) as the logical home, standardizing only the shape of what passes through. Not agreed. Vasilije: MCP hasn't shown much promise; hooks are the new golden standard because they give control. Misha: a CLI has been more reliable than MCP for retrieval isolation (e.g. limiting graph hops), and they instrument hooks for consistency.</p></div>
+<div class="card open"><h3>Identity and scope granularity</h3><p>Vasilije: is this partly identity provisioning and federation? One server for the organization and one personal breaks quickly, and even per-workspace may not be granular enough. What is the lowest granularity for scope?</p></div>
+<div class="card open"><h3>Delivering several memories at runtime</h3><p>Misha: at runtime, is more than one memory passed? Compiled or raw? Can memories nest (each then carrying its own metadata and provenance)? His answer for Context Nest: no nested memories, compiled at runtime. Gabe took it into the three runtime extremes above. Not settled for the spec.</p></div>
+<div class="card open"><h3>Writes</h3><p>Misha asked whether this covers writes. Gabe: defining the read shape constrains writes. A write needs author, date and time, and whether it updates something or creates something new; a title is optional. Misha: writes from a human, a webhook or an agent (e.g. a forget or "dream" agent) may need different authorship tagging.</p></div>
+</div>
+
+<h2>Whitespace: new ground to decide on</h2>
+<p class="note">Rows tagged "not raised on the call" (or raised only in the thread) come from the drafts or the channel and are proposed for discussion. Each item needs a call: <strong>discuss</strong> (it belongs in the spec and isn't settled), <strong>out of spec</strong> (leave it to implementers to compete on) or <strong>answered</strong> (proposed resolution below). Items are judged against three goals: <span class="goal">adoption</span>, easy to implement on today's stores; <span class="goal">auditability</span>, traceable to an accountable human when required; and <span class="goal">innovation</span>, which means standardizing the interface and leaving room for people to build better solutions rather than locking one in.</p>
+<div class="wrap"><table class="ws">
+<thead><tr><th>Area</th><th>Call</th><th>Proposed resolution / question</th><th>Goals</th></tr></thead>
+<tbody>
+<tr><th>Recall function signature</th><td><span class="st st-o">out of spec</span></td><td>Agreed on the call. Standardize the memory shape that recall returns, not the recall call itself.</td><td><span class="goal">innovation</span></td></tr>
+<tr><th>Federation merge and ranking logic</th><td><span class="st st-o">out of spec</span></td><td>Standardize the per-server interface and the union view the agent sees. How results are combined is where implementations compete.</td><td><span class="goal">innovation</span></td></tr>
+<tr><th>Memory controllers (forget, dream, consolidation agents)</th><td><span class="st st-o">out of spec</span></td><td>Their algorithms stay with implementations. The only requirement: their writes carry provenance like any other writer. The industry name ("memory controller"?) is open.</td><td><span class="goal">innovation</span> <span class="goal">auditability</span></td></tr>
+<tr><th>Retrieval isolation (hop limits, traversal depth)</th><td><span class="st st-o">out of spec</span></td><td>Implementation behavior behind recall. It's one reason CLI and MCP implementations differ.</td><td><span class="goal">innovation</span></td></tr>
+<tr><th>Audit log storage and delivery</th><td><span class="st st-o">out of spec</span></td><td>Logs live apart from the memory and don't travel with every retrieval. Agreed on the call to leave this to implementers.</td><td><span class="goal">innovation</span></td></tr>
+<tr><th>Auditable flag on memories and retrievals</th><td><span class="st st-d">discuss</span></td><td>Should the header or retrieval response be able to mark something auditable or not, so a consumer knows whether it traces to an accountable human? This is the small hook that makes the audit layer above possible.</td><td><span class="goal">auditability</span> <span class="goal">adoption</span></td></tr>
+<tr><th>Definition of "auditable"</th><td><span class="st st-a">answered</span></td><td>Traceable to one or more accountable humans (Gabe and Misha on the call). Adopt as the definition.</td><td><span class="goal">auditability</span></td></tr>
+<tr><th>Field tiers</th><td><span class="st st-o">proposed</span></td><td>Proposed by Gabe: audit-required, ACL-required or fully optional on header fields. Next step: assign fields to tiers.</td><td><span class="goal">adoption</span> <span class="goal">auditability</span></td></tr>
+<tr><th>Body formats</th><td><span class="st st-a">answered</span></td><td>Any body, with its format declared in <code>type</code>. Markdown is the common case; DocLang, CSV and XML were named as formats to allow ("allow for that without requiring it").</td><td><span class="goal">adoption</span> <span class="goal">innovation</span></td></tr>
+<tr><th>Legacy stores with no metadata (e.g. a folder of .md memories)</th><td><span class="st st-d">discuss</span></td><td>Allow heuristic backfill (the agent authored it, the local user is the human), but the export must say the information is lossy or not auditable. How is that declared?</td><td><span class="goal">adoption</span> <span class="goal">auditability</span></td></tr>
+<tr><th>Split accountability (initiator, agent, approver)</th><td><span class="st st-d">discuss</span></td><td>An agent writes on one person's instructions and another person approves. Does the provenance list need roles, or is naming the accountable human enough?</td><td><span class="goal">auditability</span></td></tr>
+<tr><th>Delete, forget and resurrection on import</th><td><span class="st st-d">discuss</span> <span class="st st-p">not raised on the call</span></td><td>If a re-import creates a new memory, an invalidated or deleted memory can come back from an old archive. Is a tombstone needed in interchange (Cognee §3.5, Context Nest §6.3)?</td><td><span class="goal">auditability</span></td></tr>
+<tr><th>Copy vs move vs federation</th><td><span class="st st-d">discuss</span></td><td>IBM: valid in one system at a time. Cognee: three distinct intents that keep origin identity. The answer decides what <code>identifier</code> means after import.</td><td><span class="goal">adoption</span> <span class="goal">auditability</span></td></tr>
+<tr><th>Import fidelity and receipts</th><td><span class="st st-d">discuss</span> <span class="st st-p">raised in the thread (Misha), not on the call</span></td><td>How does a receiver confirm it got the same memory with the same history, and report what was transformed or dropped? The checksum is part of this; a manifest or receipt may be the rest.</td><td><span class="goal">auditability</span></td></tr>
+<tr><th>Change notification at runtime</th><td><span class="st st-d">discuss</span> <span class="st st-p">raised in the thread (Sruly: memory updates often), not on the call</span></td><td>When a memory changes mid-session, how does the harness find out? MCP resource subscriptions are one candidate. Implementations would fill in the details.</td><td><span class="goal">adoption</span> <span class="goal">innovation</span></td></tr>
+<tr><th>Conformance floor and profiles</th><td><span class="st st-d">discuss</span> <span class="st st-p">not raised on the call</span></td><td>AIDP makes every endpoint optional except <code>/info</code>; Cognee argues for a floor. Is there a minimum profile, with a Markdown loading profile (Packer) and a federation binding (AIDP) layered on top?</td><td><span class="goal">adoption</span></td></tr>
+<tr><th>Identity pass-through for federation</th><td><span class="st st-d">discuss</span></td><td>Point to existing auth (OAuth, MCP auth) rather than define our own? The spec probably only needs the identity fields the union view must carry.</td><td><span class="goal">adoption</span></td></tr>
+<tr><th>Dangling links on export</th><td><span class="st st-d">discuss</span> <span class="st st-p">not raised on the call</span></td><td>In a partial export, a link may point to a memory that wasn't included or was deleted. Keep it as an unresolved reference, drop it, or report it in the import results?</td><td><span class="goal">adoption</span> <span class="goal">auditability</span></td></tr>
+<tr><th>Credentials in exports</th><td><span class="st st-a">answered</span> <span class="st st-p">not raised on the call</span></td><td>Excluded from memory exchange (Cognee §3.3), handled as a separate administrative operation.</td><td><span class="goal">auditability</span></td></tr>
+</tbody></table></div>
+
+<h2>Actions</h2>
+<ul>
+<li><strong>Misha:</strong> summarize the discussion, where the data shapes overlap and where the proposals don't align yet. Done as this document (PR #10). Sruly asked for the notes.</li>
+<li><strong>Vasilije:</strong> once he has the first version, come back with the elements missing from the higher-level representation.</li>
+<li><strong>Ben Labaschin and Drew Breunig:</strong> respond to Gabe's question on merging MM&amp;C and E&amp;R into a single workstream.</li>
+<li><strong>Everyone:</strong> settle the open header fields and tiers ahead of the Oct 2 draft.</li>
+</ul>
+
+<p class="foot">Sources: The-AI-Disclosures-Project/Open-Memory-Protocol, <code>main</code> @ 7beb260, <code>early-draft-specs/</code>.</p>
+</main>
+</body>
+</html>
