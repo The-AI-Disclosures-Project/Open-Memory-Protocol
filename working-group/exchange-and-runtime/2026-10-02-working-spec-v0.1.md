@@ -181,16 +181,14 @@ A conforming store MAY delete a memory (IBM; AIDP `/fmp/delete`; Cognee; CN). A 
 
 ### 6.5 Forget, tombstones and anti-resurrection [proposed, not discussed on the call]
 
-A **forget** erases a memory's content while keeping its history verifiable (CN §6.3). A **tombstone** records that a revision was erased (Cognee §3.5).
+A **forget** erases a memory's content on purpose, for example to honor an erasure request, while its history stays verifiable (Cognee §3.5; CN §6.3). A **tombstone** is the record a forget leaves behind. This section states the outcomes a conforming store delivers. How a store achieves them is left to implementations (§11).
 
-**Implementation status.** A released implementation exists (Context Nest, `ctx` 3.0.0; PromptOwl/ContextNest#130), so this section is implementable as written. The need is observable as well: in cross-draft adapter fixtures, a store whose import rule gives every re-import a new identity revives an invalidated memory from an older archive, which is the resurrection case above.
+- After a forget, the content of every revision it covers MUST NOT be retrievable from the store or from its exports.
+- A store that offers a verifiable history (§6.2) MUST still verify after a forget.
+- A forget MUST leave a tombstone that records when it happened, who did it and why. The tombstone MUST NOT contain the forgotten content.
+- **Anti-resurrection.** A receiving system MUST NOT restore forgotten content from an older archive or a pre-forget copy. Tombstones travel with exports (§8) so that receivers can tell.
 
-- A forget MUST remove the content of every revision it covers and MUST keep whatever hashes the history's verification depends on, so verification still passes.
-- A forget MUST leave a tombstone per erased revision with the time, the actor and a reason code from a closed set. It MUST NOT keep the content in the tombstone or in any audit record.
-- **Anti-resurrection.** A receiving system MUST honor tombstones carried by an import, and MUST refuse to restore a tombstoned revision from an older archive or a pre-forget copy (Cognee §6; CN §6.3).
-- Tombstones travel with exports (§8).
-
-Without tombstones, an interchange rule that turns every re-import into a new memory lets an invalidated or deleted memory come back from an old archive (Cognee §3.5). Whether tombstones belong in the core or in the audit profile is issue I-7.
+Without tombstones, an interchange rule that turns every re-import into a new memory lets an invalidated or deleted memory come back from an old archive (Cognee §3.5). Cross-draft adapter fixtures reproduce this case. Whether tombstones belong in the core or in the audit profile is issue I-7.
 
 ---
 
@@ -322,6 +320,7 @@ Left to implementations, so that they can compete and improve on them:
 - The recall function signature, ranking and retrieval algorithms [agreed].
 - Federation merge and ranking logic (§9.4) [agreed].
 - Memory-maintenance agents (forget, consolidation, "dream" agents) and their algorithms. Their writes still carry provenance (§4.2).
+- Forget mechanics: how content is erased, what a store keeps so its history still verifies, and the tombstone format beyond the fields named in §6.5.
 - Retrieval isolation, such as limits on graph traversal depth.
 - Audit-log storage and delivery. The protocol may define a flag saying whether a memory or a retrieval is auditable (issue I-13), but not the log.
 - Storage, indexing, embeddings and internal mutation (all drafts).
