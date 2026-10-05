@@ -1,0 +1,23 @@
+# Two memory servers, one agent. Start them with:
+#   fmp-server --name personal --port 8801
+#   fmp-server --name work     --port 8802 --disable delete
+# Or serve your real coding-agent history read-only:
+#   fmp-server --name history --port 8803 --acp-index ~/.local/share/acp-memory/db.sqlite
+
+[[servers]]
+name = "personal"
+url = "http://127.0.0.1:8801"
+send_transcripts = true
+accept_inferences = true
+
+[[servers]]
+name = "work"
+url = "http://127.0.0.1:8802"
+send_transcripts = false      # private transcripts never leave the personal server
+accept_inferences = true
+
+[[servers]]
+name = "history"
+url = "http://127.0.0.1:8803"
+send_transcripts = false
+accept_inferences = false

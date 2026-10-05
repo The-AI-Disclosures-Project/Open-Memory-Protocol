@@ -1,0 +1,44 @@
+[project]
+name = "aidp-draft-fmp"
+version = "0.1.0"
+description = "Reference server, federated client and LangChain middleware for the Federated Memory Protocol (AIDP draft v0.1)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Open Memory Protocol Initiative", email = "ompi@aidisclosures.org" },
+]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "langchain>=1.0",
+    "langchain-openai>=1.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+packer = ["packer-draft-langchain-harness"]
+
+[project.scripts]
+fmp-server = "fmp.cli:server_main"
+fmp-agent = "fmp.cli:agent_main"
+
+[tool.uv.sources]
+packer-draft-langchain-harness = { path = "../packer-draft-langchain-harness", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["fmp"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
