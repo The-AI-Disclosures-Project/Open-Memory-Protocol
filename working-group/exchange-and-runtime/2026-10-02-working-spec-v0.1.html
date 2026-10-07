@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OMP Working Spec</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#6b6a64;--line:#e4e1d8;--head:#f1eee6;--full:#1f6f4a;--part:#b7791f;--none:#b9b6ad;--accent:#2d4f8a;--hl:#eef3fb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#e8e6e1;--muted:#9a978f;--line:#2e3033;--head:#212326;--full:#5fbf8f;--part:#e0a84a;--none:#55575b;--accent:#8fb0e8;--hl:#1e2633}}
+:root[data-theme="dark"]{--bg:#17181a;--fg:#e8e6e1;--muted:#9a978f;--line:#2e3033;--head:#212326;--full:#5fbf8f;--part:#e0a84a;--none:#55575b;--accent:#8fb0e8;--hl:#1e2633}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:19px;margin:44px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
+.sub{color:var(--muted);margin:0 0 20px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:12px 0}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+thead th{background:var(--head);position:sticky;top:0;font-weight:600;white-space:nowrap}
+tbody th{font-weight:600;width:190px}
+tr.group td,tr.group th{background:var(--head);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.f,.p,.n{font-weight:700;margin-right:4px}
+.o{color:var(--accent)}.f{color:var(--full)}.p{color:var(--part)}.n{color:var(--none)}
+td small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--bg)}
+.card h3{margin:0 0 6px;font-size:15px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.pos{background:var(--hl);border-left:3px solid var(--accent)}
+ol,ul{padding-left:20px}li{margin:5px 0}
+code{font-size:12.5px;background:var(--head);padding:1px 4px;border-radius:3px}
+.foot{color:var(--muted);font-size:12.5px;margin-top:40px}
+.h3{font-size:15px;margin:22px 0 8px}
+.note{color:var(--muted);font-size:14px}
+.agree{border-left:3px solid var(--full)}.open{border-left:3px solid var(--part)}
+.st{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;border:1px solid currentColor}
+.st-a{color:var(--full)}.st-d{color:var(--part)}.st-o{color:var(--accent)}.st-p{color:var(--muted)}
+.goal{display:inline-block;font-size:11px;padding:1px 6px;margin:1px 2px 1px 0;border-radius:4px;background:var(--head);color:var(--fg);white-space:nowrap}
+table.fm,table.ws{min-width:760px}
+table.fm tbody th,table.ws tbody th{width:200px}
+pre{background:var(--head);padding:12px 14px;border-radius:6px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+pre code{background:none;padding:0}
+h3{font-size:16px;margin:24px 0 8px}h4{font-size:14px}
+hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+.wrap table{min-width:640px}
+.st-e{color:var(--muted);border-style:dashed}
+</style>
+</head><body><main>
+<h1>Open Memory Protocol: Memory Object, Exchange and Runtime</h1>
+<p><strong>Editors' draft v0.1, 2026-10-02</strong>, building on the 2026-09-28 call. Exchange and Runtime sub-thread, written with the Memory Model and Context (MM&amp;C) overlap in mind. Not an adopted OMP standard.</p>
+<p><strong>Sources.</strong> This draft distills the proposals in <code>early-draft-specs/</code> on <code>main</code> (commit 7beb260): the scoping note (Strauss and Rosenblat), Packer v0.2 (Letta), IBM v0.1, AIDP / FMP v0.1, Cognee v0.1, Context Nest v0.1 and the AMS Card (Mila / Mozilla). It also draws on the 2026-09-28 exchange-and-runtime call and the #exchange-and-runtime thread. Section references in parentheses point to the source draft, for example (IBM), (Cognee §3.5), (CN §6.3).</p>
+<hr>
+<h2>0. Status, scope and conventions</h2>
+<h3>0.1 Status</h3>
+<p>This is a working draft for discussion. Every section carries a status:</p>
+<ul><li><strong><span class="st st-a">agreed</span></strong>: at least two participants explicitly agreed on the 2026-09-28 call and nobody objected.</li><li><strong><span class="st st-o">proposed</span></strong>: put forward on the call or in a source draft and not contested, but nobody explicitly signed on.</li><li><strong><span class="st st-d">open</span></strong>: raised and not resolved.</li><li><strong><span class="st st-p">discussed</span></strong>, <strong><span class="st st-a">no objection</span></strong>, <strong><span class="st st-p">parked</span></strong>: used for header fields, as in the call notes.</li><li><strong><span class="st st-e">editors</span></strong>: text the editors added to make the draft complete. It has not been discussed yet.</li></ul>
+<h3>0.2 Scope</h3>
+<p>In scope: the memory object (its header and body), the fields it carries, how memories link to each other and to evidence, versioning and lifecycle, the export/import (interchange) representation, the runtime representation, and the shape of what crosses a runtime binding.</p>
+<p>Out of scope for this draft: user scope and candidate implementations (set aside on the call), and everything listed in §11.</p>
+<h3>0.3 Conventions</h3>
+<p>The key words MUST, MUST NOT, SHOULD, SHOULD NOT, MAY and RECOMMENDED are to be read as in RFC 2119 and RFC 8174. <strong>In this draft, every normative statement is proposed.</strong> A MUST states what the editors propose the requirement should be once adopted. It does not claim the group has agreed to it.</p>
+<hr>
+<h2>1. Goals</h2>
+<p>The design is judged against three goals.</p>
+<ol><li><strong>Adoption.</strong> A folder of markdown memories, a server-backed store and a graph store can all conform with little work. Most header fields are optional, and the smallest profile (§10.1) can be met by today's harnesses.</li><li><strong>Auditability.</strong> When a deployment needs it, every memory can be traced to one or more accountable humans (§4.3) <span class="st st-a">agreed</span>, its history can be verified, and its lifecycle events are recorded. These requirements sit in tiers (§3.1) so that individual users are not forced to carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one <span class="st st-a">agreed</span>.</li><li><strong>Room for innovation.</strong> The protocol standardizes interfaces and the shape of data, not algorithms. Recall, ranking, federation merge logic, memory-maintenance agents, retrieval isolation and audit-log delivery are left to implementations to compete on (§11).</li></ol>
+<hr>
+<h2>2. The memory object</h2>
+<h3>2.1 Header plus body <span class="st st-a">agreed</span></h3>
+<p>A memory is a <strong>header</strong> plus a <strong>body</strong>.</p>
+<ul><li>The <strong>header</strong> is a rigorous schema that can be rendered into any format that renders schemas (JSON, YAML front matter, a database row).</li><li>The <strong>body</strong> is a string in any format, and its format is declared by the header's <code>type</code> field (§3).</li></ul>
+<p>This is a two-sided data contract: a stable header that changes only through versioning, and a free-form payload the protocol does not prescribe (Cognee, from the call).</p>
+<h3>2.2 Body formats <span class="st st-a">agreed</span></h3>
+<p>Markdown is the common body format and is RECOMMENDED for bodies meant to be read by agents. Plain text is equally acceptable. The protocol MUST allow other formats, including DocLang, CSV, XML (for example PubMed) and HTML, without requiring every implementation to process every format.</p>
+<p>The group is leaning toward markdown as the <strong>common body format</strong>, not the <strong>base object</strong> <span class="st st-d">open, leaning</span>. The base object is the header plus a typed body. Section 10.2 defines how a markdown-first loading profile relates to that (Packer).</p>
+<h3>2.3 Atomic unit <span class="st st-d">open</span></h3>
+<p>The protocol does not yet fix the size of a memory. One view: a memory is the smallest semantic unit that carries meaning and can be evaluated true or false (Cognee, from the call). Another: memories are documents with titles and authors, as in document stores (CN, Packer). The header in §3 is written to work for both. See issue I-2.</p>
+<hr>
+<h2>3. Header fields</h2>
+<h3>3.1 Tiers <span class="st st-o">proposed</span></h3>
+<p>Each field carries one tier (proposed by Gabe on the call):</p>
+<div class="wrap"><table><thead><tr><th>Tier</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>required</strong></td><td>Every conforming memory carries it</td></tr><tr><td><strong>audit-required</strong></td><td>Required in the audit profile (§10.4); optional otherwise</td></tr><tr><td><strong>ACL-required</strong></td><td>Required where access control applies; interchange only</td></tr><tr><td><strong>optional</strong></td><td>May be omitted in every profile</td></tr></tbody></table></div>
+<p>Optional fields tend to go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small (from the call).</p>
+<p><strong>Every tier assignment in §3.2 is proposed by the editors.</strong> The call did not assign fields to tiers.</p>
+<h3>3.2 Field table</h3>
+<div class="wrap"><table><thead><tr><th>Field</th><th>Type</th><th>Tier <span class="st st-e">editors</span></th><th>Status</th><th>Definition</th></tr></thead><tbody><tr><td><code>identifier</code></td><td>string</td><td>required</td><td><span class="st st-o">proposed</span></td><td>Identifies the memory within its origin system. May be a readable title, a UUID or a path, and carries no required meaning. MUST be unique among the memories in one export. Replaces <code>title</code> as the key (call; IBM "memory identifier"; Cognee §3.1)</td></tr><tr><td><code>title</code></td><td>string</td><td>optional</td><td><span class="st st-o">proposed</span></td><td>A human-readable label. May duplicate the body for fact-sized memories (call)</td></tr><tr><td><code>type</code></td><td>string</td><td>required</td><td><span class="st st-p">discussed</span></td><td>The content or media type of the body (for example <code>text/markdown</code>, <code>text/html</code>, <code>text/csv</code>, <code>application/xml</code>, a skill, structured data). Not a semantic ontology (CN; call)</td></tr><tr><td><code>tags</code></td><td>list of strings</td><td>optional</td><td><span class="st st-p">discussed</span></td><td>Semantic tags. Free-form, or values drawn from an ontology declared elsewhere (for example a JSON-LD <code>@context</code>). The protocol defines the shape of a tag set, not the values (IBM; CN)</td></tr><tr><td><code>scope</code></td><td>list of strings</td><td>ACL-required</td><td><span class="st st-o">proposed</span></td><td>Scope tags that access policy attaches to. Set by the system, never by the agent. Interchange only (§7). A scope tag is neither an access grant nor proof of ownership (IBM; Cognee §3.3; call)</td></tr><tr><td><code>created_at</code></td><td>ISO 8601 timestamp</td><td>required</td><td><span class="st st-a">no objection</span></td><td>When the memory was first created</td></tr><tr><td><code>version</code></td><td>opaque, with a declared comparator</td><td>required</td><td><span class="st st-d">open</span></td><td>The revision of this memory. See §6.1</td></tr><tr><td><code>updated_at</code></td><td>ISO 8601 timestamp</td><td>optional</td><td><span class="st st-d">open</span></td><td>When this revision was written. Whether it belongs in the header at all is open (issue I-4)</td></tr><tr><td><code>checksum</code></td><td>string (<code>algorithm:hex</code>)</td><td>audit-required</td><td><span class="st st-a">no objection</span></td><td>An integrity hash of the header-covered fields plus the body (CN; call)</td></tr><tr><td><code>provenance</code></td><td>list of contributors</td><td>required, with an accountable human audit-required</td><td><span class="st st-o">proposed</span></td><td>Everyone and everything that contributed. Replaces <code>author</code>. See §4</td></tr><tr><td><code>evidence</code></td><td>list of references or strings</td><td>optional, audit-required when the memory is derived</td><td><span class="st st-d">open</span></td><td>Where the memory came from. See §4.4</td></tr><tr><td><code>links</code></td><td>list of edges</td><td>optional</td><td><span class="st st-d">open</span></td><td>References to other memories. See §5</td></tr><tr><td><code>valid_from</code> / <code>invalidated_at</code></td><td>ISO 8601 timestamp</td><td>optional</td><td><span class="st st-o">proposed</span></td><td>When the claim applies and when it stopped applying, distinct from when it was recorded (IBM; Cognee §3.5)</td></tr><tr><td><code>status</code></td><td>string</td><td>optional</td><td><span class="st st-p">parked</span></td><td>Lifecycle or visibility state inside a store (for example draft, published). Possibly implementation-specific. If kept, interchange only (call; CN)</td></tr></tbody></table></div>
+<p>Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields (Cognee §5).</p>
+<hr>
+<h2>4. Provenance and evidence</h2>
+<h3>4.1 Contributor list <span class="st st-o">proposed</span></h3>
+<p><code>provenance</code> is a list. Each entry names one contributor:</p>
+<div class="wrap"><table><thead><tr><th>Key</th><th>Tier <span class="st st-e">editors</span></th><th>Meaning</th></tr></thead><tbody><tr><td><code>id</code></td><td>required</td><td>An identifier for the contributor (a person, an agent, a system)</td></tr><tr><td><code>kind</code></td><td>required</td><td><code>human</code>, <code>agent</code> or <code>system</code></td></tr><tr><td><code>role</code></td><td>optional</td><td>For example <code>author</code>, <code>instructed</code>, <code>approved</code>, <code>edited</code>, <code>imported</code> <span class="st st-d">open</span></td></tr><tr><td><code>ai_usage</code></td><td>optional</td><td><code>none</code>, <code>draft</code> or <code>full</code>, mirroring the human / mixed / AI split in the EU AI Act (IBM; call) <span class="st st-d">open</span></td></tr><tr><td><code>model</code></td><td>optional</td><td>The model or agent that acted, when <code>kind</code> is <code>agent</code></td></tr><tr><td><code>at</code></td><td>optional</td><td>When this contributor acted</td></tr></tbody></table></div>
+<p>A plain list lets a memory record, for example, that a person asked an agent to save something and the agent rewrote it, without forcing a single grade on the result (Sruly, call). Whether <code>role</code> and <code>ai_usage</code> are part of the core is open (issue I-3).</p>
+<h3>4.2 Writers are contributors <span class="st st-e">editors</span></h3>
+<p>Any process that writes a memory, including forget, consolidation and other maintenance agents, MUST appear in <code>provenance</code> like any other writer. The protocol does not define what those agents do (§11).</p>
+<h3>4.3 Accountable human <span class="st st-a">agreed</span></h3>
+<p>A memory is <strong>auditable</strong> if it can be traced to one or more accountable humans. In the audit profile (§10.4), every memory MUST carry at least one <code>provenance</code> entry with <code>kind: human</code>, and SHOULD mark who is accountable when several humans appear (for example the person who gave the instructions and the person who approved) <span class="st st-o">proposed</span>.</p>
+<h3>4.4 Evidence <span class="st st-d">open</span></h3>
+<p><code>evidence</code> links a memory back to what it was derived from: source material, transcript turns, or other memories. Each entry is either a reference to another memory's <code>identifier</code> (optionally at a version) or a plain string when the source is not addressable (call). Implementations SHOULD distinguish source material, transcripts, human assertions and machine-derived memories (Cognee §3.2; AIDP ground truth / transcripts / inferences). Evidence records origin, not truth.</p>
+<p>A derived memory whose evidence is unavailable MUST say so rather than omit the field silently (Cognee §3.2) <span class="st st-e">editors</span>.</p>
+<h3>4.5 Legacy stores <span class="st st-d">open</span></h3>
+<p>Stores without metadata (for example a folder of markdown memories) MAY fill <code>provenance</code> heuristically, for instance treating the harness as the agent and the local user as the human. An export built this way MUST declare that its provenance is inferred and that the memories are not auditable (call). How to declare it is issue I-9.</p>
+<hr>
+<h2>5. Links, lineage and edges</h2>
+<h3>5.1 A graph <span class="st st-a">agreed</span></h3>
+<p>Evidence and lineage form a graph whose nodes are memories and sources. How the graph is built, stored and traversed is left to the implementation. An audit-grade system MUST be able to reconstruct the full chain behind a memory. Other systems MAY leave nodes unconnected (call).</p>
+<h3>5.2 Depth <span class="st st-d">open</span></h3>
+<p>The protocol does not require full provenance on every object. The minimum lineage an audit-grade system must keep (n hops back, or the full chain) is open (issue I-6). Consolidation SHOULD name all its inputs (Cognee §3.4).</p>
+<h3>5.3 Links between memories <span class="st st-d">open</span></h3>
+<p>Memories MAY reference each other. Two carriers are under discussion, and they are not exclusive:</p>
+<ul><li><strong>Inline links in the body</strong>, for example wiki syntax <code>[[identifier]]</code> (CN). These work in any format that can carry text.</li><li><strong>Typed edges in the header</strong>, for example <code>links: [{target, rel}]</code>, with <code>rel</code> values such as <code>derived_from</code>, <code>supersedes</code>, <code>relates_to</code> (Cognee §3.4; IBM override).</li></ul>
+<p>Open: what a link targets (identifier, or identifier at a version), whether edges are typed in the core, and what happens when a target is missing from an export (§8.5). See issue I-5.</p>
+<hr>
+<h2>6. Versioning and lifecycle</h2>
+<h3>6.1 Version slot <span class="st st-d">open</span></h3>
+<p>Every memory carries a <code>version</code> field. Its format is left to the implementation (a sequence number, semantic version or other), but the implementation MUST declare a comparator that orders the versions of one memory (IBM). Wall-clock time SHOULD NOT be the comparator (call). Whatever the group decides in issue I-4, the <code>version</code> slot stays, so implementations with richer history have a place to expose it <span class="st st-e">editors</span>.</p>
+<h3>6.2 Immutable revisions <span class="st st-d">open</span></h3>
+<p>A change SHOULD create a new revision that supersedes the old one, rather than overwrite it in place, so history can be read "as of" a point in time (IBM; Cognee §3.1; CN). This is RECOMMENDED, not required, because a hard rule breaks markdown-on-disk stores (call). <strong>Proposed by the editors:</strong> in the audit profile (§10.4), immutable revisions and a verifiable history (for example a hash chain) are REQUIRED.</p>
+<h3>6.3 Invalidation and supersession <span class="st st-o">proposed</span></h3>
+<p>Recording time is distinct from when a claim applies (Cognee §3.5). A memory MAY be invalidated (<code>invalidated_at</code>) without being deleted (IBM). A newer revision or another memory MAY supersede it. Current reads SHOULD exclude invalidated memories, and historical reads SHOULD be explicit (Cognee §3.5).</p>
+<h3>6.4 Delete <span class="st st-o">proposed</span></h3>
+<p>A conforming store MAY delete a memory (IBM; AIDP <code>/fmp/delete</code>; Cognee; CN). A delete SHOULD leave an audit record (who, when, why) with no content. A delete does not by itself stop the content from coming back on a later import.</p>
+<h3>6.5 Forget, tombstones and anti-resurrection <span class="st st-o">proposed, not discussed on the call</span></h3>
+<p>A <strong>forget</strong> erases a memory's content on purpose, for example to honor an erasure request, while its history stays verifiable (Cognee §3.5; CN §6.3). A <strong>tombstone</strong> is the record a forget leaves behind. This section states the outcomes a conforming store delivers. How a store achieves them is left to implementations (§11).</p>
+<ul><li>After a forget, the content of every revision it covers MUST NOT be retrievable from the store or from its exports.</li><li>A store that offers a verifiable history (§6.2) MUST still verify after a forget.</li><li>A forget MUST leave a tombstone that records when it happened, who did it and why. The tombstone MUST NOT contain the forgotten content.</li><li><strong>Anti-resurrection.</strong> A receiving system MUST NOT restore forgotten content from an older archive or a pre-forget copy. Tombstones travel with exports (§8) so that receivers can tell.</li></ul>
+<p>Without tombstones, an interchange rule that turns every re-import into a new memory lets an invalidated or deleted memory come back from an old archive (Cognee §3.5). Cross-draft adapter fixtures reproduce this case. Whether tombstones belong in the core or in the audit profile is issue I-7.</p>
+<hr>
+<h2>7. Representations</h2>
+<h3>7.1 Interchange is a superset of runtime <span class="st st-a">agreed</span></h3>
+<p>There are two representations of the same memory (call):</p>
+<ul><li><strong>Interchange</strong> (export and import, migration): the full header, including operational fields a receiving system needs to integrate the memory.</li><li><strong>Runtime</strong> (what an agent sees): a projection of the interchange form. It omits fields that would add noise to the agent's context or reveal how the store is organized.</li></ul>
+<p>This lines up with keeping metadata out of the agent's view, for example a markdown body the agent reads with structured metadata stored separately (AIDP, thread).</p>
+<h3>7.2 Field placement <span class="st st-o">proposed</span></h3>
+<div class="wrap"><table><thead><tr><th>Field</th><th>Interchange</th><th>Runtime</th></tr></thead><tbody><tr><td><code>identifier</code>, <code>type</code>, <code>body</code></td><td>yes</td><td>yes</td></tr><tr><td><code>title</code>, <code>tags</code>, <code>created_at</code></td><td>yes</td><td>yes</td></tr><tr><td><code>version</code>, <code>updated_at</code>, <code>valid_from</code>, <code>invalidated_at</code></td><td>yes</td><td>when the implementation needs them</td></tr><tr><td><code>provenance</code></td><td>yes</td><td>a summary MAY be shown (for example the author)</td></tr><tr><td><code>evidence</code>, <code>links</code></td><td>yes</td><td>MAY be shown</td></tr><tr><td><code>checksum</code></td><td>yes</td><td>no</td></tr><tr><td><code>scope</code></td><td>yes</td><td>no</td></tr><tr><td><code>status</code></td><td>yes, if kept</td><td>no</td></tr><tr><td>tombstones, audit records</td><td>yes</td><td>no</td></tr></tbody></table></div>
+<p>Runtime access control is enforced by the serving system using interchange fields. The agent does not need to see them (call).</p>
+<hr>
+<h2>8. Exchange</h2>
+<h3>8.1 Manifest <span class="st st-o">proposed</span></h3>
+<p>Every export SHOULD begin with a manifest that declares the protocol version, the profiles it follows (§10), the body formats present, whether it is a complete snapshot or a selection, and any required extensions (Cognee §3.6). Absence from a partial export MUST NOT be read as deletion (Cognee §3.6).</p>
+<h3>8.2 Transfer intent <span class="st st-d">open</span></h3>
+<p>An export MUST declare its intent (Cognee §3.6):</p>
+<ul><li><strong>copy</strong>: the source keeps its memories.</li><li><strong>move</strong>: the source deletes its memories only after a durable, conforming import on the receiving side.</li><li><strong>federation</strong>: no transfer. The memory is read where it resides (AIDP).</li></ul>
+<p>IBM's draft treats a memory as valid in one system at a time, with an import creating a new memory in the receiving system. Cognee's draft keeps the origin identity across copies. Whether an imported memory keeps its origin <code>identifier</code> or receives a new one with a recorded mapping is issue I-8. A receiving system that assigns its own identifiers MUST keep the origin-to-local mapping (Cognee §3.1) <span class="st st-e">editors</span>.</p>
+<h3>8.3 Fidelity <span class="st st-o">proposed, raised in the thread, not discussed on the call</span></h3>
+<p>The receiving side SHOULD be able to check that it received the same memory with the same history. In the audit profile, it MUST be able to, using <code>checksum</code> and the verifiable history (§6.2).</p>
+<h3>8.4 Receipts <span class="st st-o">proposed, not discussed on the call</span></h3>
+<p>An import SHOULD produce a receipt that lists, per memory, whether it was accepted, transformed, omitted or rejected, with reasons and any identifier mappings (Cognee §3.6). Retries MUST NOT duplicate memories.</p>
+<h3>8.5 Dangling links <span class="st st-d">open, not discussed on the call</span></h3>
+<p>In a partial export, a link or evidence reference may point to a memory that was not included or was deleted. The receiving system MUST NOT fail the import for this reason. Whether it keeps the reference as unresolved, drops it, or reports it in the receipt is issue I-5.</p>
+<h3>8.6 Credentials <span class="st st-e">editors</span></h3>
+<p>Credentials (passwords, API keys, tokens) are not memory and MUST NOT be exported as memory (Cognee §3.3).</p>
+<hr>
+<h2>9. Runtime binding</h2>
+<h3>9.1 What crosses the binding <span class="st st-o">proposed</span></h3>
+<p>At runtime, memory reaches an agent in three ways (call):</p>
+<ol><li><strong>File access</strong>: the agent reads memory files with shell or file tools.</li><li><strong>Tools</strong>: the agent calls explicit remember and recall tools exposed by a memory server.</li><li><strong>Hooks</strong>: a supervisor observes or decorates the conversation without the agent knowing, deciding what to add to a session and what to store (IBM observe / decorate; AIDP plugins).</li></ol>
+<p>The protocol standardizes the <strong>shape of the memory objects</strong> that cross these surfaces, meaning the runtime representation of §7, not a new transport.</p>
+<h3>9.2 Candidate binding: MCP <span class="st st-o">proposed, not agreed</span></h3>
+<p>MCP was proposed as the home for the runtime binding: tools for remember and recall, interceptors for hooks, and file access as a tool (IBM; call). It is <strong>not agreed</strong>. Some implementers find hooks more controllable than MCP tools, and some find a CLI more reliable for retrieval isolation (call). SEP-2640 (Skills over MCP) was suggested as a way to get progressive disclosure over MCP without a file system (AIDP, thread). See issue I-10.</p>
+<h3>9.3 Recall is not standardized <span class="st st-a">agreed</span></h3>
+<p>The protocol MUST NOT fix a signature for recall. Implementations provide their own recall and their own guidance on using it. The protocol defines what recall returns (memory objects in the runtime representation), not how it is called (call).</p>
+<p>A write needs, at minimum, an author, a time, and whether it creates a memory or revises an existing one (call) <span class="st st-o">proposed</span>.</p>
+<h3>9.4 Federation <span class="st st-a">agreed</span></h3>
+<p>When several memory servers are connected, a federation layer MAY sit between them and the agent and present one unified memory. How it merges results and combines scopes is left to the implementation (AIDP; call). Identity MUST pass through the federation layer to each server (call).</p>
+<h3>9.5 Change notification <span class="st st-d">open, raised in the thread</span></h3>
+<p>Memory can change during a session. How a harness learns that a memory it already loaded has changed (for example through MCP resource subscriptions) is issue I-11.</p>
+<h3>9.6 Multiple memories <span class="st st-d">open</span></h3>
+<p>Whether a server returns several memories compiled into one payload or as separate objects, and whether memories can nest, is issue I-12. If they are returned separately, each carries its own runtime header.</p>
+<hr>
+<h2>10. Conformance levels <span class="st st-e">editors</span></h2>
+<p>Profiles let a deployment claim only what it implements (Cognee §5). An export's manifest declares its profiles.</p>
+<h3>10.1 Minimal profile</h3>
+<p>The required fields of §3.2, a body with a declared <code>type</code>, and an export that preserves unknown fields. Meant to be reachable from a folder of markdown memories.</p>
+<h3>10.2 Markdown loading profile</h3>
+<p>The directory and loading contract of Packer: a root <code>MEMORY.md</code>, deeper files deferred, deferred memory surfaced one level down, and selective reads (Packer). Header fields are carried as front matter or in a sidecar. When a projection to this profile drops fields, it MUST declare the loss (Cognee §2).</p>
+<h3>10.3 Federation binding</h3>
+<p>The endpoint set of AIDP / FMP (upload, search, read, delete, and a required capability endpoint), carrying memory objects in the runtime representation (AIDP). Each server declares its capabilities.</p>
+<h3>10.4 Audit profile</h3>
+<p>Everything in the minimal profile, plus: an accountable human in every memory's <code>provenance</code> (§4.3), <code>checksum</code> on every memory, immutable revisions with a verifiable history (§6.2), evidence on derived memories (§4.4), recorded lifecycle events including deletes, and, if adopted (issue I-7), tombstones and anti-resurrection (§6.5).</p>
+<hr>
+<h2>11. Out of scope</h2>
+<p>Left to implementations, so that they can compete and improve on them:</p>
+<ul><li>The recall function signature, ranking and retrieval algorithms <span class="st st-a">agreed</span>.</li><li>Federation merge and ranking logic (§9.4) <span class="st st-a">agreed</span>.</li><li>Memory-maintenance agents (forget, consolidation, "dream" agents) and their algorithms. Their writes still carry provenance (§4.2).</li><li>Forget mechanics: how content is erased, what a store keeps so its history still verifies, and the tombstone format beyond the fields named in §6.5.</li><li>Retrieval isolation, such as limits on graph traversal depth.</li><li>Audit-log storage and delivery. The protocol may define a flag saying whether a memory or a retrieval is auditable (issue I-13), but not the log.</li><li>Storage, indexing, embeddings and internal mutation (all drafts).</li><li>Access-control systems. The protocol carries <code>scope</code> tags that access policy attaches to, but does not define the policy language (IBM; CN).</li></ul>
+<hr>
+<h2>12. Open issues</h2>
+<div class="wrap"><table><thead><tr><th>#</th><th>Issue</th><th>Where</th></tr></thead><tbody><tr><td>I-1</td><td>What it means for a markdown-first profile that markdown is the common body format rather than the base object</td><td>§2.2, §10.2</td></tr><tr><td>I-2</td><td>The atomic unit: the smallest meaningful claim, or a document</td><td>§2.3</td></tr><tr><td>I-3</td><td>The shape of provenance: whether <code>role</code> and <code>ai_usage</code> are core, and how to record several accountable humans</td><td>§4.1, §4.3</td></tr><tr><td>I-4</td><td>Versioning: whether <code>version</code> form is constrained, whether in-place updates are allowed, and whether <code>updated_at</code> belongs</td><td>§6.1, §6.2</td></tr><tr><td>I-5</td><td>Links: inline, header edges, or both; what a link targets; handling of dangling links</td><td>§5.3, §8.5</td></tr><tr><td>I-6</td><td>Lineage depth required for audit</td><td>§5.2</td></tr><tr><td>I-7</td><td>Tombstones and anti-resurrection: core or audit profile</td><td>§6.5</td></tr><tr><td>I-8</td><td>Identity on import: keep the origin identifier, or assign a new one with a mapping</td><td>§8.2</td></tr><tr><td>I-9</td><td>How an export declares inferred, non-auditable provenance</td><td>§4.5</td></tr><tr><td>I-10</td><td>Runtime binding: MCP, hooks, CLI, or several</td><td>§9.2</td></tr><tr><td>I-11</td><td>Change notification during a session</td><td>§9.5</td></tr><tr><td>I-12</td><td>Compiled vs separate memories at runtime, and nesting</td><td>§9.6</td></tr><tr><td>I-13</td><td>An auditable flag on memories and retrievals</td><td>§11</td></tr><tr><td>I-14</td><td>Status and visibility: standardize or leave to implementations (parked)</td><td>§3.2</td></tr><tr><td>I-15</td><td>Identity and scope granularity for federation</td><td>§9.4</td></tr><tr><td>I-16</td><td>Whether the tier assignments in §3.2 hold</td><td>§3</td></tr></tbody></table></div>
+<hr>
+<h2>Appendix A. Example header in JSON (interchange)</h2>
+<pre><code>{
+  &quot;identifier&quot;: &quot;team/preferences/status-update-day&quot;,
+  &quot;title&quot;: &quot;Status updates move to Friday&quot;,
+  &quot;type&quot;: &quot;text/markdown&quot;,
+  &quot;tags&quot;: [&quot;preference&quot;, &quot;team-process&quot;],
+  &quot;scope&quot;: [&quot;team:platform&quot;],
+  &quot;created_at&quot;: &quot;2026-09-01T14:02:00Z&quot;,
+  &quot;version&quot;: { &quot;value&quot;: 2, &quot;comparator&quot;: &quot;integer&quot; },
+  &quot;updated_at&quot;: &quot;2026-09-15T09:30:00Z&quot;,
+  &quot;valid_from&quot;: &quot;2026-09-15T00:00:00Z&quot;,
+  &quot;checksum&quot;: &quot;sha256:9f2c1e0b6d4a8f3e2b1c7d5a9e0f4b3c8d2a6e1f7b9c3d5e8a0f2b4c6d1e3a5&quot;,
+  &quot;provenance&quot;: [
+    { &quot;id&quot;: &quot;user:jordan&quot;, &quot;kind&quot;: &quot;human&quot;, &quot;role&quot;: &quot;instructed&quot;, &quot;at&quot;: &quot;2026-09-15T09:28:00Z&quot; },
+    { &quot;id&quot;: &quot;agent:notes-assistant&quot;, &quot;kind&quot;: &quot;agent&quot;, &quot;role&quot;: &quot;author&quot;, &quot;ai_usage&quot;: &quot;full&quot;, &quot;model&quot;: &quot;example-model-1&quot; },
+    { &quot;id&quot;: &quot;user:sam&quot;, &quot;kind&quot;: &quot;human&quot;, &quot;role&quot;: &quot;approved&quot;, &quot;at&quot;: &quot;2026-09-15T09:30:00Z&quot; }
+  ],
+  &quot;evidence&quot;: [
+    { &quot;ref&quot;: &quot;transcripts/2026-09-15-standup#turn-14&quot; },
+    { &quot;ref&quot;: &quot;team/preferences/status-update-day&quot;, &quot;version&quot;: 1 }
+  ],
+  &quot;links&quot;: [
+    { &quot;target&quot;: &quot;team/preferences/status-update-day&quot;, &quot;version&quot;: 1, &quot;rel&quot;: &quot;supersedes&quot; }
+  ],
+  &quot;body&quot;: &quot;Status updates are due Fridays from Sep 15. They were due Tuesdays before that.&quot;
+}</code></pre>
+<h2>Appendix B. The same memory as markdown with front matter (runtime projection)</h2>
+<pre><code>---
+identifier: team/preferences/status-update-day
+title: Status updates move to Friday
+type: text/markdown
+tags: [preference, team-process]
+created_at: 2026-09-01T14:02:00Z
+version: 2
+provenance:
+  - { id: user:jordan, kind: human, role: instructed }
+  - { id: agent:notes-assistant, kind: agent, role: author }
+---
+
+Status updates are due Fridays from Sep 15. They were due Tuesdays
+before that. Supersedes [[team/preferences/status-update-day@1]].</code></pre>
+<p><code>scope</code>, <code>checksum</code>, <code>approved</code> provenance entries and the audit fields are omitted from the runtime projection (§7.2). They remain in the interchange form.</p>
+<hr>
+<h2>Acknowledgements</h2>
+<p>Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card), and from the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar.</p>
+</main></body></html>
