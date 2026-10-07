@@ -1,3 +1,13 @@
+# Here is the latest
+
+- **October 2: working spec v0.1.** An editors' draft brings together the memory object, exchange format, and runtime representation. **Open for review; not an adopted standard.** [Read the draft](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/blob/a6c40e64969e0089ff7cad7397aea27a335a8c81/working-group/exchange-and-runtime/2026-10-02-working-spec-v0.1.md) · [Discuss in PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13)
+- **October 2: Hermes memory round-trip field report.** An implementation report tests what survives export and import, identifies fidelity gaps, and proposes changes to receipts, timestamps, and ownership metadata. **Open contribution.** [Read and discuss in PR #12](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/12)
+- **September 28: where the drafts agree.** The working group's comparison matrix and call notes map shared ground, unresolved questions, and next steps. **Merged into this repository.** [Read the working notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md)
+
+[All open proposals and contributions](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pulls) · [Full artifact list](#artifacts) · [How to contribute](#how-to-contribute)
+
+---
+
 <p align="center">
   <img src="media/ompi-logo.png" alt="Open Memory Protocol Initiative" width="640">
 </p>
@@ -34,7 +44,7 @@
 
 ---
 
-> **Current stage.** OMPI is an open-source ecosystem in early public development. The v0.1 draft technology and experimental Python implementation are open for community iteration, and the ecosystem's first public convening is **September 9, 2026** (online, co-hosted with Mozilla and IBM). All artifacts in this repository are developed openly for use, adoption, and iteration by contributors and implementers across the ecosystem.
+> **Current stage.** OMPI is in early public development. Working groups are comparing proposals, developing a shared working draft, and testing memory portability. Drafts and experimental implementations are open for community review and iteration.
 
 <p align="center">
   <a href="https://discord.gg/7DbzzxZ9y">
@@ -51,32 +61,6 @@
 The **Open Memory Protocol (OMP)** is an open, royalty-free technology for portable, interoperable memory across AI agents and services. The **Open Memory Protocol Initiative (OMPI)** is the multi-stakeholder, vendor-neutral open-source ecosystem that develops, maintains, and grows OMP. OMPI is hosted at the [AI Disclosures Project](https://ai-disclosures.org/), a project of [Code for Science & Society](https://www.codeforsociety.org/).
 
 This repository is the technical and governance home of the ecosystem.
-
-## Key Artifacts
-
-### Specs
-
-- **Letta Draft Spec v0.2** — Updated draft by Charles Packer (Letta). Expanded schema, provenance, and lifecycle definitions. [`early-draft-specs/draft-v0.2-packer.pdf`](early-draft-specs/draft-v0.2-packer.pdf)
-
-- **IBM Draft Spec v0.1** — IBM's initial draft OMP specification. [`early-draft-specs/draft-v0.1-ibm.pdf`](early-draft-specs/draft-v0.1-ibm.pdf)
-
-- **AI Disclosures Project Draft Spec v0.1** — Draft OMP specification from the AI Disclosures Project, authored by Sruly Rosenblat. [`early-draft-specs/draft-v0.1-aidp.pdf`](early-draft-specs/draft-v0.1-aidp.pdf)
-
-- **Cognee / COGX Proposal v0.1** — A semantic core for portable agent memory: identity, evidence, authority, lineage, lifecycle, and exchange fidelity. Uses COGX as an implemented reference input, distinguishes current capabilities from proposed guarantees, and positions Markdown as a profile and runtime APIs and federation as bindings. [PDF](early-draft-specs/draft-v0.1-cognee.pdf) · [Markdown source](early-draft-specs/draft-v0.1-cognee.md)
-
-- **Context Nest Proposal v0.1** — A governed Markdown profile for portable agent memory: eight front-matter keys and in-prose links as the atomic unit, `contextnest://` addressing with checkpoint-pinned replay, a selector grammar for scoped memory views, append-only hash-chained version history, and a proposed forget protocol that erases content while keeping verification intact. Separates implemented from proposed. [Markdown](early-draft-specs/draft-v0.1-contextnest.md)
-
-- **Agent Memory System Card (AMS Card)** — A structured documentation format for agent memory systems, by [Mila](https://mila.quebec/) and [Mozilla](https://mozilla.org). Model cards made language models legible; dataset cards did the same for training data — memory systems had no equivalent until now. Template, reference card, and evaluation framework: [`mila-iqia/agent-memory-system-card`](https://github.com/mila-iqia/agent-memory-system-card/) (goes live Sep 9). Draft, open for comment. [`early-draft-specs/ams-card.md`](early-draft-specs/ams-card.md)
-
-- **`me.md`** — Draft personal-sovereignty memory protocol authored by David Hamilton (Block / goose). A user-owned, plain-file protocol for what agents know about you: files live on the user's machine, agents may only *propose* additions, and the user decides what becomes memory. Complementary discussion draft in the OMP ecosystem. Canonical source: [`github.com/block/me.md`](https://github.com/block/me.md)
-
-### Other
-
-- **Memory Ecosystem Scoping Note** — Surveys current memory implementations and shared primitives an open technology can standardize (August 2026). [`early-draft-specs/scoping-note-2026-09.pdf`](early-draft-specs/scoping-note-2026-09.pdf)
-
-- **Python Implementation** — Draft loader, validator, and harness contract for the draft open memory protocol technology. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)
-
-- **ACP-Based MCP Memory-Server Prototype** — An old experimental prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`. [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)
 
 ## Why an Open Protocol
 
@@ -95,31 +79,6 @@ The ecosystem's brief [scoping note](early-draft-specs/scoping-note-2026-09.pdf)
 3. **Lifecycle operations.** Memory treated as something with a lifecycle: create (remember), read (recall), update (correct or revise), delete (forget). Explicit in Hermes, Letta, Foundry, Copilot Studio, and various coding harnesses.
 4. **Selective retrieval.** Agents request the memories relevant to the current task rather than loading the entire memory store.
 5. **Controls and policy.** Rules for privacy, access, retention, provenance, and permission.
-
-## Repository Layout
-
-```
-Open-Memory-Protocol/
-├── early-draft-specs/           — specifications & scoping notes
-│   ├── draft-v0.2-packer.pdf       (Packer draft technology spec, v0.2)
-│   ├── draft-v0.1-ibm.pdf          (IBM draft technology spec, v0.1)
-│   ├── draft-v0.1-aidp.pdf         (AI Disclosures Project draft, v0.1)
-│   ├── draft-v0.1-cognee.pdf       (Cognee / COGX exchange proposal, v0.1)
-│   ├── draft-v0.1-cognee.md        (editable source of the Cognee proposal)
-│   ├── draft-v0.1-contextnest.md   (Context Nest proposal, v0.1)
-│   ├── ams-card.md                 (Agent Memory System Card — Mila & Mozilla)
-│   └── scoping-note-2026-09.pdf    (Strauss & Rosenblat scoping note, Sept 2026)
-├── prototypes/                 — experimental code
-│   ├── python-loader-validator/    (Python loader + validator sketch)
-│   └── acp_memory_server/          (ACP-based MCP memory-server prototype)
-├── research/                   — research notes, background reading, essays
-├── docs/                       — contributing guide and other docs
-├── media/                      — logo and visual assets
-├── GOVERNANCE.md               — Technical Steering Group, decision process, licensing
-└── README.md
-```
-
-Three top-level content folders (`early-draft-specs/`, `prototypes/`, `research/`) plus supporting files at the repo root.
 
 ## First vertical: coding agents
 
@@ -155,6 +114,59 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 - **August 2026** — Charles Packer (Letta) circulates the draft OMP technology, reviewed by the AI Disclosures Project team; current version at [`early-draft-specs/draft-v0.2-packer.pdf`](early-draft-specs/draft-v0.2-packer.pdf). OMPI consolidates its work in this repository as the canonical technical and governance home.
 - **September 9, 2026** — First ecosystem convening, co-hosted with Mozilla and IBM.
 - **October 2026** — In-person ecosystem gathering at the O'Reilly open-source unconference (Berkeley).
+
+## Artifacts
+
+### Drafts and proposals
+
+- **Letta Draft Spec v0.2** — Updated draft by Charles Packer (Letta). Expanded schema, provenance, and lifecycle definitions. [`early-draft-specs/draft-v0.2-packer.pdf`](early-draft-specs/draft-v0.2-packer.pdf)
+
+- **IBM Draft Spec v0.1** — IBM's initial draft OMP specification. [`early-draft-specs/draft-v0.1-ibm.pdf`](early-draft-specs/draft-v0.1-ibm.pdf)
+
+- **AI Disclosures Project Draft Spec v0.1** — Draft OMP specification from the AI Disclosures Project, authored by Sruly Rosenblat. [`early-draft-specs/draft-v0.1-aidp.pdf`](early-draft-specs/draft-v0.1-aidp.pdf)
+
+- **Cognee / COGX Proposal v0.1** — A semantic core for portable agent memory: identity, evidence, authority, lineage, lifecycle, and exchange fidelity. Uses COGX as an implemented reference input, distinguishes current capabilities from proposed guarantees, and positions Markdown as a profile and runtime APIs and federation as bindings. [PDF](early-draft-specs/draft-v0.1-cognee.pdf) · [Markdown source](early-draft-specs/draft-v0.1-cognee.md)
+
+- **Context Nest Proposal v0.1** — A governed Markdown profile for portable agent memory: eight front-matter keys and in-prose links as the atomic unit, `contextnest://` addressing with checkpoint-pinned replay, a selector grammar for scoped memory views, append-only hash-chained version history, and a proposed forget protocol that erases content while keeping verification intact. Separates implemented from proposed. [Markdown](early-draft-specs/draft-v0.1-contextnest.md)
+
+- **`me.md`** — Draft personal-sovereignty memory protocol authored by David Hamilton (Block / goose). A user-owned, plain-file protocol for what agents know about you: files live on the user's machine, agents may only *propose* additions, and the user decides what becomes memory. Complementary discussion draft in the OMP ecosystem. Canonical source: [`github.com/block/me.md`](https://github.com/block/me.md)
+
+### Documentation and research
+
+- **Agent Memory System Card (AMS Card)** — A structured documentation format for agent memory systems, by [Mila](https://mila.quebec/) and [Mozilla](https://mozilla.org). Model cards made language models legible; dataset cards did the same for training data — memory systems had no equivalent until now. Template, reference card, and evaluation framework: [`mila-iqia/agent-memory-system-card`](https://github.com/mila-iqia/agent-memory-system-card/). Draft, open for comment. [`early-draft-specs/ams-card.md`](early-draft-specs/ams-card.md)
+
+- **Memory Ecosystem Scoping Note** — Surveys current memory implementations and shared primitives an open technology can standardize (August 2026). [`early-draft-specs/scoping-note-2026-09.pdf`](early-draft-specs/scoping-note-2026-09.pdf)
+
+### Code and prototypes
+
+- **Python Implementation** — Draft loader, validator, and harness contract for the draft open memory protocol technology. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)
+
+- **ACP-Based MCP Memory-Server Prototype** — An old experimental prototype indexing sessions across twelve coding-agent harnesses (Claude Code, Codex, Goose, Cursor, Cline, Roo, Kilo, Zed, Gemini CLI, Qwen Code, Continue, Aider). Originated in [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) with first commits in *May 2026*; imported here at upstream commit `02b8d92`. [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)
+
+## Repository Layout
+
+```
+Open-Memory-Protocol/
+├── early-draft-specs/           — specifications & scoping notes
+│   ├── draft-v0.2-packer.pdf       (Packer draft technology spec, v0.2)
+│   ├── draft-v0.1-ibm.pdf          (IBM draft technology spec, v0.1)
+│   ├── draft-v0.1-aidp.pdf         (AI Disclosures Project draft, v0.1)
+│   ├── draft-v0.1-cognee.pdf       (Cognee / COGX exchange proposal, v0.1)
+│   ├── draft-v0.1-cognee.md        (editable source of the Cognee proposal)
+│   ├── draft-v0.1-contextnest.md   (Context Nest proposal, v0.1)
+│   ├── ams-card.md                 (Agent Memory System Card — Mila & Mozilla)
+│   └── scoping-note-2026-09.pdf    (Strauss & Rosenblat scoping note, Sept 2026)
+├── prototypes/                 — experimental code
+│   ├── python-loader-validator/    (Python loader + validator sketch)
+│   └── acp_memory_server/          (ACP-based MCP memory-server prototype)
+├── research/                   — research notes, background reading, essays
+├── docs/                       — contributing guide and other docs
+├── media/                      — logo and visual assets
+├── GOVERNANCE.md               — Technical Steering Group, decision process, licensing
+└── README.md
+```
+
+Three top-level content folders (`early-draft-specs/`, `prototypes/`, `research/`) plus supporting files at the repo root.
 
 ## Ecosystem recruitment network
 
