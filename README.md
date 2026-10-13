@@ -124,7 +124,7 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 
 - **IBM Draft Spec v0.1** — IBM's initial draft OMP specification. [`early-draft-specs/draft-v0.1-ibm.pdf`](early-draft-specs/draft-v0.1-ibm.pdf)
 
-- **AI Disclosures Project Draft Spec v0.1** — Draft OMP specification from the AI Disclosures Project, authored by Sruly Rosenblat. [`early-draft-specs/draft-v0.1-aidp.pdf`](early-draft-specs/draft-v0.1-aidp.pdf)
+- **AI Disclosures Project Federated Memory Protocol Draft v1.1** — Updated FMP proposal from the AI Disclosures Project, authored by Sruly Rosenblat (October 13, 2026). [`early-draft-specs/draft-v1.1-aidp.pdf`](early-draft-specs/draft-v1.1-aidp.pdf)
 
 - **Cognee / COGX Proposal v0.1** — A semantic core for portable agent memory: identity, evidence, authority, lineage, lifecycle, and exchange fidelity. Uses COGX as an implemented reference input, distinguishes current capabilities from proposed guarantees, and positions Markdown as a profile and runtime APIs and federation as bindings. [PDF](early-draft-specs/draft-v0.1-cognee.pdf) · [Markdown source](early-draft-specs/draft-v0.1-cognee.md)
 
@@ -151,7 +151,7 @@ Open-Memory-Protocol/
 ├── early-draft-specs/           — specifications & scoping notes
 │   ├── draft-v0.2-packer.pdf       (Packer draft technology spec, v0.2)
 │   ├── draft-v0.1-ibm.pdf          (IBM draft technology spec, v0.1)
-│   ├── draft-v0.1-aidp.pdf         (AI Disclosures Project draft, v0.1)
+│   ├── draft-v1.1-aidp.pdf         (AI Disclosures Project FMP draft, v1.1)
 │   ├── draft-v0.1-cognee.pdf       (Cognee / COGX exchange proposal, v0.1)
 │   ├── draft-v0.1-cognee.md        (editable source of the Cognee proposal)
 │   ├── draft-v0.1-contextnest.md   (Context Nest proposal, v0.1)
