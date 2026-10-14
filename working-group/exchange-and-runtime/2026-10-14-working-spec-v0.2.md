@@ -11,6 +11,7 @@
 - `version` is **audit-required**, not required. Stores that change memories in place and stores that never change them are both supported (10-14, §6).
 - **`valid_until`** replaces `invalidated_at` and may be a future date (10-14). `created_at` records when the system learned something; `valid_from` records when it became true (10-14).
 - `provenance` is optional outside the audit profile. An exporter that doesn't know who wrote a memory leaves it out rather than inventing it (review, §4.5).
+- New open issues I-17 to I-23.
 - New: a `stub` flag (§2.4), `path` kept separate from `identifier` (§3.2), `origin` and `exported_at` in the manifest (§8.1), a rule for dangling references (§8.5), and a note on trust when importing (§8.7).
 - Accuracy and confidence are handled through provenance and evidence, as an editors' proposal (§4.6).
 - The thin core with semantic conventions is listed as an open proposal (§3.3).
@@ -464,6 +465,7 @@ Left to implementations, so that they can compete and improve on them:
 | I-20 | Accuracy and confidence through provenance and evidence (editors' proposal), vs a standard field (Cognee PR #16) | §4.6 |
 | I-21 | A thin core with separately versioned semantic conventions (review) | §3.3 |
 | I-22 | Trust and sanitization of imported memories | §8.7 |
+| I-23 | Use cases not yet covered (#use-cases list): contradictions kept and flagged rather than resolved (for example a `contradicts` link rel, or `contribution: contradicted` per §4.6), consent to hand a memory over, and consent to learn from a memory | §4.6, §5.3 |
 
 ---
 
