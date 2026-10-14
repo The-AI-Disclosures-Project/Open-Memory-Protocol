@@ -53,9 +53,10 @@ The **Open Memory Protocol (OMP)** is an open, royalty-free technology for porta
 
 This repository is the technical and governance home of the ecosystem.
 
-### The Latest
+### Most Recent Work
 
 - **October 2: working spec v0.1.** An editors' draft brings together the memory object, exchange format, and runtime representation. **Open for review; not an adopted standard.** [Read the draft](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/blob/a6c40e64969e0089ff7cad7397aea27a335a8c81/working-group/exchange-and-runtime/2026-10-02-working-spec-v0.1.md) · [Discuss in PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13)
+
 - **September 28: where the drafts agree.** The working group's comparison matrix and call notes map shared ground, unresolved questions, and next steps. **Merged into this repository.** [Read the working notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md)
 
 [All open proposals and contributions](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pulls) · [Full artifact list](#artifacts) · [How to contribute](#how-to-contribute)
