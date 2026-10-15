@@ -55,11 +55,11 @@ This repository is the technical and governance home of the ecosystem.
 
 ### Start here: current work
 
-- **[PR #13: exchange-and-runtime working specification v0.2](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13).** Updated October 14 with review feedback and the technical working meeting. This editors' draft brings together the memory object, exchange format, and runtime representation. **Open for review; not an adopted standard.**
+- **[PR #13: exchange-and-runtime working specification v0.2](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13).** Updated October 14 with review feedback and the technical working meeting. This editors' draft brings together the memory object, exchange format, and runtime representation. **Open for review; not an adopted protocol.**
 
-- **[PR #16: Cognee's additional metadata proposals](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/16).** Covers identity, evidence, validity, and accuracy. Overlapping proposals are referenced in v0.2. **Draft PR, open for review; not an adopted standard.**
+- **[PR #16: Cognee's additional metadata proposals](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/16).** Covers identity, evidence, validity, and accuracy. Overlapping proposals are referenced in v0.2. **Draft PR, open for review; not an adopted protocol.**
 
-- **[PR #17: memory security and threat model](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17).** Covers adversarial content, source trust, and preventing forgotten memories from returning through import. Written against v0.1; read alongside the updated specification in PR #13. **Open for review; not an adopted standard.**
+- **[PR #17: memory security and threat model](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17).** Covers adversarial content, source trust, and preventing forgotten memories from returning through import. Written against v0.1; read alongside the updated specification in PR #13. **Open for review; not an adopted protocol.**
 
 - **Background — September 28: comparison matrix and working notes.** The working group's comparison matrix and call notes map shared ground, unresolved questions, and next steps. **Merged into this repository.** [Read the working notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md)
 
@@ -78,7 +78,7 @@ The fragmentation has real engineering and security costs. Developers write besp
 
 ## Shared practices in the ecosystem
 
-The ecosystem's brief [scoping note](early-draft-specs/scoping-note-2026-09.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open technology can standardize. These are the concrete issues the working group will iterate on:
+The ecosystem's brief [scoping note](early-draft-specs/scoping-note-2026-09.pdf) surveys memory implementations across coding harnesses, consumer assistants, and enterprise agent systems and identifies shared practices that a minimal open protocol can standardize. These are the concrete issues the working group will iterate on:
 
 1. **Persistent memory across sessions.** Memory that survives across chat sessions rather than disappearing at conversation end. Present in Claude Code, OpenHands, Hermes, VS Code / Copilot, Deep Agents, ChatGPT, Gemini, AWS AgentCore, Vertex Memory Bank, and Microsoft Foundry.
 2. **Scope and ownership.** Every memory tied to an owner or context — user, project, agent, team, or organization. Labels vary across systems, but each can answer "whose memory is this?"
@@ -88,7 +88,7 @@ The ecosystem's brief [scoping note](early-draft-specs/scoping-note-2026-09.pdf)
 
 ## First vertical: coding agents
 
-The ecosystem's initial implementation focus will be compatibility with coding-agents, where memory lock-in is most acute and developer adoption of standardized tooling is fastest. Early implementations explore memory transfer across Claude Code, Codex, goose, and Letta Code as a first implementation.
+The ecosystem's initial implementation focus will be compatibility with coding-agents, where memory lock-in is most acute and developer adoption of protocols are fastest. Early implementations explore memory transfer across Claude Code, Codex, goose, and Letta Code as a first implementation.
 
 ## Ecosystem partners
 
@@ -99,7 +99,7 @@ Formal in-kind partners: **Mozilla** and **IBM**, co-hosting convenings and lead
 
 ## Governance and sustainability
 
-OMPI is organized as a member-driven, consensus-driven open-source ecosystem, modeled on peer standards development organizations (W3C, IETF, FDX, DTI). Governance covers:
+OMPI is organized as a member-driven, consensus-driven open-source ecosystem, modeled on peer protocol development organizations (W3C, IETF, FDX, DTI). Governance covers:
 
 - **Technical Steering Group** with in-kind partner seats (Mozilla, IBM), a technology-author seat (Letta), and rotating working-group seats.
 - **DCO-based contributions** across the reference implementation and draft technology.
@@ -141,7 +141,7 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 
 - **Agent Memory System Card (AMS Card)** — A structured documentation format for agent memory systems, by [Mila](https://mila.quebec/) and [Mozilla](https://mozilla.org). Model cards made language models legible; dataset cards did the same for training data — memory systems had no equivalent until now. Template, reference card, and evaluation framework: [`mila-iqia/agent-memory-system-card`](https://github.com/mila-iqia/agent-memory-system-card/). Draft, open for comment. [`early-draft-specs/ams-card.md`](early-draft-specs/ams-card.md)
 
-- **Memory Ecosystem Scoping Note** — Surveys current memory implementations and shared primitives an open technology can standardize (August 2026). [`early-draft-specs/scoping-note-2026-09.pdf`](early-draft-specs/scoping-note-2026-09.pdf)
+- **Memory Ecosystem Scoping Note** — Surveys current memory implementations and shared primitives a new protocol can standardize (August 2026). [`early-draft-specs/scoping-note-2026-09.pdf`](early-draft-specs/scoping-note-2026-09.pdf)
 
 ### Code and prototypes
 
