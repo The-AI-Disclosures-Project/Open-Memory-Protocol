@@ -83,7 +83,7 @@ Some sources need more than a media type. Structured or relational sources and o
 
 ### 2.3 Atomic unit [deferred, 10-14]
 
-The protocol does not fix the size of a memory. One view: a memory is the smallest semantic unit that carries meaning and can be evaluated true or false (Cognee, from the call). Another: memories are documents with titles and authors, as in document stores (CN, Packer). The metadata in §3 is written to work for both. The 2026-10-14 meeting kept this out of scope for now. See issue I-2.
+The protocol does not fix the size of a memory. One view: a memory is the smallest semantic unit that carries meaning and can be evaluated true or false (Cognee, from the call). Another: memories are documents with titles and authors, as in document stores (CN, Packer). A third takes a single claim as the unit, carrying its provenance, a confidence estimate, its versions and what it superseded (the knowledge object: arXiv 2601.15313, Appendix A; arXiv 2603.15994; arXiv 2603.17781; SSRN 10.2139/ssrn.5812343). The metadata in §3 is written to work for all three. The 2026-10-14 meeting kept this out of scope for now. See issue I-2.
 
 ### 2.4 Stubs [proposed, 10-14]
 
@@ -201,6 +201,7 @@ The 2026-10-14 meeting asked whether a memory should carry its accuracy (Vasilij
 - **What the check rests on** is evidence: the source, the transcript or the later memory that confirmed or contradicted it.
 - **Receivers compute their own confidence** from those records with their own algorithm, which the protocol leaves to implementations (§11).
 - An implementation MAY carry its own score as an extension field. It SHOULD name the system that produced the score, so that a receiver does not mistake it for a portable value.
+- A variant under discussion puts an optional confidence on each evidence entry instead of a record-level score, portable only together with who or what produced it, how and when (review, 10-15). It would extend §4.4, not the field table.
 
 See issue I-20.
 
@@ -444,7 +445,7 @@ Left to implementations, so that they can compete and improve on them:
 | # | Issue | Where |
 |---|---|---|
 | I-1 | ~~Markdown as the common body format vs the base object~~. Settled 10-14: the base object is metadata plus a typed body, and markdown is not preferred | §2.2 |
-| I-2 | The atomic unit: the smallest meaningful claim, or a document. Deferred 10-14 | §2.3 |
+| I-2 | The atomic unit: the smallest meaningful claim, a knowledge object (one claim with provenance, confidence and a version chain), or a document. Deferred 10-14 | §2.3 |
 | I-3 | The shape of provenance: whether `contribution` and `ai_usage` are core, the EU AI Act terms for `ai_usage`, and how to record several accountable humans | §4.1, §4.3 |
 | I-4 | Versioning: the form of `version` and its comparator (including incomparable versions). Mostly settled 10-14: audit-required, and in-place updates allowed | §6.1, §6.2 |
 | I-5 | Links: inline, metadata edges, or both; what a link targets; how transcripts are exported or linked | §4.4, §5.3 |
@@ -556,4 +557,4 @@ No `provenance`, so the author is unknown (§4.5). No `version`, so it cannot cl
 
 ## Acknowledgements
 
-Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card). It also draws on the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar, and on the review comments on PR #13 by Gabe Goodhart (with Rynne and Anna Lisa), Sruly Rosenblat and Ilan Strauss. v0.2 also reflects the 2026-10-14 technical working meeting and its participants, including Wes Jackson.
+Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card). It also draws on the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar, and on the review comments on PR #13 by Gabe Goodhart (with Rynne and Anna Lisa), Sruly Rosenblat and Ilan Strauss. v0.2 also reflects the 2026-10-14 technical working meeting and its participants, including Wes Jackson. The knowledge object papers shared by lvrzhn on PR #13 (arXiv 2601.15313, 2603.15994, 2603.17781; SSRN 10.2139/ssrn.5773922, revised 10.2139/ssrn.5812343) informed §2.3 and §4.6.
