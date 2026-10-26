@@ -28,6 +28,7 @@
 
 <p align="center">
   <sub><b>Co-convened with</b></sub><br>
+  
   <a href="https://www.mozilla.org/"><img src="media/mozilla-logo.png" alt="Mozilla" height="40"></a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://www.ibm.com/"><img src="media/ibm-logo.png" alt="IBM" height="52"></a>
