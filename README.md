@@ -35,6 +35,8 @@
 
 ---
 
+> **December hackathon.** We are holding an online mini hackathon in early December to align on the spec's goals and make progress on a draft implementation together. [Vote on the date here](https://forms.gle/ditdHjo1trjm9X7YA).
+
 > **Current stage.** OMPI is in early public development. Working groups are comparing proposals, developing a shared working draft, and testing memory portability. Drafts and experimental implementations are open for community review and iteration.
 
 <p align="center">
