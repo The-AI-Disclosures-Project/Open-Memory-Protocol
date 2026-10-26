@@ -51,7 +51,7 @@
 
 # Open Memory Protocol Initiative
 
-The **Open Memory Protocol (OMP)** is an open, royalty-free technology for portable, interoperable memory across AI agents and services. The **Open Memory Protocol Initiative (OMPI)** is the multi-stakeholder, vendor-neutral open-source ecosystem that develops, maintains, and grows OMP. OMPI is hosted at the [AI Disclosures Project](https://ai-disclosures.org/), a project of [Code for Science & Society](https://www.codeforsociety.org/).
+The **Open Memory Protocol Initiative (OMPI)** is the multi-stakeholder, vendor-neutral open-source ecosystem with the goal of building an open protocol for agentic memory: that allows memory to move between various agentic systems (interoperability) and for memory to be shared between systems. It is hosted at the [AI Disclosures Project](https://ai-disclosures.org/), a project of [Code for Science & Society](https://www.codeforsociety.org/) and co-convened with IBM and Mozilla.
 
 This repository is the technical and governance home of the ecosystem.
 
