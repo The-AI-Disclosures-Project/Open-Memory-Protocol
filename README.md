@@ -35,9 +35,9 @@
 
 ---
 
-> **December hackathon.** We are holding an online mini hackathon in early December to align on the spec's goals and make progress on a draft implementation together. [Vote on the date here](https://forms.gle/ditdHjo1trjm9X7YA)!
+**December hackathon.** We are holding an online mini hackathon in early December to align on the spec's goals and make progress on a draft implementation together. [Vote on the date here](https://forms.gle/ditdHjo1trjm9X7YA)!
 
-> **Current stage.** Working towards a version 1. No reference implementation exists yet. Current focus is on the exchange semantics and memory object. Next step is on the supporting shared memory components. 
+**Current stage.** Working towards a version 1. No reference implementation exists yet. Current focus is on the exchange semantics and memory object. Next step is on the supporting shared memory components. 
 
 <p align="center">
   <a href="https://discord.gg/7DbzzxZ9y">
