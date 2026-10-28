@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ai-disclosures.org/ompi"><strong>Site</strong></a> ·
+  <a href="https://openmemoryprotocol.org"><strong>Site</strong></a> ·
   <a href="early-draft-specs/"><strong>Draft technology</strong></a> ·
   <a href="prototypes/python-loader-validator/"><strong>Python code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
@@ -51,7 +51,7 @@
 
 # Open Memory Protocol Initiative
 
-The **Open Memory Protocol Initiative (OMPI)** is the multi-stakeholder, vendor-neutral open-source ecosystem with the goal of building an open protocol for agentic memory: that allows memory to move between various agentic systems (interoperability) and for memory to be shared between systems. It is hosted at the [AI Disclosures Project](https://ai-disclosures.org/) (housed at [Code for Science & Society](https://www.codeforsociety.org/)) and co-convened together with **IBM and Mozilla**.
+The **[Open Memory Protocol Initiative (OMPI)](https://openmemoryprotocol.org)** is the multi-stakeholder, vendor-neutral open-source ecosystem with the goal of building an open protocol for agentic memory: that allows memory to move between various agentic systems (interoperability) and for memory to be shared between systems. It is hosted at the [AI Disclosures Project](https://ai-disclosures.org/) (housed at [Code for Science & Society](https://www.codeforsociety.org/)) and co-convened together with **IBM and Mozilla**.
 
 This repository is the technical and governance home of the ecosystem.
 
