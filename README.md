@@ -8,6 +8,7 @@
   <a href="early-draft-specs/"><strong>Draft technology</strong></a> ·
   <a href="prototypes/python-loader-validator/"><strong>Python code</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
+  <a href="https://ompi.fly.dev"><strong>Live demo</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
   <a href="docs/contributing.md"><strong>Contribute</strong></a> ·
   <a href="https://discord.gg/7DbzzxZ9y"><strong>Discord</strong></a>
@@ -146,6 +147,8 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 - **Memory Ecosystem Scoping Note** — Surveys current memory implementations and shared primitives a new protocol can standardize (August 2026). [`early-draft-specs/scoping-note-2026-09.pdf`](early-draft-specs/scoping-note-2026-09.pdf)
 
 ### Code and prototypes
+
+- **Live demo: omp-live** — Built for the OMP session at FOO Camp. One set of memories is shared by three different memory systems (a Markdown file system, a knowledge graph and a full-text search index) plus a coding agent, all kept in sync in real time through OMP interchange records. There is no central hub. Edit a memory in any system and it moves through OMP into the others. Forgets leave tombstones everywhere, and conflicts are held for a person to resolve. Try it at [ompi.fly.dev](https://ompi.fly.dev). Source: [`SrulyRosenblat/ompi-foo-camp`](https://github.com/SrulyRosenblat/ompi-foo-camp/tree/main/omp-live).
 
 - **Python Implementation** — Draft loader, validator, and harness contract for the draft open memory protocol technology. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)
 
