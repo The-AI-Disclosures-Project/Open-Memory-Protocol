@@ -126,9 +126,9 @@ Optional fields tend to go unimplemented, so the protocol SHOULD keep the number
 | `identifier` | string | required | [proposed] | Identifies the memory within its origin system, and stays the same across all versions of that memory (10-14). Carries no required meaning. UUIDs are RECOMMENDED (10-14). MUST be unique among the memories in one export. Together with the manifest's `origin` (§8.1), forms a global key (review; Cognee PR #16). Replaces `title` as the key (call; IBM "memory identifier"; Cognee §3.1) |
 | `path` | string | optional | [proposed, 10-14] | Where the memory sat in the origin store's hierarchy, for example a folder path. Kept separate from `identifier` because folder structure carries discovery and progressive-disclosure information (Sruly, 10-14). See issue I-19 |
 | `title` | string | optional | [proposed] | A human-readable label. May duplicate the body for fact-sized memories (call) |
-| `protocol_version` | string | optional | [agreed, 11-06; name open] | The version of this protocol the memory was written against. It lets a system bring memories at rest forward as the protocol changes, including when it exports from and imports to itself (11-06). Optional on the memory so a folder of markdown stays conformant; the manifest proposal is expected to require it (11-06). The name is still open: `protocol_version` or `omp_version`. See issue I-26 |
+| `protocol_version` | string | optional | [agreed, 11-06; name and format open] | The version of this protocol the memory was written against. It lets a system bring memories at rest forward as the protocol changes, including when it exports from and imports to itself (11-06). Optional on the memory so a folder of markdown stays conformant; the manifest proposal is expected to require it (11-06). The name is still open: `protocol_version` or `omp_version`. So is the format, for example date-based to match MCP. See issue I-26 |
 | `media_type` | string | required | [agreed, 11-06] | The media type of the body. MUST be a valid MIME type (for example `text/markdown`, `application/json`, `text/html`, `text/csv`, `application/xml`). A system SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type (§2.2; 11-06). Not a semantic ontology. Renamed from `type`, which agent harnesses already use for the kind of a memory (review; CN; call) |
-| `stub` | boolean | optional | [proposed, 10-14] | `true` when the body is a summary or pointer and the full body must be fetched (§2.4) |
+| `stub` | boolean | optional | [proposed, 10-14] | `true` when the body is a summary or pointer and the full body may be fetched for more details (§2.4) |
 | `tags` | list of strings | optional | [discussed] | Semantic tags. Free-form, or values drawn from a vocabulary declared elsewhere (for example a JSON-LD `@context` or schema.org). This is where a system records the kind of a memory (fact, preference, decision, observation) without the protocol requiring an ontology (IBM; CN; 10-14). Tags MAY cross into the runtime representation (§7.2) |
 | `scope` | list of strings | ACL-required | [proposed] | Scope tags that access policy attaches to. Set by the system, never by the agent. Interchange only (§7). A scope tag is neither an access grant nor proof of ownership (IBM; Cognee §3.3; call) |
 | `created_at` | ISO 8601 timestamp | required | [no objection] | When the system recorded the memory. Distinct from when the claim became true (`valid_from`) (10-14) |
@@ -136,7 +136,7 @@ Optional fields tend to go unimplemented, so the protocol SHOULD keep the number
 | `valid_until` | ISO 8601 timestamp | optional | [agreed, 10-14] | When the claim stops being true. MAY be in the future, for example a temporary workaround to retry at a set time. Replaces `invalidated_at` (review; 10-14) |
 | `version` | opaque, with a declared comparator | audit-required | [proposed, 10-14] | The revision of this memory. See §6.1 |
 | `updated_at` | ISO 8601 timestamp | optional | [proposed, 10-14] | When this revision was written. Allows stores that change memories in place (10-14) |
-| `checksum` | string (`algorithm:hex`) | audit-required | [no objection] | An integrity hash of the metadata-covered fields plus the body (CN; call). Cognee proposes a second hash of the body alone for deduplication (PR #16), [open] |
+| `checksum` | string (`algorithm:hex` eg `sha256:abcdefg...`) | audit-required | [no objection] | An integrity hash of the metadata-covered fields plus the body (CN; call). Cognee proposes a second hash of the body alone for deduplication (PR #16), [open] |
 | `provenance` | list of contributors | optional; audit-required, with an accountable human | [proposed] | Everyone and everything that contributed. Replaces `author`. A missing `provenance` means the author is unknown (review). See §4 |
 | `evidence` | list of references or strings | optional; audit-required when the memory is derived | [open] | What the memory rests on, inside or outside the store. See §4.4 |
 | `links` | list of edges | optional | [open] | References to other memories. See §5 |
@@ -198,7 +198,7 @@ Accountability is assigned, not a sign-off on each memory. For a consolidation o
 
 A derived memory whose evidence is unavailable MUST say so rather than omit the field silently (Cognee §3.2) [editors].
 
-Evidence that points outside the store may not travel with an export. §8.5 covers what happens then. How to export transcripts, or link to messages inside them, is open (review; issue I-5).
+Evidence that points outside the store MAY be excluded from an export. §8.5 covers what happens then. How to export transcripts, or link to messages inside them, is open (review; issue I-5).
 
 Agent memory is often the wrong home for facts that belong in a system of record, such as a price list or a patient record. A memory SHOULD link to the system of record rather than copy from it (Wes, 10-14) [proposed].
 
@@ -487,7 +487,7 @@ Left to implementations, so that they can compete and improve on them:
 | I-22 | Trust and sanitization of imported memories | §8.7 |
 | I-23 | Use cases not yet covered (#use-cases list): contradictions kept and flagged rather than resolved (for example a `contradicts` link rel, or `contribution: contradicted` per §4.6), consent to hand a memory over, and consent to learn from a memory | §4.6, §5.3 |
 | I-25 | Whether line-level attribution needs an optional field, or stays derived from diffs (11-06) | §4.1 |
-| I-26 | The name of the version field: `protocol_version` or `omp_version` (11-06) | §3.2 |
+| I-26 | The name of the version field, `protocol_version` or `omp_version`, and its format, for example date-based to match MCP's `MCP-Protocol-Version` (11-06) | §3.2 |
 
 ---
 
