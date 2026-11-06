@@ -1,8 +1,17 @@
 # Open Memory Protocol: Memory Object, Exchange and Runtime
 
-**Editors' draft v0.2, 2026-10-14**. Exchange and Runtime sub-thread, written with the Memory Model and Context (MM&C) overlap in mind. Not an adopted OMP standard.
+**Editors' draft v0.5, 2026-11-06**. Exchange and Runtime sub-thread, written with the Memory Model and Context (MM&C) overlap in mind. Not an adopted OMP standard.
 
-**Sources.** This draft distills the proposals in `early-draft-specs/` on `main`: the scoping note (Strauss and Rosenblat), Packer v0.2 (Letta), IBM v0.1, AIDP / FMP, Cognee v0.1, Context Nest v0.1 and the AMS Card (Mila / Mozilla). It also draws on the 2026-09-28 exchange-and-runtime call, the 2026-10-14 technical working meeting, the review comments on PR #13, Cognee's header proposals in PR #16, and the #exchange-and-runtime thread. Section references in parentheses point to the source draft, for example (IBM), (Cognee §3.5), (CN §6.3). "Call" means the 2026-09-28 call. "10-14" means the 2026-10-14 meeting. "Review" means a comment on PR #13.
+**Sources.** This draft distills the proposals in `early-draft-specs/` on `main`: the scoping note (Strauss and Rosenblat), Packer v0.2 (Letta), IBM v0.1, AIDP / FMP, Cognee v0.1, Context Nest v0.1 and the AMS Card (Mila / Mozilla). It also draws on the 2026-09-28 exchange-and-runtime call, the 2026-10-14 and 2026-11-06 technical working meetings, the review comments on PR #13, Cognee's header proposals in PR #16, and the #exchange-and-runtime thread. Section references in parentheses point to the source draft, for example (IBM), (Cognee §3.5), (CN §6.3). "Call" means the 2026-09-28 call. "10-14" means the 2026-10-14 meeting. "11-06" means the 2026-11-06 meeting. "Review" means a comment on PR #13.
+
+### Changes since v0.2
+
+- `media_type` MUST be a valid MIME type. A system SHOULD support `text/plain` and `text/markdown` and MAY support any other valid MIME type, so bodies are no longer limited to text (11-06, §2.2, §3.2).
+- New required field: `protocol_version`, the protocol version a memory was written against. The name is still open (11-06, §3.2).
+- New optional field: `weight`, a relative ordering among memories from one `origin` (11-06, §3.2, §4.6).
+- `at` in `provenance` stays as written. Attribution is per revision, and line-level attribution MAY be derived from diffs (11-06, §4.1).
+- This document is now the individual memory spec. The export/import manifest moves to a follow-up proposal (11-06, §0.2, §8.1).
+- New open issues I-25 and I-26.
 
 ### Changes since v0.1
 
@@ -44,6 +53,8 @@ Everything standardized MUST work down to a folder of memory files on one laptop
 
 In scope: the memory object (its metadata and body), the fields it carries, how memories link to each other and to evidence, versioning and lifecycle, the export/import (interchange) representation, the runtime representation, and the shape of what crosses a runtime binding. Also out of scope: everything listed in §11.
 
+**This document is the individual memory spec** [agreed, 11-06]. It defines one memory as it is represented on export and import. A follow-up proposal defines the manifest used once per export or import. That proposal covers attributes that are static for a given system version (for example supported MIME types, semantic tags and the version comparator), attributes that vary per transaction, and self-to-self migrations, when a system moves its own data between versions. It MUST declare the MIME types the exporting and importing systems support, and it MAY describe what a system's `weight` means. §8.1 stays here as working text until then.
+
 ### 0.3 Conventions
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, MAY and RECOMMENDED are to be read as in RFC 2119 and RFC 8174. **In this draft, every normative statement is proposed.** A MUST states what the editors propose the requirement should be once adopted. It does not claim the group has agreed to it.
@@ -67,15 +78,15 @@ The design is judged against three goals.
 A memory is **metadata** plus a **body**.
 
 - The **metadata** is a rigorous schema that can be rendered into any format that renders schemas (JSON, YAML front matter, a database row). It is for the system that manages the memory. v0.1 called it the header. "Metadata" avoids implying a file (10-14).
-- The **body** is what is semantically relevant to the agent. It is a string in any text format, declared by the `media_type` field (§3).
+- The **body** is what is semantically relevant to the agent. Its format is declared by the `media_type` field (§3). It is usually a string in a text format.
 
 This is a two-sided data contract: stable metadata that changes only through versioning or lifecycle events (§6.2), and a free-form payload the protocol does not prescribe (Cognee, from the call).
 
 Whether a body can be a structured value rather than a string is issue I-17 (review).
 
-### 2.2 Body formats [agreed, 10-14]
+### 2.2 Body formats [agreed, 10-14 and 11-06]
 
-The body MAY be in any text format: markdown, plain text, JSON, DocLang, XML (for example PubMed), HTML, CSV and others. `media_type` declares which. Implementations need not process every format. The protocol does not prefer markdown. Much agent memory today is markdown, and this design keeps it conformant without making it the standard (10-14).
+The body MAY be in any format with a valid MIME type. Text is the common case: markdown, plain text, JSON, DocLang, XML (for example PubMed), HTML, CSV and others. `media_type` declares which. A system SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type (11-06). Implementations need not process every format. Non-text bodies such as image or audio are allowed but not required. How they are carried is part of issue I-17. The protocol does not prefer markdown. Much agent memory today is markdown, and this design keeps it conformant without making it the standard (10-14).
 
 The base object is the metadata plus a typed body, not a markdown file (call; 10-14). Section 10.2 defines how a markdown-first loading profile relates to that (Packer).
 
@@ -106,7 +117,7 @@ Each field carries one tier (proposed by Gabe on the call):
 
 Optional fields tend to go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small (from the call).
 
-**Every tier assignment in §3.2 is proposed by the editors, except `version` and `updated_at`, which were read back on 2026-10-14.**
+**Every tier assignment in §3.2 is proposed by the editors, except `version` and `updated_at`, which were read back on 2026-10-14, and `protocol_version` and `weight`, which were set on 2026-11-06.**
 
 ### 3.2 Field table
 
@@ -115,7 +126,8 @@ Optional fields tend to go unimplemented, so the protocol SHOULD keep the number
 | `identifier` | string | required | [proposed] | Identifies the memory within its origin system, and stays the same across all versions of that memory (10-14). Carries no required meaning. UUIDs are RECOMMENDED (10-14). MUST be unique among the memories in one export. Together with the manifest's `origin` (§8.1), forms a global key (review; Cognee PR #16). Replaces `title` as the key (call; IBM "memory identifier"; Cognee §3.1) |
 | `path` | string | optional | [proposed, 10-14] | Where the memory sat in the origin store's hierarchy, for example a folder path. Kept separate from `identifier` because folder structure carries discovery and progressive-disclosure information (Sruly, 10-14). See issue I-19 |
 | `title` | string | optional | [proposed] | A human-readable label. May duplicate the body for fact-sized memories (call) |
-| `media_type` | string | required | [discussed] | The content or media type of the body (for example `text/markdown`, `application/json`, `text/html`, `text/csv`, `application/xml`). Not a semantic ontology. Renamed from `type`, which agent harnesses already use for the kind of a memory (review; CN; call) |
+| `protocol_version` | string | required | [agreed, 11-06; name open] | The version of this protocol the memory was written against. It lets a system bring memories at rest forward as the protocol changes, including when it exports from and imports to itself (11-06). The name is still open: `protocol_version` or `omp_version`. See issue I-26 |
+| `media_type` | string | required | [agreed, 11-06] | The media type of the body. MUST be a valid MIME type (for example `text/markdown`, `application/json`, `text/html`, `text/csv`, `application/xml`). A system SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type (§2.2; 11-06). Not a semantic ontology. Renamed from `type`, which agent harnesses already use for the kind of a memory (review; CN; call) |
 | `stub` | boolean | optional | [proposed, 10-14] | `true` when the body is a summary or pointer and the full body must be fetched (§2.4) |
 | `tags` | list of strings | optional | [discussed] | Semantic tags. Free-form, or values drawn from a vocabulary declared elsewhere (for example a JSON-LD `@context` or schema.org). This is where a system records the kind of a memory (fact, preference, decision, observation) without the protocol requiring an ontology (IBM; CN; 10-14). Tags MAY cross into the runtime representation (§7.2) |
 | `scope` | list of strings | ACL-required | [proposed] | Scope tags that access policy attaches to. Set by the system, never by the agent. Interchange only (§7). A scope tag is neither an access grant nor proof of ownership (IBM; Cognee §3.3; call) |
@@ -128,6 +140,7 @@ Optional fields tend to go unimplemented, so the protocol SHOULD keep the number
 | `provenance` | list of contributors | optional; audit-required, with an accountable human | [proposed] | Everyone and everything that contributed. Replaces `author`. A missing `provenance` means the author is unknown (review). See §4 |
 | `evidence` | list of references or strings | optional; audit-required when the memory is derived | [open] | What the memory rests on, inside or outside the store. See §4.4 |
 | `links` | list of edges | optional | [open] | References to other memories. See §5 |
+| `weight` | float | optional | [agreed, 11-06] | A relative ordering among memories from one `origin`. Not bounded, and with no prescribed mathematical meaning. See §4.6 |
 | `status` | string | optional | [parked] | Lifecycle or visibility state inside a store (for example draft, published). Possibly implementation-specific. If kept, interchange only (call; CN) |
 
 Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields (Cognee §5).
@@ -150,7 +163,7 @@ This was not reached on 2026-10-14 and is not adopted. The draft keeps the field
 
 ## 4. Provenance and evidence
 
-Provenance and evidence are the protocol's main tools for answering who stands behind a memory and why to believe it. Trust (§8.7) and accuracy (§4.6) build on them rather than adding new fields [editors].
+Provenance and evidence are the protocol's main tools for answering who stands behind a memory and why to believe it. Trust (§8.7) and accuracy (§4.6) build on them [editors].
 
 ### 4.1 Contributor list [proposed]
 
@@ -166,6 +179,8 @@ Provenance and evidence are the protocol's main tools for answering who stands b
 | `at` | optional | When this contributor acted |
 
 A plain list lets a memory record, for example, that a person asked an agent to save something and the agent rewrote it, without forcing a single grade on the result (Sruly, call). Whether `contribution` and `ai_usage` are part of the core is open (issue I-3).
+
+**Attribution is per revision** [agreed, 11-06]. `provenance` records who contributed to a revision and in what sequence, not who wrote each line. An implementation that needs line-level attribution MAY derive it from the diffs between revisions. Whether the protocol needs an optional field for that is issue I-25.
 
 ### 4.2 Writers are contributors [editors]
 
@@ -191,17 +206,19 @@ Agent memory is often the wrong home for facts that belong in a system of record
 
 A store that does not know who wrote a memory (for example a folder of markdown files) MUST leave `provenance` out rather than fill it with guesses. A receiving system MUST read a missing `provenance` as "author unknown". In particular, it MUST NOT read it as the user's own words (review). Such memories conform to the minimal profile but cannot claim the audit profile. This replaces v0.1's heuristic provenance, which a receiver could not tell apart from real provenance.
 
-### 4.6 Accuracy and confidence [open, editors' proposal]
+### 4.6 Accuracy, confidence and weight [proposed; weight agreed, 11-06]
 
 The 2026-10-14 meeting asked whether a memory should carry its accuracy (Vasilije, 10-14; Cognee PR #16 `accuracy`). Two concerns were raised. A score cannot move between systems unless the algorithm that produced it is also standardized. And a system can become confidently wrong through self-reinforcing loops (10-14). Vouching was suggested instead: a model or a person vouches for a memory (Sruly, 10-14).
 
-**Editors' proposal: no standard accuracy or confidence score.** Accuracy is conveyed through provenance and evidence, which already travel:
+**The protocol defines no portable accuracy or confidence score.** Accuracy is conveyed through provenance and evidence, which already travel, and a memory MAY also carry a relative `weight`:
 
 - **Who checked it** is provenance. A person, an agent or an evaluator (for example an LLM judge) that confirms, corrects or contradicts a memory appears as a contributor with `contribution: verified`, `corrected` or `contradicted`, plus `at`. Humans and agents can be mixed, and the record shows which is which.
 - **What the check rests on** is evidence: the source, the transcript or the later memory that confirmed or contradicted it.
 - **Receivers compute their own confidence** from those records with their own algorithm, which the protocol leaves to implementations (§11).
 - An implementation MAY carry its own score as an extension field. It SHOULD name the system that produced the score, so that a receiver does not mistake it for a portable value.
 - A variant under discussion puts an optional confidence on each evidence entry instead of a record-level score, portable only together with who or what produced it, how and when (review, 10-15). It would extend §4.4, not the field table.
+
+**`weight`** [agreed, 11-06]. A memory MAY carry an optional `weight`, a floating point value. It is not bounded and has no prescribed mathematical meaning, so it is not a probability or a confidence. It only orders memories from one `origin` relative to each other, and values from different origins are not comparable. Without it, a receiver that recomputes its own values loses the exporter's relative ordering, which usually comes from an algorithm the exporter does not share (review; 11-06). A receiving system MAY interpret `weight` however it wants.
 
 See issue I-20.
 
@@ -290,7 +307,7 @@ Which fields reach the agent is left to each memory system. It takes the interch
 | `stub` | yes | yes, when true |
 | `title`, `tags`, `created_at` | yes | yes |
 | `path` | yes | MAY be shown, for progressive disclosure |
-| `version`, `updated_at`, `valid_from`, `valid_until` | yes | when the implementation needs them |
+| `protocol_version`, `version`, `updated_at`, `valid_from`, `valid_until`, `weight` | yes | when the implementation needs them |
 | `provenance` | yes | a summary MAY be shown (for example the author) |
 | `evidence`, `links` | yes | MAY be shown |
 | `checksum` | yes | no |
@@ -304,7 +321,9 @@ Runtime access control is enforced by the serving system using interchange field
 
 ## 8. Exchange
 
-### 8.1 Manifest [proposed]
+### 8.1 Manifest [proposed; to be replaced, 11-06]
+
+This section is working text. The follow-up manifest proposal (§0.2) replaces it (11-06).
 
 Every export SHOULD begin with a manifest that declares:
 
@@ -398,7 +417,7 @@ Profiles let a deployment claim only what it implements (Cognee §5). An export'
 
 ### 10.1 Minimal profile
 
-The required fields of §3.2 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields. Meant to be reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (§4.5, §6.1).
+The required fields of §3.2 (`identifier`, `protocol_version`, `media_type`, `created_at`), a body, and an export that preserves unknown fields. Meant to be reachable from a folder of markdown memories with no other metadata. An exporter MAY add `protocol_version` at export, so those files need no change on disk [editors]. Provenance and versioning are not required (§4.5, §6.1).
 
 ### 10.2 Markdown loading profile
 
@@ -460,13 +479,15 @@ Left to implementations, so that they can compete and improve on them:
 | I-14 | Status and visibility: standardize or leave to implementations (parked) | §3.2 |
 | I-15 | Identity and scope granularity for federation, and whether federation needs any standard recall (review) | §9.3, §9.4 |
 | I-16 | Whether the tier assignments in §3.2 hold | §3 |
-| I-17 | Whether a body can be a structured value rather than a string (review) | §2.1 |
+| I-17 | Whether a body can be a structured value rather than a string (review), and how a non-text body is carried (11-06) | §2.1, §2.2 |
 | I-18 | An optional schema or source-type field for structured sources and opaque documents; is a query-backed memory the query output or its source data (10-14) | §2.2 |
 | I-19 | Folder taxonomy and other hierarchy metadata beyond `path` (10-14) | §3.2, §10.2 |
-| I-20 | Accuracy and confidence through provenance and evidence (editors' proposal), vs a standard field (Cognee PR #16) | §4.6 |
+| I-20 | ~~Accuracy and confidence as a standard field~~. Settled 11-06: provenance and evidence carry accuracy, plus an optional `weight` for relative ordering within one `origin`. Confidence on evidence entries stays open | §4.6 |
 | I-21 | A thin core with separately versioned semantic conventions (review) | §3.3 |
 | I-22 | Trust and sanitization of imported memories | §8.7 |
 | I-23 | Use cases not yet covered (#use-cases list): contradictions kept and flagged rather than resolved (for example a `contradicts` link rel, or `contribution: contradicted` per §4.6), consent to hand a memory over, and consent to learn from a memory | §4.6, §5.3 |
+| I-25 | Whether line-level attribution needs an optional field, or stays derived from diffs (11-06) | §4.1 |
+| I-26 | The name of the required version field: `protocol_version` or `omp_version` (11-06) | §3.2 |
 
 ---
 
@@ -476,7 +497,7 @@ Manifest:
 
 ```json
 {
-  "protocol_version": "0.2",
+  "protocol_version": "0.5",
   "profiles": ["minimal", "audit"],
   "origin": "store:6f1c2a9e-4b7d-4e2a-9c1f-3d8e5a7b0c42",
   "exported_at": "2026-10-14T18:00:00Z",
@@ -491,6 +512,7 @@ One memory:
 ```json
 {
   "identifier": "9b2e7c14-3f6a-4d1e-8a5b-2c7f9e0d4b31",
+  "protocol_version": "0.5",
   "path": "team/preferences/status-update-day.md",
   "title": "Status updates move to Friday",
   "media_type": "text/markdown",
@@ -513,6 +535,7 @@ One memory:
   "links": [
     { "target": "9b2e7c14-3f6a-4d1e-8a5b-2c7f9e0d4b31", "version": 1, "rel": "supersedes" }
   ],
+  "weight": 1.7,
   "body": "Status updates are due Fridays from Sep 15. They were due Tuesdays before that."
 }
 ```
@@ -522,6 +545,7 @@ One memory:
 ```markdown
 ---
 identifier: 9b2e7c14-3f6a-4d1e-8a5b-2c7f9e0d4b31
+protocol_version: "0.5"
 path: team/preferences/status-update-day.md
 title: Status updates move to Friday
 media_type: text/markdown
@@ -544,6 +568,7 @@ before that.
 ```markdown
 ---
 identifier: MEMORY.md
+protocol_version: "0.5"
 media_type: text/markdown
 created_at: 2026-10-14T00:00:00Z
 ---
@@ -557,4 +582,4 @@ No `provenance`, so the author is unknown (§4.5). No `version`, so it cannot cl
 
 ## Acknowledgements
 
-Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card). It also draws on the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar, and on the review comments on PR #13 by Gabe Goodhart (with Rynne and Anna Lisa), Sruly Rosenblat and Ilan Strauss. v0.2 also reflects the 2026-10-14 technical working meeting and its participants, including Wes Jackson. The knowledge object papers shared by lvrzhn on PR #13 (arXiv 2601.15313, 2603.15994, 2603.17781; SSRN 10.2139/ssrn.5773922, revised 10.2139/ssrn.5812343) informed §2.3 and §4.6.
+Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card). It also draws on the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar, and on the review comments on PR #13 by Gabe Goodhart (with Rynne and Anna Lisa), Sruly Rosenblat and Ilan Strauss. v0.2 also reflects the 2026-10-14 technical working meeting and its participants, including Wes Jackson. v0.5 reflects the 2026-11-06 technical working meeting and its participants. The knowledge object papers shared by lvrzhn on PR #13 (arXiv 2601.15313, 2603.15994, 2603.17781; SSRN 10.2139/ssrn.5773922, revised 10.2139/ssrn.5812343) informed §2.3 and §4.6.
