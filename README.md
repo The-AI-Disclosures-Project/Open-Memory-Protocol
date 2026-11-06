@@ -11,7 +11,7 @@
   <a href="https://ompi.fly.dev"><strong>Live demo</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
   <a href="docs/contributing.md"><strong>Contribute</strong></a> ·
-  <a href="https://discord.gg/AvG4cYWhQ"><strong>Discord</strong></a>
+  <a href="https://discord.gg/B8Fhcech4"><strong>Discord</strong></a>
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/docs-CC%20BY%204.0-lightgrey" alt="Documentation license: CC BY 4.0">
   <img src="https://img.shields.io/badge/code-Apache%202.0-lightgrey" alt="Code license: Apache 2.0">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
-  <a href="https://discord.gg/AvG4cYWhQ"><img src="https://img.shields.io/badge/Discord-apply%20to%20join-5865F2?logo=discord&logoColor=white" alt="Discord: apply to join"></a>
+  <a href="https://discord.gg/B8Fhcech4"><img src="https://img.shields.io/badge/Discord-apply%20to%20join-5865F2?logo=discord&logoColor=white" alt="Discord: apply to join"></a>
 </p>
 
 <p align="center">
@@ -41,7 +41,7 @@
 **Current stage.** Working towards a version 1. No reference implementation exists yet. Current focus is on the exchange semantics and memory object. Next step is on the supporting shared memory components. 
 
 <p align="center">
-  <a href="https://discord.gg/AvG4cYWhQ">
+  <a href="https://discord.gg/B8Fhcech4">
     <img src="https://img.shields.io/badge/%F0%9F%92%AC%20Join%20the%20OMPI%20Discord-apply%20for%20access-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join the OMPI Discord: apply for access">
   </a>
   <br>
@@ -190,7 +190,7 @@ Thirteen external participants from ten affiliations are confirmed for the Septe
 - Read the [draft technology](early-draft-specs/) and open an issue with feedback.
 - Run the [experimental Python implementation](prototypes/python-loader-validator/) against your own memory workload.
 - Explore the [ACP-based memory-server prototype](prototypes/acp_memory_server/).
-- Apply to join the [OMPI Discord](https://discord.gg/AvG4cYWhQ) for working-group discussion and implementer support.
+- Apply to join the [OMPI Discord](https://discord.gg/B8Fhcech4) for working-group discussion and implementer support.
 - Contact [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to join the ecosystem.
 
 ## License
