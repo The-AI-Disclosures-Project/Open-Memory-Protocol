@@ -7,7 +7,7 @@
 ### Changes since v0.2
 
 - `media_type` MUST be a valid MIME type. A system SHOULD support `text/plain` and `text/markdown` and MAY support any other valid MIME type, so bodies are no longer limited to text (11-06, §2.2, §3.2).
-- New required field: `protocol_version`, the protocol version a memory was written against. The name is still open (11-06, §3.2).
+- New optional field: `protocol_version`, the protocol version a memory was written against. The manifest proposal is expected to require it. The name is still open (11-06, §3.2).
 - New optional field: `weight`, a relative ordering among memories from one `origin` (11-06, §3.2, §4.6).
 - `at` in `provenance` stays as written. Attribution is per revision, and line-level attribution MAY be derived from diffs (11-06, §4.1).
 - This document is now the individual memory spec. The export/import manifest moves to a follow-up proposal (11-06, §0.2, §8.1).
@@ -53,7 +53,7 @@ Everything standardized MUST work down to a folder of memory files on one laptop
 
 In scope: the memory object (its metadata and body), the fields it carries, how memories link to each other and to evidence, versioning and lifecycle, the export/import (interchange) representation, the runtime representation, and the shape of what crosses a runtime binding. Also out of scope: everything listed in §11.
 
-**This document is the individual memory spec** [agreed, 11-06]. It defines one memory as it is represented on export and import. A follow-up proposal defines the manifest used once per export or import. That proposal covers attributes that are static for a given system version (for example supported MIME types, semantic tags and the version comparator), attributes that vary per transaction, and self-to-self migrations, when a system moves its own data between versions. It MUST declare the MIME types the exporting and importing systems support, and it MAY describe what a system's `weight` means. §8.1 stays here as working text until then.
+**This document is the individual memory spec** [agreed, 11-06]. It defines one memory as it is represented on export and import. A follow-up proposal defines the manifest used once per export or import. That proposal covers attributes that are static for a given system version (for example supported MIME types, semantic tags and the version comparator), attributes that vary per transaction, and self-to-self migrations, when a system moves its own data between versions. It MUST declare the MIME types the exporting and importing systems support, it is expected to require `protocol_version`, and it MAY describe what a system's `weight` means. §8.1 stays here as working text until then.
 
 ### 0.3 Conventions
 
@@ -126,7 +126,7 @@ Optional fields tend to go unimplemented, so the protocol SHOULD keep the number
 | `identifier` | string | required | [proposed] | Identifies the memory within its origin system, and stays the same across all versions of that memory (10-14). Carries no required meaning. UUIDs are RECOMMENDED (10-14). MUST be unique among the memories in one export. Together with the manifest's `origin` (§8.1), forms a global key (review; Cognee PR #16). Replaces `title` as the key (call; IBM "memory identifier"; Cognee §3.1) |
 | `path` | string | optional | [proposed, 10-14] | Where the memory sat in the origin store's hierarchy, for example a folder path. Kept separate from `identifier` because folder structure carries discovery and progressive-disclosure information (Sruly, 10-14). See issue I-19 |
 | `title` | string | optional | [proposed] | A human-readable label. May duplicate the body for fact-sized memories (call) |
-| `protocol_version` | string | required | [agreed, 11-06; name open] | The version of this protocol the memory was written against. It lets a system bring memories at rest forward as the protocol changes, including when it exports from and imports to itself (11-06). The name is still open: `protocol_version` or `omp_version`. See issue I-26 |
+| `protocol_version` | string | optional | [agreed, 11-06; name open] | The version of this protocol the memory was written against. It lets a system bring memories at rest forward as the protocol changes, including when it exports from and imports to itself (11-06). Optional on the memory so a folder of markdown stays conformant; the manifest proposal is expected to require it (11-06). The name is still open: `protocol_version` or `omp_version`. See issue I-26 |
 | `media_type` | string | required | [agreed, 11-06] | The media type of the body. MUST be a valid MIME type (for example `text/markdown`, `application/json`, `text/html`, `text/csv`, `application/xml`). A system SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type (§2.2; 11-06). Not a semantic ontology. Renamed from `type`, which agent harnesses already use for the kind of a memory (review; CN; call) |
 | `stub` | boolean | optional | [proposed, 10-14] | `true` when the body is a summary or pointer and the full body must be fetched (§2.4) |
 | `tags` | list of strings | optional | [discussed] | Semantic tags. Free-form, or values drawn from a vocabulary declared elsewhere (for example a JSON-LD `@context` or schema.org). This is where a system records the kind of a memory (fact, preference, decision, observation) without the protocol requiring an ontology (IBM; CN; 10-14). Tags MAY cross into the runtime representation (§7.2) |
@@ -417,7 +417,7 @@ Profiles let a deployment claim only what it implements (Cognee §5). An export'
 
 ### 10.1 Minimal profile
 
-The required fields of §3.2 (`identifier`, `protocol_version`, `media_type`, `created_at`), a body, and an export that preserves unknown fields. Meant to be reachable from a folder of markdown memories with no other metadata. An exporter MAY add `protocol_version` at export, so those files need no change on disk [editors]. Provenance and versioning are not required (§4.5, §6.1).
+The required fields of §3.2 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields. Meant to be reachable from a folder of markdown memories with no other metadata. An exporter MAY add `protocol_version` at export [editors]. Provenance and versioning are not required (§4.5, §6.1).
 
 ### 10.2 Markdown loading profile
 
@@ -487,7 +487,7 @@ Left to implementations, so that they can compete and improve on them:
 | I-22 | Trust and sanitization of imported memories | §8.7 |
 | I-23 | Use cases not yet covered (#use-cases list): contradictions kept and flagged rather than resolved (for example a `contradicts` link rel, or `contribution: contradicted` per §4.6), consent to hand a memory over, and consent to learn from a memory | §4.6, §5.3 |
 | I-25 | Whether line-level attribution needs an optional field, or stays derived from diffs (11-06) | §4.1 |
-| I-26 | The name of the required version field: `protocol_version` or `omp_version` (11-06) | §3.2 |
+| I-26 | The name of the version field: `protocol_version` or `omp_version` (11-06) | §3.2 |
 
 ---
 
