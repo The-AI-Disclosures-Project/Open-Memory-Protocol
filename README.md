@@ -58,9 +58,9 @@ This repository is the technical and governance home of the ecosystem.
 
 ### Start here: current work
 
-- **[Exchange-and-runtime working specification, editors' draft v0.5](working-group/exchange-and-runtime/2026-10-14-working-spec-v0.2.md).** Covers the memory object, exchange format, and runtime representation. Merged November 6 in [PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13), drawing on the November 6 technical working meeting and Cognee's proposals in [PR #16](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/16). **Editors' draft; not an adopted protocol.**
+- **[Exchange-and-runtime working specification, editors' draft v0.5](working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md).** Covers the memory object, exchange format, and runtime representation. Merged November 6 in [PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13), drawing on the November 6 technical working meeting and Cognee's proposals in [PR #16](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/16). **Editors' draft; not an adopted protocol.**
 
-- **[PR #17: memory security and threat model](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17).** Covers adversarial content, source trust, and preventing forgotten memories from returning through import. Written against v0.1; read alongside the [v0.5 editors' draft](working-group/exchange-and-runtime/2026-10-14-working-spec-v0.2.md). **Open for review; not an adopted protocol.**
+- **[PR #17: memory security and threat model](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17).** Covers adversarial content, source trust, and preventing forgotten memories from returning through import. Written against v0.1; read alongside the [v0.5 editors' draft](working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md). **Open for review; not an adopted protocol.**
 
 - **Background — September 28: comparison matrix and working notes.** The working group's comparison matrix and call notes map shared ground, unresolved questions, and next steps. **Merged into this repository.** [Read the working notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md)
 
