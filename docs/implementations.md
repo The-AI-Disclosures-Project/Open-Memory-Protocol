@@ -9,9 +9,10 @@ These independently maintained examples help implementers run experiments and re
 **Draft target:** [Editors’ v0.5](../working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md)  
 **License:** Apache-2.0
 
-A TypeScript example with a Cloudflare Worker, separate personal/company stores in Artifacts Git repositories, a browser demo, an HTTP SDK, and six MCP tools. It demonstrates creating, recalling, revising, deleting, exporting, and importing small UTF-8 memories while retaining unknown JSON metadata and origin identity.
+A TypeScript example with a Cloudflare Worker, separate personal/company stores in Artifacts Git repositories, a minimal Pi-powered chat agent, an HTTP SDK, and six MCP tools. It demonstrates creating, recalling, revising, deleting, exporting, and importing small UTF-8 memories while retaining unknown JSON metadata and origin identity.
 
-- [Run locally or deploy to your account](https://github.com/irvinebroque/omp-cloudflare#readme), including a Deploy to Cloudflare button. Local development uses an Artifacts simulator; deployment requires Workers Paid and Artifacts access.
+- [Run locally or deploy to your account](https://github.com/irvinebroque/omp-cloudflare#readme), including a Deploy to Cloudflare button. Local memory development uses an Artifacts simulator; chat requires Workers AI inference. Deployment requires Workers Paid and Artifacts access.
+- [Pi agent architecture and limits](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/agent.md): conversations persist in SQLite Durable Objects; explicit tool-saved facts become portable OMP records.
 - [Protocol coverage and experimental choices](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/protocol.md), including the snapshot envelope, typed-link handling, import receipts, and collision limits.
 - [Independent Python folder receiver/exporter](https://github.com/irvinebroque/omp-cloudflare/blob/main/examples/file-store.py), which preserves metadata without importing the TypeScript implementation.
 - [Validation record](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/validation.md) and [automated checks](https://github.com/irvinebroque/omp-cloudflare/actions).
