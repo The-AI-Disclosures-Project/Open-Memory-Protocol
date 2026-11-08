@@ -13,7 +13,6 @@ A TypeScript example with a Cloudflare Worker, separate personal/company stores 
 
 - [Run locally or deploy to your account](https://github.com/irvinebroque/omp-cloudflare#readme), including a Deploy to Cloudflare button. Local memory development uses an Artifacts simulator; chat requires Workers AI inference. Deployment requires Workers Paid and Artifacts access.
 - [Automated checks](https://github.com/irvinebroque/omp-cloudflare/actions).
-- [Optional Codex memory skill and MCP setup](https://github.com/irvinebroque/omp-cloudflare/blob/main/codex/README.md).
 
 The implementation uses one shared access key. Store routing and runtime applicability are not multi-user authorization. Deletion retains Git history. Its HTTP/MCP binding, archive identity map, concurrency token and runtime conventions are implementation choices, not adopted OMP schemas. It does not claim secure forgetting, binary transport, or full-profile conformance.
 
