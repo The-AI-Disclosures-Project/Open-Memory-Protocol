@@ -14,11 +14,10 @@ A TypeScript example with a Cloudflare Worker, separate personal/company stores 
 - [Run locally or deploy to your account](https://github.com/irvinebroque/omp-cloudflare#readme), including a Deploy to Cloudflare button. Local memory development uses an Artifacts simulator; chat requires Workers AI inference. Deployment requires Workers Paid and Artifacts access.
 - [Pi agent architecture and limits](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/agent.md): conversations persist in SQLite Durable Objects; explicit tool-saved facts become portable OMP records.
 - [Protocol coverage and experimental choices](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/protocol.md), including the snapshot envelope, typed-link handling, import receipts, and collision limits.
-- [Independent Python folder receiver/exporter](https://github.com/irvinebroque/omp-cloudflare/blob/main/examples/file-store.py), which preserves metadata without importing the TypeScript implementation.
 - [Validation record](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/validation.md) and [automated checks](https://github.com/irvinebroque/omp-cloudflare/actions).
 - [Optional Codex memory skill and MCP setup](https://github.com/irvinebroque/omp-cloudflare/blob/main/codex/README.md).
 
-The implementation uses one shared operator token. Store routing and runtime applicability are not multi-user authorization. Deletion retains Git history. Its HTTP/MCP binding, archive identity map, concurrency token and runtime conventions are implementation choices, not adopted OMP schemas. It does not claim secure forgetting, binary transport, or full-profile conformance.
+The implementation uses one shared access key. Store routing and runtime applicability are not multi-user authorization. Deletion retains Git history. Its HTTP/MCP binding, archive identity map, concurrency token and runtime conventions are implementation choices, not adopted OMP schemas. It does not claim secure forgetting, binary transport, or full-profile conformance.
 
 ## Maintenance and possible adoption
 
