@@ -10,7 +10,6 @@
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
   <a href="https://ompi.fly.dev"><strong>Live demo</strong></a> ·
   <a href="GOVERNANCE.md"><strong>Governance</strong></a> ·
-  <a href="docs/README.md"><strong>Docs</strong></a> ·
   <a href="docs/contributing.md"><strong>Contribute</strong></a> ·
   <a href="https://discord.gg/B8Fhcech4"><strong>Discord</strong></a>
 </p>
@@ -39,7 +38,7 @@
 
 **December hackathon.** We are holding an online mini hackathon in early December to align on the spec's goals and make progress on a draft implementation together. [Vote on the date here](https://forms.gle/ditdHjo1trjm9X7YA)!
 
-**Current stage.** Working towards a version 1. No official reference implementation has been designated. [Community implementation examples](docs/implementations.md) can be used to explore the working draft. Current focus is on the exchange semantics and memory object. Next step is on the supporting shared memory components.
+**Current stage.** Working towards a version 1. No reference implementation exists yet. Current focus is on the exchange semantics and memory object. Next step is on the supporting shared memory components. 
 
 <p align="center">
   <a href="https://discord.gg/B8Fhcech4">
@@ -147,8 +146,7 @@ OMPI consolidates work developing across the AI Disclosures Project since August
 
 ### Code and prototypes
 
-- **Community implementation examples** — Independently maintained experiments, with supported draft versions and implementation-specific limits. [Implementation directory](docs/implementations.md). The Cloudflare example includes a deployable service, browser demo, HTTP/TypeScript clients, MCP tools, and an independent file-adapter exchange.
-
+- **Cloudflare example** — [OMP gateway and memory stores on Cloudflare Workers](https://github.com/irvinebroque/omp-cloudflare).
 - **Live demo: omp-live** — Built for the OMP session at FOO Camp. One set of memories is shared by three different memory systems (a Markdown file system, a knowledge graph and a full-text search index) plus a coding agent, all kept in sync in real time through OMP interchange records. There is no central hub. Edit a memory in any system and it moves through OMP into the others. Forgets leave tombstones everywhere, and conflicts are held for a person to resolve. Try it at [ompi.fly.dev](https://ompi.fly.dev). Source: [`SrulyRosenblat/ompi-foo-camp`](https://github.com/SrulyRosenblat/ompi-foo-camp/tree/main/omp-live).
 
 - **Python Implementation** — Draft loader, validator, and harness contract for the draft open memory protocol technology. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)

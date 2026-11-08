@@ -4,9 +4,8 @@ Thanks for your interest in the Open Memory Protocol (OMPI). This document is th
 
 ## Ways to contribute
 
-- **Specification feedback.** Start with the [current documentation guide](README.md) and the [editors’ draft v0.5](../working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md) and open an issue with feedback, questions, or proposed changes.
+- **Specification feedback.** Read [`early-draft-specs/draft-v0.2-packer.pdf`](../early-draft-specs/draft-v0.2-packer.pdf) and open an issue with feedback, questions, or proposed changes.
 - **Experimental code.** The Python sketch lives in [`prototypes/python-loader-validator/`](../prototypes/python-loader-validator/). Bug reports, patches, and additional loader / validator experiments are welcome.
-- **Implementation examples.** Run an example from the [community implementation directory](implementations.md). File implementation bugs in its own repository; bring protocol questions and interoperability findings here.
 - **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
 - **Adopter case studies.** If you have implemented OMPI in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
 
