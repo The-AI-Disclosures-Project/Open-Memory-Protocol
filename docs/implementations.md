@@ -12,9 +12,7 @@ These independently maintained examples help implementers run experiments and re
 A TypeScript example with a Cloudflare Worker, separate personal/company stores in Artifacts Git repositories, a minimal Pi-powered chat agent, an HTTP API, and six MCP tools. It demonstrates creating, recalling, revising, deleting, exporting, and importing small UTF-8 memories while retaining unknown JSON metadata and origin identity.
 
 - [Run locally or deploy to your account](https://github.com/irvinebroque/omp-cloudflare#readme), including a Deploy to Cloudflare button. Local memory development uses an Artifacts simulator; chat requires Workers AI inference. Deployment requires Workers Paid and Artifacts access.
-- [Pi agent architecture and limits](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/agent.md): conversations persist in SQLite Durable Objects; explicit tool-saved facts become portable OMP records.
-- [Protocol coverage and experimental choices](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/protocol.md), including the snapshot envelope, typed-link handling, import receipts, and collision limits.
-- [Validation record](https://github.com/irvinebroque/omp-cloudflare/blob/main/docs/validation.md) and [automated checks](https://github.com/irvinebroque/omp-cloudflare/actions).
+- [Automated checks](https://github.com/irvinebroque/omp-cloudflare/actions).
 - [Optional Codex memory skill and MCP setup](https://github.com/irvinebroque/omp-cloudflare/blob/main/codex/README.md).
 
 The implementation uses one shared access key. Store routing and runtime applicability are not multi-user authorization. Deletion retains Git history. Its HTTP/MCP binding, archive identity map, concurrency token and runtime conventions are implementation choices, not adopted OMP schemas. It does not claim secure forgetting, binary transport, or full-profile conformance.
