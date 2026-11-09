@@ -38,12 +38,13 @@ The [Open Memory Protocol Initiative (OMPI)](https://openmemoryprotocol.org) is 
 
 ## Current work
 
-- **Status.** Pre-1.0. No reference implementation exists yet. Current focus: the memory object and exchange semantics; next, the export/import manifest (a follow-up to v0.5). First implementation target: coding-agent harnesses (Claude Code, Codex, goose, Letta Code).
-- **[Exchange-and-runtime working specification, editors' draft v0.5](working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md)** (November 6, 2026). Defines the individual memory object, its interchange and runtime representations and the exchange semantics; the export/import manifest is deferred to a follow-up proposal. Merged in [PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13). Not an adopted protocol.
-- **[PR #17: memory security and threat model](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17).** Open for review. Written against v0.1; read alongside v0.5.
-- **[September 28 working notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md).** Comparison matrix of the contributed proposals and the call notes the editors' draft grew out of.
-- **December hackathon.** Online, early December, to align on the spec's goals and work on a draft implementation together. [Vote on the date](https://forms.gle/ditdHjo1trjm9X7YA). <!-- remove after the hackathon -->
-- [All open proposals and contributions](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pulls)
+Pre-1.0, no reference implementation yet. First target: coding-agent harnesses.
+
+- **Spec:** [editors' draft v0.5](working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md), November 6, 2026. The memory object, its interchange and runtime forms, and exchange semantics. Not adopted. Next: the export/import manifest.
+- **In review:** [PR #17](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17), a threat model for the memory object.
+- **Background:** [September 28 notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md), where the proposals agree and differ.
+- **Next:** online hackathon, early December. [Vote on the date](https://forms.gle/ditdHjo1trjm9X7YA). <!-- remove after the hackathon -->
+- [Open pull requests](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pulls)
 
 ## Why an open protocol
 
