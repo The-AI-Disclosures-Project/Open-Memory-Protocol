@@ -63,30 +63,36 @@ The [scoping note](working-group/past-proposals/scoping-note-2026-09.pdf) finds 
 
 ## Artifacts
 
-### Contributed proposals
+Latest revision of each. Summaries, superseded revisions and how to add one: [`working-group/past-proposals/`](working-group/past-proposals/).
 
-Inputs to the working specification. Only the latest revision of each is listed here; superseded revisions are in [`working-group/past-proposals/archive/`](working-group/past-proposals/archive/).
+### Proposals
 
-- **Letta draft v0.2** — Charles Packer (Letta). A `MEMORY.md` directory with progressive disclosure and a four-rule harness contract; ownership, versioning and sync are out of scope. [`working-group/past-proposals/draft-v0.2-packer.pdf`](working-group/past-proposals/draft-v0.2-packer.pdf)
-- **IBM proposal v0.1** — An immutable memory record (body, id, author, AI provenance, created/invalidated, version comparator, source, semantic and scope tags) and the runtime verbs remember, recall, observe and decorate. [`working-group/past-proposals/draft-v0.1-ibm.pdf`](working-group/past-proposals/draft-v0.1-ibm.pdf)
-- **AI Disclosures Project, Federated Memory Protocol draft v0.2** — Sruly Rosenblat (October 13, 2026). Many memory servers behind one plugin, over native, plugin + MCP, or plain MCP endpoints. Numbered v1.1 inside the document. [`working-group/past-proposals/draft-v0.2-aidp.pdf`](working-group/past-proposals/draft-v0.2-aidp.pdf)
-- **Cognee proposal v0.1** — A semantic core for portable agent memory: identity, evidence, authority, lineage, lifecycle and exchange fidelity, with COGX as an implemented reference input. [`working-group/past-proposals/draft-v0.1-cognee.md`](working-group/past-proposals/draft-v0.1-cognee.md)
-- **Context Nest proposal v0.1** — PromptOwl. A governed Markdown profile: front-matter keys and in-prose links as the atomic unit, `contextnest://` addressing, scoped selectors, append-only hash-chained history, and a forget protocol. [`working-group/past-proposals/draft-v0.1-contextnest.md`](working-group/past-proposals/draft-v0.1-contextnest.md)
-- **Sapience knowledge-object proposal v0.2** — Sapience Labs. The knowledge object as a portable memory unit: confidence carried in provenance, two timestamps, supersession as a first-class relation; mapped onto editors' draft v0.2. [`working-group/past-proposals/draft-v0.2-sapience.md`](working-group/past-proposals/draft-v0.2-sapience.md)
-- **`me.md`** — David Hamilton (Block / goose). A user-owned, plain-file protocol for what agents know about you; agents may only propose additions. Complementary discussion draft, maintained at [`block/me.md`](https://github.com/block/me.md).
+| Proposal | From | |
+|---|---|---|
+| Letta draft v0.2 | Charles Packer, Letta | [pdf](working-group/past-proposals/draft-v0.2-packer.pdf) |
+| IBM proposal v0.1 | IBM | [pdf](working-group/past-proposals/draft-v0.1-ibm.pdf) |
+| Federated Memory Protocol v0.2 | Sruly Rosenblat, AI Disclosures Project | [pdf](working-group/past-proposals/draft-v0.2-aidp.pdf) |
+| Cognee proposal v0.1 | Cognee | [md](working-group/past-proposals/draft-v0.1-cognee.md) |
+| Context Nest v0.1 | PromptOwl | [md](working-group/past-proposals/draft-v0.1-contextnest.md) |
+| Knowledge object v0.2 | Sapience Labs | [md](working-group/past-proposals/draft-v0.2-sapience.md) |
+| me.md | David Hamilton, Block / goose | [block/me.md](https://github.com/block/me.md) |
 
-### Surveys and documentation
+### Background
 
-- **Scoping note** (August 2026) — Strauss and Rosenblat. Surveys current memory implementations and the shared primitives a protocol can standardize. [`working-group/past-proposals/scoping-note-2026-09.pdf`](working-group/past-proposals/scoping-note-2026-09.pdf)
-- **Prior-art survey** (September 2026) — Memory implementations, standards and research across the ecosystem, with a convergence analysis. [`docs/prior-art/`](docs/prior-art/)
-- **Agent Memory System Card (AMS Card)** — A documentation format for agent memory systems, by [Mila](https://mila.quebec/) and [Mozilla](https://mozilla.org). Template, reference card and evaluation framework: [`mila-iqia/agent-memory-system-card`](https://github.com/mila-iqia/agent-memory-system-card/). Draft, open for comment. [`working-group/past-proposals/ams-card.md`](working-group/past-proposals/ams-card.md)
-- **The Memory Walled Garden** (October 2025) — Essay on memory lock-in and the case for portability. Markdown archive with figures. [`docs/the-memory-walled-garden/`](docs/the-memory-walled-garden/the-memory-walled-garden.md)
+| Document | |
+|---|---|
+| Scoping note, Strauss and Rosenblat, August 2026 | [pdf](working-group/past-proposals/scoping-note-2026-09.pdf) |
+| Prior-art survey, September 2026 | [docs/prior-art/](docs/prior-art/) |
+| Agent Memory System Card, Mila and Mozilla | [md](working-group/past-proposals/ams-card.md) |
+| The Memory Walled Garden, October 2025 | [docs/the-memory-walled-garden/](docs/the-memory-walled-garden/the-memory-walled-garden.md) |
 
-### Code and prototypes
+### Code
 
-- **Live demo (omp-live)** — One set of memories kept in sync across a Markdown file tree, a knowledge graph, a full-text index and a coding agent through OMP interchange records; forgets leave tombstones, conflicts wait for a person. Built for FOO Camp. [ompi.fly.dev](https://ompi.fly.dev) · source [`SrulyRosenblat/ompi-foo-camp`](https://github.com/SrulyRosenblat/ompi-foo-camp/tree/main/omp-live)
-- **Python loader / validator** — Sketch of a loader, validator and harness contract for the Letta v0.2 draft; not yet updated to v0.5. [`prototypes/python-loader-validator/`](prototypes/python-loader-validator/)
-- **ACP memory server** — Earlier prototype that indexes session history across twelve coding-agent harnesses, imported from [`SrulyRosenblat/agent_memory_mcp`](https://github.com/SrulyRosenblat/agent_memory_mcp) at commit `02b8d92`. [`prototypes/acp_memory_server/`](prototypes/acp_memory_server/)
+| Prototype | Targets | |
+|---|---|---|
+| omp-live, three memory systems and a coding agent kept in sync | OMP interchange records | [ompi.fly.dev](https://ompi.fly.dev) · [source](https://github.com/SrulyRosenblat/ompi-foo-camp/tree/main/omp-live) |
+| Python loader / validator | Letta v0.2 draft | [prototypes/python-loader-validator/](prototypes/python-loader-validator/) |
+| ACP memory server, session index over twelve harnesses | pre-OMP | [prototypes/acp_memory_server/](prototypes/acp_memory_server/) |
 
 ## Repository layout
 
