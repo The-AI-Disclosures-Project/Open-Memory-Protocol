@@ -50,7 +50,7 @@ The working group's areas of concern include the **atomic unit** of a memory, **
 
 **Standards sketch (OMP PR #4).** Its four headings map directly: *Memory Object Format* → §3; *Memory Access Protocol* → §4; *Memory Rights* → §6; *Security Considerations* → §5 (tamper-evidence) and §6.3 (erasure that preserves verifiability).
 
-**Prior art.** Cited in [`prior-art/`](../prior-art/); Context Nest's own entry is in `prior-art/emerging-standards.md`.
+**Prior art.** Cited in [`docs/prior-art/`](../../docs/prior-art/); Context Nest's own entry is in `docs/prior-art/emerging-standards.md`.
 
 ## 3. The atomic unit: eight keys and a link syntax
 

@@ -1,7 +1,5 @@
 # Open Memory Protocol: where the drafts agree
 
-> Working notes from the exchange-and-runtime sub-thread. A styled version of this page is in [`2026-09-28-common-ground.html`](2026-09-28-common-ground.html) (download to view).
-
 A working matrix of every draft in `early-draft-specs/` on `main` (commit 7beb260), plus notes from the Sep 28 exchange-and-runtime call: where the data shapes overlap and where the proposals don't align (yet). For the draft due Oct 2, 2026. Discussion draft, 2026-09-28.
 
 ## What's in main

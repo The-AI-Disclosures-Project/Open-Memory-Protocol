@@ -1,23 +1,22 @@
 # Contributing to the Open Memory Protocol
 
-Thanks for your interest in the Open Memory Protocol (OMPI). This document is the entry point for anyone who wants to shape the specification, contribute to the experimental code, or participate in the working group.
+How to shape the specification, contribute to the experimental code, or join the working group.
 
 ## Ways to contribute
 
-- **Specification feedback.** Read [`early-draft-specs/draft-v0.2-packer.pdf`](../early-draft-specs/draft-v0.2-packer.pdf) and open an issue with feedback, questions, or proposed changes.
+- **Specification feedback.** Read the [editors' draft v0.5](../working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md) and open an issue or pull request. Contributed proposals live in [`working-group/past-proposals/`](../working-group/past-proposals/); when you revise one, move the previous revision to [`working-group/past-proposals/archive/`](../working-group/past-proposals/archive/) so only the latest is listed.
 - **Experimental code.** The Python sketch lives in [`prototypes/python-loader-validator/`](../prototypes/python-loader-validator/). Bug reports, patches, and additional loader / validator experiments are welcome.
-- **Working group participation.** Attend the monthly working-group call and the two annual technical convenings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) to be added.
-- **Adopter case studies.** If you have implemented OMPI in a production agent harness or memory-layer service, submit a short case study for the quarterly report.
+- **Working group participation.** Attend the technical working meetings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) or apply on [Discord](https://discord.gg/B8Fhcech4) to be added.
+- **Implementation reports.** If you prototype against the editors' draft, open an issue describing what mapped cleanly and what did not.
 
 ## Proposing a protocol change
 
-Substantive changes to the protocol move through open discussion, iteration, testing, implementation, and market experimentation. See [`GOVERNANCE.md`](../GOVERNANCE.md) for the full process. In brief:
+Substantive changes to the protocol go through public discussion and implementation evidence. See [`GOVERNANCE.md`](../GOVERNANCE.md) for the full process. In brief:
 
 1. Open an issue in this repository describing the problem and a proposed direction.
 2. Include: problem statement, proposed change, implementation sketch or link, and (where possible) evidence from usage or adoption.
-3. Public discussion stays open for at least two weeks so implementers and adopters can weigh in.
-4. Protocol Editors decide (merge, revise, decline), with rationale.
-5. Steering Committee reviews editor decisions quarterly.
+3. Maintainers decide by lazy consensus, with the rationale recorded on the issue.
+4. Unresolved decisions go to a simple majority of the Technical Steering Group; breaking changes need a migration plan and a two-thirds TSG vote.
 
 ## Experimental code development
 
@@ -25,7 +24,7 @@ Substantive changes to the protocol move through open discussion, iteration, tes
 - Run tests: `pytest prototypes/python-loader-validator/tests/`
 - Style: `ruff format` and `ruff check`
 
-The experimental code follows semantic versioning. Changes require two reviewer approvals and a passing test suite before merge.
+Run the tests before opening a pull request; a maintainer reviews and merges.
 
 ## Code of conduct
 
@@ -33,10 +32,8 @@ The Initiative operates under the [Contributor Covenant v2.1](https://www.contri
 
 ## Working-group meetings
 
-- **Monthly working-group call.** Second Tuesday of each month, 10:00 ET, one hour. Notes published within one week.
-- **September 9, 2026** — first informal working-group discussion (online, two hours). Co-hosted by AI Disclosures Project, Mozilla, and IBM.
-- **October 2026** — in-person session at the O'Reilly open-source unconference (Berkeley).
+Technical working meetings are announced on Discord. Decisions are folded into the editors' draft in [`working-group/`](../working-group/) (see its change log). Past convenings are listed in [`history.md`](history.md).
 
 ## Contact
 
-All Initiative correspondence — working-group coordination, security disclosures, and code-of-conduct reports — goes to [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org).
+Working-group coordination, security disclosures, and code-of-conduct reports: [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org).
