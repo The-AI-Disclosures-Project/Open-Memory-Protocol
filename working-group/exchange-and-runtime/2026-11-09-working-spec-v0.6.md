@@ -1,6 +1,6 @@
 # Open Memory Protocol: The Memory Object (Exchange and Runtime)
 
-Editors' draft v0.5 (2026-11-06), restructured 2026-11-09: the same text, reordered, with no normative change. Exchange and Runtime sub-thread, written with the Memory Model and Context (MM&C) overlap in mind. Not an adopted OMP standard.
+**Editors' draft v0.6, 2026-11-09.** Exchange and Runtime sub-thread, written with the Memory Model and Context (MM&C) overlap in mind. Not an adopted OMP standard. v0.6 is v0.5 (2026-11-06) reordered, with no normative change; the section map and the earlier change logs are in 5.7.
 
 **How to read this draft.** MUST, SHOULD and MAY are RFC 2119 / RFC 8174 keywords, and every one of them is a proposal by the editors until the group adopts the protocol. Text is proposed unless marked [agreed]. An unsettled question is marked [open I-n] (or [open U-n] when it had no number) and described once, in 5.2. A mark at the end of a paragraph or list covers it; a mark inside a paragraph covers its sentence. Part 1 is the memory object, Part 2 why the protocol exists and what it covers, Part 3 the remaining rules, Part 4 what the group has agreed, Part 5 everything else (alternatives, open issues, deferred items, the discussion record, sources, change history with the v0.5 section map), then the examples.
 
@@ -307,7 +307,7 @@ What each profile of 1.4 requires, each item pointing to the section that states
 
 ## Part 4. What the group has agreed
 
-In v0.5, "[agreed]" means "at least two participants explicitly agreed on a call and nobody objected." Agreed is not adopted. Each row gives the decision, the meeting, where it now sits, and the open remainder by issue id.
+"[agreed]" means "at least two participants explicitly agreed on a call and nobody objected." Agreed is not adopted. Each row gives the decision, the meeting, where it now sits, and the open remainder by issue id.
 
 | Topic | Decision | Meeting | Where | Open remainder |
 |---|---|---|---|---|
@@ -636,17 +636,17 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 
 ### 5.7 Change history
 
-#### Restructured 2026-11-09
+#### Changes since v0.5
 
-- The v0.5 text is reordered into five parts: the memory object (Part 1), goals and scope (Part 2), the remaining rules (Part 3), what the group has agreed (Part 4), and everything else (Part 5). No normative change: no MUST, SHOULD or MAY is added, removed, strengthened or weakened, and no field, profile, default or encoding is introduced.
+- No normative change. The v0.5 text is reordered into five parts: the memory object (Part 1), goals and scope (Part 2), the remaining rules (Part 3), what the group has agreed (Part 4), and everything else (Part 5). No MUST, SHOULD or MAY is added, removed, strengthened or weakened, and no field, profile, default or encoding is introduced.
 - Editorial changes to tables and examples: a body row is added to the field table (1.3), restating the existing text on what a body is and that the minimal profile carries one; the parked `status` row moves from the field table to 5.3.2; the manifest JSON moves from Appendix A to 5.3; `protocol_version` is removed from the Appendix C example, since the minimal profile does not require it; and the Appendix B caption now says what the example shows.
 - The eight-tag status scheme ([agreed], [proposed], [open], [discussed], [no objection], [parked], [deferred], [editors]) is replaced by two marks in the body, [agreed] and [open I-n] / [open U-n]. Unmarked text is proposed by the editors. Who agreed what and when is in Part 4; who proposed what and when is in 5.5; editors-added text is listed in 5.1; parked and deferred items are listed in 5.3.
 - Every attribution, meeting code, PR number and source-draft citation moves out of Parts 1 to 3 into 5.5.
 - Fourteen questions the v0.5 text raised without an issue number are registered as U-1 to U-14 in 5.2.
 
-The § references in the two verbatim entries below are v0.5 section numbers. This map translates them.
+The § references in the two verbatim entries below are v0.5 section numbers. This map translates them; external references to v0.5 sections (PR #13, PR #16, the September 28 notes) resolve through it.
 
-| v0.5 | This draft |
+| v0.5 | v0.6 |
 |---|---|
 | Title block | front matter |
 | Sources | 5.6 (text); 5.5 (legend) |
@@ -739,7 +739,7 @@ This is one memory in the interchange representation (3.4); it carries every fie
 ```json
 {
   "identifier": "9b2e7c14-3f6a-4d1e-8a5b-2c7f9e0d4b31",
-  "protocol_version": "0.5",
+  "protocol_version": "0.6",
   "path": "team/preferences/status-update-day.md",
   "title": "Status updates move to Friday",
   "media_type": "text/markdown",
@@ -772,7 +772,7 @@ This is one memory in the interchange representation (3.4); it carries every fie
 ```markdown
 ---
 identifier: 9b2e7c14-3f6a-4d1e-8a5b-2c7f9e0d4b31
-protocol_version: "0.5"
+protocol_version: "0.6"
 path: team/preferences/status-update-day.md
 title: Status updates move to Friday
 media_type: text/markdown
