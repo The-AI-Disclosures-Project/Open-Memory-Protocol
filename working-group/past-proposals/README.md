@@ -1,6 +1,6 @@
 # Contributed proposals
 
-The proposals the working group distilled into the [exchange-and-runtime editors' draft](../exchange-and-runtime/2026-11-06-working-spec-v0.5.md), plus the scoping note and the AMS card. This folder keeps the latest revision of each; earlier revisions are in [`archive/`](archive/). The [September 28 common-ground notes](../exchange-and-runtime/2026-09-28-common-ground.md) compare them primitive by primitive.
+The proposals the working group distilled into the [exchange-and-runtime editors' draft](../exchange-and-runtime/2026-11-09-working-spec-v0.6.md), plus the scoping note and the AMS card. This folder keeps the latest revision of each; earlier revisions are in [`archive/`](archive/). The [September 28 common-ground notes](../exchange-and-runtime/2026-09-28-common-ground.md) compare them primitive by primitive.
 
 ## Latest revisions
 
@@ -23,7 +23,7 @@ The proposals the working group distilled into the [exchange-and-runtime editors
 |---|---|---|
 | [`archive/draft-v0.1-sapience.md`](archive/draft-v0.1-sapience.md) (mapped onto editors' draft v0.1) | [`draft-v0.2-sapience.md`](draft-v0.2-sapience.md) | October 15, 2026 |
 
-The editors' drafts themselves (v0.1 of October 2, v0.2 of October 14) were revised in place; their change logs are at the top of the [v0.5 draft](../exchange-and-runtime/2026-11-06-working-spec-v0.5.md).
+The editors' drafts themselves (v0.1 of October 2, v0.2 of October 14) were revised in place; their change logs are in the change history of the [v0.6 draft](../exchange-and-runtime/2026-11-09-working-spec-v0.6.md).
 
 ## Adding or revising a proposal
 

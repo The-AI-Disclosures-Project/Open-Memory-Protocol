@@ -11,6 +11,7 @@ OMPI grew out of AI Disclosures Project work that began in August 2025; this rep
 - **September 9, 2026** — First ecosystem convening, co-hosted with Mozilla and IBM; thirteen external participants from ten affiliations.
 - **September 28, 2026** — Exchange-and-runtime call. The contributed proposals are compared in the [common-ground notes](../working-group/exchange-and-runtime/2026-09-28-common-ground.md).
 - **October 2026** — In-person gathering at the O'Reilly open-source unconference (Berkeley). Editors' draft v0.1 (October 2) and v0.2 (October 14) of the exchange-and-runtime working specification.
-- **November 6, 2026** — Editors' draft v0.5 of the [exchange-and-runtime working specification](../working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md) is merged ([PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13)).
+- **November 6, 2026** — Editors' draft v0.5 of the exchange-and-runtime working specification is merged ([PR #13](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/13)).
+- **November 9, 2026** — Editors' draft [v0.6](../working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6.md): v0.5 reordered with the memory object first, no normative change.
 
 Entries without a link are dates from the project team; this repository holds no notes for them.

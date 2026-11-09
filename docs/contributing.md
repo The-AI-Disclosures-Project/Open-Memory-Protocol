@@ -4,7 +4,7 @@ How to shape the specification, contribute to the experimental code, or join the
 
 ## Ways to contribute
 
-- **Specification feedback.** Read the [editors' draft v0.5](../working-group/exchange-and-runtime/2026-11-06-working-spec-v0.5.md) and open an issue or pull request. Contributed proposals live in [`working-group/past-proposals/`](../working-group/past-proposals/); when you revise one, move the previous revision to [`working-group/past-proposals/archive/`](../working-group/past-proposals/archive/) so only the latest is listed.
+- **Specification feedback.** Read the [editors' draft v0.6](../working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6.md) and open an issue or pull request. Contributed proposals live in [`working-group/past-proposals/`](../working-group/past-proposals/); when you revise one, move the previous revision to [`working-group/past-proposals/archive/`](../working-group/past-proposals/archive/) so only the latest is listed.
 - **Experimental code.** The Python sketch lives in [`prototypes/python-loader-validator/`](../prototypes/python-loader-validator/). Bug reports, patches, and additional loader / validator experiments are welcome.
 - **Working group participation.** Attend the technical working meetings. Email [ompi@aidisclosures.org](mailto:ompi@aidisclosures.org) or apply on [Discord](https://discord.gg/B8Fhcech4) to be added.
 - **Implementation reports.** If you prototype against the editors' draft, open an issue describing what mapped cleanly and what did not.
