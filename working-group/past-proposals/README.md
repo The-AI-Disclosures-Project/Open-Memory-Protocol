@@ -23,7 +23,7 @@ The proposals the working group distilled into the [exchange-and-runtime editors
 |---|---|---|
 | [`archive/draft-v0.1-sapience.md`](archive/draft-v0.1-sapience.md) (mapped onto editors' draft v0.1) | [`draft-v0.2-sapience.md`](draft-v0.2-sapience.md) | October 15, 2026 |
 
-The editors' drafts themselves (v0.1 of October 2, v0.2 of October 14) were revised in place; their change logs are in the change history of the [v0.6 draft](../exchange-and-runtime/2026-11-09-working-spec-v0.6.md).
+The editors' drafts themselves (v0.1 of October 2, v0.2 of October 14) were revised in place; their change logs are in the [v0.6 notes document](../exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md), section H.
 
 ## Adding or revising a proposal
 
