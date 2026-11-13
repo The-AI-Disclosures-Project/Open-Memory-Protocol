@@ -25,11 +25,6 @@
   <a href="https://www.ibm.com/"><img src="media/ibm-logo.png" alt="IBM" height="52"></a>
 </p>
 
-<p align="center">
-  <sub><b>Participating organizations</b></sub><br>
-  <sub>Letta · Block / goose · Cognee · PromptOwl · Sapience Labs · Mila · Pinecone · Agentic AI Foundation · Pi</sub>
-</p>
-
 ---
 
 # Open Memory Protocol Initiative
