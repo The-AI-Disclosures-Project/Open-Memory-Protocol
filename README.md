@@ -91,6 +91,7 @@ Latest revision of each. Summaries, superseded revisions and how to add one: [`w
 
 | Prototype | Targets | |
 |---|---|---|
+| Cloudflare example, OMP gateway and memory stores on Workers with Cloudflare Artifacts storage | v0.5 minimal profile | [irvinebroque/omp-cloudflare](https://github.com/irvinebroque/omp-cloudflare) |
 | omp-live, three memory systems and a coding agent kept in sync | OMP interchange records | [ompi.fly.dev](https://ompi.fly.dev) · [source](https://github.com/SrulyRosenblat/ompi-foo-camp/tree/main/omp-live) |
 | Python loader / validator | Letta v0.2 draft | [prototypes/python-loader-validator/](prototypes/python-loader-validator/) |
 | ACP memory server, session index over twelve harnesses | pre-OMP | [prototypes/acp_memory_server/](prototypes/acp_memory_server/) |
