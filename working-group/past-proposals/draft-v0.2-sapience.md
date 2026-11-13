@@ -2,7 +2,7 @@
 
 **Discussion draft v0.2 | October 15, 2026 | Sapience Labs contribution to OMPI**
 
-**Status:** Proposed for discussion; not an adopted OMP standard. This note restates, at the level of meaning, the knowledge object (KO) described in our public papers, and maps it onto the working draft *Open Memory Protocol: Memory Object, Exchange and Runtime* (editors' draft v0.2, 2026-10-14). Version 0.1 of this note, mapped onto editors' draft v0.1, is in early-draft-specs/draft-v0.1-sapience.md. It adds no fields beyond what those papers describe and proposes no algorithms.
+**Status:** Proposed for discussion; not an adopted OMP standard. This note restates, at the level of meaning, the knowledge object (KO) described in our public papers, and maps it onto the working draft *Open Memory Protocol: Memory Object, Exchange and Runtime* (editors' draft v0.2, 2026-10-14). Version 0.1 of this note, mapped onto editors' draft v0.1, is in [`archive/draft-v0.1-sapience.md`](archive/draft-v0.1-sapience.md). It adds no fields beyond what those papers describe and proposes no algorithms.
 
 **Prior work this note draws on (all public):**
 

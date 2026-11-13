@@ -1,7 +1,8 @@
 -- Pandoc Lua filter for the OMP working spec.
 --
 -- 1. Reads the title, stage, version and date from the document itself
---    (the H1 and the "**Editors' draft v0.5, 2026-11-06**" line), so the
+--    (the H1 and the "**Editors' draft v0.6, 2026-11-09.**" line; a
+--    trailing period inside the bold is allowed), so the
 --    file name never has to carry them.
 -- 2. Turns status markers such as [agreed] or [proposed, 10-14] into
 --    styled spans.
@@ -202,7 +203,7 @@ local function Pandoc(doc)
   for idx, blk in ipairs(blocks) do
     if blk.t == "Para" and blk.content[1] and blk.content[1].t == "Strong" then
       local lead = stringify(blk.content[1])
-      local stage, version, date = lead:match("^(.-)%s+(v[%d%.]+),%s*(%d%d%d%d%-%d%d%-%d%d)$")
+      local stage, version, date = lead:match("^(.-)%s+(v[%d%.]+),%s*(%d%d%d%d%-%d%d%-%d%d)%.?$")
       if stage then
         meta_out.stage, meta_out.version, meta_out.date = stage, version, date
         meta_out.date_long = long_date(date)

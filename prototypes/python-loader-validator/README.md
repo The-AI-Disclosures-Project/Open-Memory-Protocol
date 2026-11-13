@@ -1,6 +1,6 @@
 # OMP — Python experiment
 
-An experimental Python sketch exploring the [Open Memory Protocol (OMP)](../README.md), targeting the harness contract and validation rules in [`early-draft-specs/draft-v0.2-packer.pdf`](../early-draft-specs/draft-v0.2-packer.pdf).
+An experimental Python sketch exploring the [Open Memory Protocol (OMP)](../../README.md), targeting the harness contract and validation rules in [`working-group/past-proposals/draft-v0.2-packer.pdf`](../../working-group/past-proposals/draft-v0.2-packer.pdf).
 
 ## Install
 
@@ -49,8 +49,8 @@ The test suite covers every valid and invalid memory configuration from the spec
 
 ## Scope
 
-This implementation targets the current draft (v0.1). It is intentionally minimal: no storage backend, no synchronization, no context-window budgeting. Those belong to harnesses and memory-layer providers, not to the protocol layer.
+This sketch targets the Letta v0.2 draft and has not been updated to the editors' draft v0.5. It is intentionally minimal: no storage backend, no synchronization, no context-window budgeting. Those belong to harnesses and memory-layer providers, not to the protocol layer.
 
 ## License
 
-Apache 2.0 (see [LICENSE](../LICENSE)).
+Apache 2.0 (see [LICENSE](../../LICENSE)).
