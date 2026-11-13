@@ -1,0 +1,64 @@
+name: Render spec
+
+# Builds styled HTML and EPUB from working-spec.md.
+# Pull requests get a downloadable preview. A tag like v0.5 attaches the
+# files to that GitHub release, and fails if the tag and the version
+# written in the spec disagree.
+
+on:
+  pull_request:
+    paths:
+      - working-group/exchange-and-runtime/working-spec.md
+      - tools/spec-render/**
+      - .github/workflows/render-spec.yml
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Render HTML and EPUB
+        uses: docker://pandoc/core:3.11.0.0
+        env:
+          SPEC_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          SPEC_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        with:
+          entrypoint: /bin/sh
+          args: tools/spec-render/render.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: working-spec
+          path: dist/
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: render
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: working-spec
+          path: dist
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag \
+                 --title "Working spec $TAG" --notes "Editors' draft $TAG of the working spec. Not an adopted standard."
+          gh release upload "$TAG" dist/working-spec.html dist/working-spec.epub \
+            --repo "$GITHUB_REPOSITORY" --clobber

@@ -1,6 +1,6 @@
 # Open Memory Protocol v0.6: Agreed decisions
 
-Companion to [editors' draft v0.6](2026-11-09-working-spec-v0.6.md). Section numbers refer to that document.
+Companion to [editors' draft v0.6](working-spec.md). Section numbers refer to that document.
 
 "[agreed]" means "at least two participants explicitly agreed on a call and nobody objected." Agreed is not adopted. Each row gives the decision, the meeting, where it now sits, and the open remainder by issue id.
 

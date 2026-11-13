@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="generator" content="pandoc $pandoc-version$">
+$if(version)$<meta name="omp-spec-version" content="$version$">$endif$
+<title>$pagetitle$$if(version)$ ($version$)$endif$</title>
+<style>
+${ spec.css() }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the specification</a>
+<div class="page">
+  <aside class="side" aria-label="Contents">
+    <details class="toc" open>
+      <summary>
+        <span class="toc-label">Contents</span>
+        <span class="toc-here"></span>
+        <svg class="toc-chev" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="toc-body">
+        <div class="key" aria-label="Status key">
+          <span class="st st-agreed">agreed</span>
+          <span class="st st-proposed">proposed</span>
+          <span class="st st-open">open</span>
+          <span class="st st-editors">editors</span>
+        </div>
+        <nav id="TOC" aria-label="Sections">
+$table-of-contents$
+        </nav>
+      </div>
+    </details>
+  </aside>
+
+  <main id="content" class="doc">
+    <header class="mast">
+      $if(series)$<p class="series">$series$</p>$endif$
+      <h1>$doctitle$</h1>
+      <dl class="facts">
+        $if(version)$
+        <div><dt>This version</dt><dd><strong>$version$</strong>, <time datetime="$date$">$date_long$</time></dd></div>
+        $endif$
+        $if(stage)$
+        <div><dt>Status</dt><dd>$stage$</dd></div>
+        $endif$
+        $if(source_url)$
+        <div><dt>Source</dt><dd><a href="$source_url$">$source_path$</a></dd></div>
+        $endif$
+      </dl>
+    </header>
+
+$body$
+
+    <footer class="colophon">
+      <p>Rendered from <code>$source_path$</code>$if(build_commit_short)$ at commit <a href="$repo_url$/commit/$build_commit$">$build_commit_short$</a>$endif$ with pandoc $pandoc-version$. To change the spec, edit the Markdown file.</p>
+    </footer>
+  </main>
+</div>
+<script>
+${ spec.js() }
+</script>
+</body>
+</html>
