@@ -33,7 +33,14 @@ A receiver MUST NOT compare `version` values from different origins. Two stores 
 
 v0.2 text stands. A store MAY update a memory in place and need not keep earlier revisions; the audit profile requires immutable revisions with a verifiable history (v0.2 §6.2, editors' proposal). A store that updates in place and carries `updated_at` or `version` SHOULD update them. A receiver that already holds the memory can then tell it changed.
 
-A store whose bodies never change MAY still change lifecycle metadata on an existing revision, such as `valid_until` and supersession links (Gabe Goodhart, 10-14). In the audit profile each such change MUST be recorded as a lifecycle event with a contributor and a time. Otherwise a receiver cannot tell when a memory stopped applying or who decided it. Such changes alter a `checksum` that covers metadata, which the audit profile's verifiable history has to allow for (open question 2).
+A store whose bodies never change MAY still change lifecycle metadata on an existing revision, such as `valid_until` and supersession links (Gabe Goodhart, 10-14). In the audit profile each such change MUST be recorded as a lifecycle event with a contributor and a time. Otherwise a receiver cannot tell when a memory stopped applying or who decided it.
+
+`checksum` covers a revision's content. Lifecycle metadata that may change on an immutable revision sits outside it (the fields are listed in §6.1), and in the audit profile each change to that metadata is chained to the previous lifecycle event (Misha Sulpovar, review). The body stays verifiable, and a `valid_until` update does not break the hash chain. Two consequences follow.
+
+- A receiver that uses `checksum` to tell whether a memory changed would miss a new `valid_until` or a new archived marker. It SHOULD use the lifecycle events or `updated_at` for that signal.
+- Reference checksums (§8.5) stay stable when only lifecycle metadata changes.
+
+Metadata outside `checksum` can be altered in transit without breaking it. In the audit profile the chained lifecycle events cover this. Outside the audit profile the exposure is the same as before the split.
 
 ### 6.3 Invalidation and supersession
 
@@ -56,7 +63,7 @@ Supersession is an edge in `links` with `rel: supersedes`, from the newer revisi
 
 - The edge SHOULD target a revision where the store has revision identity, and MAY target the memory otherwise. An edge to "the memory" no longer says what was replaced once the history moves on. Appendix A already targets a revision.
 - The edge SHOULD carry the reason for the change (for example correction, update, merge or expiry) and SHOULD name the contributor who made it (Zahn, review; Wes, 10-14). In the audit profile the contributor MUST be named. The reason and contributor explain the change without requiring a diff between revisions. When the replaced revision is not exported, the reason is often all a receiver has to judge it by (Sruly, review). An audit must be able to trace who retired a memory.
-- A supersedes edge states that the newer revision replaces the older one as a description of the world. An edge that only records that one revision was written after another does not state that the newer one replaces the older one, and an exporter SHOULD NOT present it as a supersedes edge. §6.8 trusts edges first, so an edge that encodes arrival order would let a late, older fact win.
+- A supersedes edge states that the newer revision replaces the older one as a description of the world. An edge that only records that one revision was written after another does not state that the newer one replaces the older one, and an exporter SHOULD NOT present it as a supersedes edge. §6.8 trusts edges first, so an edge that encodes arrival order would let a late, older fact win. For the same reason a receiver SHOULD NOT infer a supersedes edge from a cardinality conflict (§3.3); it lists the conflict in the receipt instead (§8.4).
 - Cognee's reverse pointer `invalidated_by` (PR #16) MAY also be carried. If both directions are carried and disagree, a receiver SHOULD report it in the receipt (§8.4) rather than pick one.
 - One memory MAY supersede a different memory, for example in a merge.
 
@@ -105,14 +112,22 @@ When a receiver holds two revisions of the same memory (same `origin` and `ident
 
 1. If a supersedes path connects them, the descendant is later.
 2. If there is none and the comparator reports them incomparable, they are branches (§6.3.3).
-3. Otherwise, if both carry `valid_from`, the one with the later valid time is later.
-4. Otherwise the origin's comparator decides; failing that, the `exported_at` of the exports they arrived in; failing that, the origin's recorded time, in which case the receipt says so.
+3. Otherwise, if the origin declares `version_order: replacement` and the comparator orders them, the comparator decides.
+4. Otherwise, if both carry `valid_from`, the one with the later valid time is later.
+5. Otherwise the origin's comparator decides; failing that, the `exported_at` of the exports they arrived in; failing that, the origin's recorded time, in which case the receipt says so.
 
-The order in which the receiver received them never decides which is later. This ordering is a SHOULD in the minimal profile and a MUST in the audit profile. A late-arriving older fact must not overwrite a newer one because it was written last. The same applies when an old export is imported after a newer one. Tracking systems that reconcile out-of-order reports face the same problem. The ordering says which revision is latest. Whether the latest revision applies yet is the read question of §6.3; a planned change is not current before its `valid_from`.
+`version_order` is an origin-level field of the export manifest (§8.1) that says what the origin's comparator means (Misha Sulpovar, review). It takes one of two values.
 
-The ordering cannot tell a correction that moves valid time earlier from a late arrival unless the correction carries a supersedes edge. A store that updates in place and corrects a valid time SHOULD therefore export a supersedes edge with reason "correction" to the revision it replaced, even though it no longer holds that revision (the target then dangles, §8.5).
+- `replacement`: the origin bumps `version` only for a revision it means to replace the earlier one. The comparator then decides ahead of valid time (step 3).
+- `recorded`: `version` follows write or arrival order, and step 3 does not apply.
 
-The ordering resolves honest disorder but does not resolve adversarial disorder. A forged valid time still wins step 3 (Part 3, A4; §8.7).
+An absent `version_order` means `recorded`, because a store that does not declare cannot be assumed to bump `version` only on deliberate edits. The declaration describes one origin's comparator, so an export that carries memories from several origins (I-8) declares it per origin, not once per manifest. If two exports from the same origin declare different values, for example because the store changed policy, a receiver ordering revisions across the change SHOULD treat that origin as `recorded` for them and say so in the receipt (§8.4). `version_order` does not widen A4, since versions are still compared only within one origin (§6.1).
+
+The order in which the receiver received them never decides which is later. This ordering is a SHOULD in the minimal profile and a MUST in the audit profile. A late-arriving older fact must not overwrite a newer one because it was written last. The same applies when an old export is imported after a newer one. Tracking systems that reconcile out-of-order reports face the same problem. The ordering says which revision is latest. Whether the latest revision applies yet is the read question of §6.3; a planned change is not current before its `valid_from`. This holds under `replacement` too: the comparator decides which revision is latest, and valid time still decides whether it applies yet.
+
+In a `recorded` origin, the ordering cannot tell a correction that moves valid time earlier from a late arrival unless the correction carries a supersedes edge. A `recorded` store that updates in place and corrects a valid time SHOULD therefore export a supersedes edge with reason "correction" to the revision it replaced, even though it no longer holds that revision (the target then dangles, §8.5). A `replacement` origin needs no such edge, since step 3 already puts the correction ahead of valid time.
+
+The ordering resolves honest disorder but does not resolve adversarial disorder. A forged valid time still wins step 4 (Part 3, A4; §8.7).
 
 ### 6.9 Assessments and the revision they concern
 
@@ -138,9 +153,9 @@ Each example states the expected outcome.
 
 **Example 2. Out-of-order arrival.** A store keeps the position of a tracked object as one memory (an event-style store would keep each report as its own memory, and the question would not arise). Reports reach it by two paths. The 10:05 report arrives at 10:06, the 10:00 report at 10:07. The store numbers revisions by arrival and writes no supersedes edge between them. Its comparator is a plain integer order.
 
-- Expected: step 3 of §6.8 applies, and the 10:05 position is latest. The 10:00 report is kept as history or, in a store without history, dropped. Under "newest write wins" it would have overwritten the 10:05 position.
+- Expected: the store declares no `version_order`, so it is read as `recorded`. Step 4 of §6.8 applies, and the 10:05 position is latest. The 10:00 report is kept as history or, in a store without history, dropped. Under "newest write wins" it would have overwritten the 10:05 position.
 - *Old export variant.* A receiver that holds revision 2 of Example 1, with its edge, imports an old export holding only revision 1. Expected: step 1 applies and Friday stays latest.
-- *Store with one time axis.* It leaves `valid_from` out (§6.3.1). Expected: step 4 applies, the comparator decides, and nothing is presented as an ordering in valid time.
+- *Store with one time axis.* It leaves `valid_from` out (§6.3.1). Expected: step 5 applies, the comparator decides, and nothing is presented as an ordering in valid time.
 
 **Example 3. Branches.** Revision 1 of a team memory reads "Deploys go through the release checklist." On main, revision 2a adds "and need a second reviewer." On dev, revision 2b adds "and run the migration dry run first." Both supersede revision 1, there is no path between them, and the comparator reports them incomparable.
 
@@ -169,22 +184,24 @@ PR #17 separates integrity from trustworthiness. A verifiable history shows that
 - **A1. Forged supersedes edge.** An import claims to supersede a memory from another origin and so retires it from default reads. The proposal is that a receiver does not let an imported edge retire a memory from a different origin without its own review, and lists such edges in the receipt. Within one origin, an edge is ordinary history, and in the audit profile it names its contributor.
 - **A2. Forged tombstone.** Covered by the standing rule in §6.5. A receiver that holds back a genuine tombstone keeps erased data until it checks. A receiver that obeys a forged tombstone loses data the origin still has. The standing rule keeps the common cases automatic and sends only the rest to review.
 - **A3. Resurrection.** From a pre-forget archive (§6.5), from a store that never received the forget (open question 5), or under a new identifier after re-keying (open question 6).
-- **A4. Inflated version or forged valid time.** A writer claims a large `version` or a late `valid_from` to come out latest. Versions are compared only within their origin (§6.1). A forged valid time inside one origin still wins step 3 of §6.8, and an integrity check will not catch it because the record is intact. A receiver that doubts an origin's valid times can review them under §8.7.
+- **A4. Inflated version or forged valid time.** A writer claims a large `version` or a late `valid_from` to come out latest. Versions are compared only within their origin (§6.1). A forged valid time inside one origin still wins step 4 of §6.8, and an integrity check will not catch it because the record is intact. A receiver that doubts an origin's valid times can review them under §8.7.
 
 ### Edits other sections would need
 
 - **§3.2.** `identifier`: SHOULD be stable across exports from the same origin. `valid_from`: left out when unknown.
+- **§3.3.** Cardinality as a semantic convention (Misha Sulpovar, review): a predicate MAY be declared one-valued, so a receiver can tell that two memories with the same subject and that predicate conflict. It applies only to memories that are both current under §6.3, so "lives in Boston" with a `valid_until` already set does not conflict with "lives in Austin". Two branches of one memory (§6.3.3) are not a cardinality conflict. A cardinality conflict never creates a supersedes edge.
 - **§4.6.** The bullets of §6.9.
 - **§5.3 (I-5).** A supersedes link targets a revision where one exists. Other link types stay open.
-- **§8.4.** Receipts also list memories rejected because of a tombstone, branches kept as separate memories, revisions ordered by recorded time, edges or tombstones held for review, and disagreeing forward and reverse pointers.
+- **§8.1.** The manifest carries `version_order` per origin (§6.8).
+- **§8.4.** Receipts also list memories rejected because of a tombstone, branches kept as separate memories, revisions ordered by recorded time, origins treated as `recorded` because their exports declared different `version_order` values, edges or tombstones held for review, and disagreeing forward and reverse pointers. A cardinality conflict (§3.3) between two memories that are both current under §6.3 is listed as a contradiction for review, never as an inferred supersedes edge. Branches under §6.3.3 are reported as branches.
 - **§8.7.** Imported supersedes edges and tombstones are claims by their issuer, like imported provenance.
 - **§10.4.** Add the §6.8 ordering as a MUST and named contributors on supersedes edges.
-- **§12.** I-4: branches and import ordering proposed. I-7: split as in §6.5. I-14: archived marker proposed in §6.6.
+- **§12.** I-4: branches and import ordering proposed. I-7: split as in §6.5. I-14: archived marker proposed in §6.6. I-23: cardinality convention (§3.3) with the contradiction rule in §8.4.
 
 ### Open questions
 
 1. Which metadata fields may change on an immutable revision without a new revision (§6.2)? Is the supersedes reason a closed list or free text?
-2. Should lifecycle metadata that may change on an immutable revision sit outside `checksum`, so the audit profile's hash chain survives a `valid_until` update?
+2. Proposed in §6.2: lifecycle metadata that may change on an immutable revision sits outside `checksum`, so the audit profile's hash chain survives a `valid_until` update. The list of fields in §6.1 answers this together with question 1.
 3. Should a merge (supersession across memory identities) be its own relation?
 4. Which `contribution` values count as assessments for §6.9, and is the body-only hash (PR #16) the right fallback for stores without versions?
 5. How does a forget reach stores that hold a copy but were never sent the tombstone, and must a receiver that receives a forget tombstone erase the copy it already holds? Should a delete tombstone ever block re-import, or does it only make "deleted" distinguishable from "never sent"?
