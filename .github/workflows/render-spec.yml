@@ -1,9 +1,10 @@
 name: Render spec
 
 # Builds styled HTML and EPUB from SPEC.md.
-# Pull requests get a downloadable preview. A tag like v0.5 attaches the
-# files to that GitHub release, and fails if the tag and the version
-# written in the spec disagree.
+# Pull requests get a downloadable preview. A push to main publishes the
+# page to GitHub Pages. A tag like v0.5 attaches the files to that GitHub
+# release, and fails if the tag and the version written in the spec
+# disagree.
 
 on:
   pull_request:
@@ -12,6 +13,12 @@ on:
       - tools/spec-render/**
       - .github/workflows/render-spec.yml
   push:
+    branches:
+      - main
+    paths:
+      - SPEC.md
+      - tools/spec-render/**
+      - .github/workflows/render-spec.yml
     tags:
       - "v*"
   workflow_dispatch:
@@ -39,6 +46,38 @@ jobs:
           name: working-spec
           path: dist/
           if-no-files-found: error
+
+  pages:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: render
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: working-spec
+          path: dist
+
+      - name: Lay out the site
+        run: |
+          mkdir site
+          cp dist/working-spec.html site/index.html
+          cp dist/working-spec.html dist/working-spec.epub site/
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v5
 
   release:
     if: github.ref_type == 'tag'
