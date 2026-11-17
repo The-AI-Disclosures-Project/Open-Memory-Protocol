@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://openmemoryprotocol.org"><strong>Site</strong></a> ·
-  <a href="working-group/exchange-and-runtime/working-spec.md"><strong>Working spec (v0.6)</strong></a> ·
+  <a href="https://the-ai-disclosures-project.github.io/Open-Memory-Protocol/"><strong>Working spec (v0.6)</strong></a> ·
   <a href="working-group/past-proposals/"><strong>Proposals</strong></a> ·
   <a href="prototypes/"><strong>Prototypes</strong></a> ·
   <a href="https://ompi.fly.dev"><strong>Live demo</strong></a> ·
@@ -35,7 +35,7 @@ The [Open Memory Protocol Initiative (OMPI)](https://openmemoryprotocol.org) is 
 
 Pre-1.0, no reference implementation yet. First target: coding-agent harnesses.
 
-- **Spec:** [editors' draft v0.6](working-group/exchange-and-runtime/working-spec.md), November 9, 2026. The memory object, its interchange and runtime forms, and exchange semantics; v0.5 reordered, with a proposed resolution for every open question. Companions: [agreed decisions](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-decisions.md) and [open questions and record](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md). Not adopted.
+- **Spec:** [editors' draft v0.6](working-group/exchange-and-runtime/working-spec.md) ([read it as a web page](https://the-ai-disclosures-project.github.io/Open-Memory-Protocol/)), November 9, 2026. The memory object, its interchange and runtime forms, and exchange semantics; v0.5 reordered, with a proposed resolution for every open question. Companions: [agreed decisions](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-decisions.md) and [open questions and record](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md). Not adopted.
 - **In review:** [PR #17](https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol/pull/17), a threat model for the memory object.
 - **Background:** [September 28 notes](working-group/exchange-and-runtime/2026-09-28-common-ground.md), where the proposals agree and differ.
 - **Next:** online hackathon, early December. [Vote on the date](https://forms.gle/ditdHjo1trjm9X7YA). <!-- remove after the hackathon -->
