@@ -10,16 +10,18 @@ The repository is a document set, not a codebase. Its job is to let a reader fin
 ## Layout and what goes where
 
 ```
-working-group/exchange-and-runtime/   editors' drafts and working-group notes (current spec lives here)
+SPEC.md                               the current editors' draft; the only copy anyone edits
+working-group/exchange-and-runtime/   the draft's companion decisions and notes, call notes, spec PRs in progress
 working-group/past-proposals/         contributed proposals, latest revision of each; archive/ holds superseded ones;
                                       README.md there is the index with one-paragraph summaries
 prototypes/                           experimental code, one folder per prototype, README.md lists them all
 docs/                                 contributing.md, history.md, prior-art/, the-memory-walled-garden/
 media/                                logos only
+tools/spec-render/                    pandoc build of SPEC.md into HTML and EPUB
 GOVERNANCE.md · SECURITY.md · LICENSE · README.md
 ```
 
-Do not add a top-level folder. New material goes into one of these. `working-group/exchange-and-runtime/` is the path open spec PRs target; never rename it without checking `gh pr list` for PRs that add files there.
+Do not add a top-level folder. New material goes into one of these. `SPEC.md` and `working-group/exchange-and-runtime/` are the paths open spec PRs target, and the render workflow builds from `SPEC.md`; never move either without checking `gh pr list` for PRs that touch them.
 
 ## Rules the README follows
 
@@ -36,7 +38,7 @@ Do not add a top-level folder. New material goes into one of these. `working-gro
 
 **New revision of a proposal.** `git mv` the old file to `working-group/past-proposals/archive/`; add the new `draft-vX.Y-<org>.md`; update the index (summary, superseded table) and the README table row; fix the self-reference in the new file if it points at the old revision. Run the link check.
 
-**New editors' draft.** Add it under `working-group/exchange-and-runtime/` with the date in the name; update the README nav link, the "Current work" bullet, `docs/contributing.md`'s "read the editors' draft" link, and the status line if the focus changed; add a line to `docs/history.md`. The previous draft's change log lives at the top of the new one, so the old file is not kept.
+**New editors' draft.** Edit `SPEC.md` in place and change the version and date on its bold lead-in line (the renderer reads them from there); update the README "Current work" bullet and the status line if the focus changed; add a line to `docs/history.md`. The previous draft's change log lives in the companion notes, so no old copy is kept. Tag the release (`v0.7`) to attach the rendered HTML and EPUB.
 
 **Meeting or event.** Decisions go into the editors' draft change log; call notes (if any) go next to the spec with the date in the name. The event itself is one line in `docs/history.md`. Remove any README notice for it.
 

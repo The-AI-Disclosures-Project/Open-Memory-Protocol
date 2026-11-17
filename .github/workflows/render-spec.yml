@@ -1,6 +1,6 @@
 name: Render spec
 
-# Builds styled HTML and EPUB from working-spec.md.
+# Builds styled HTML and EPUB from SPEC.md.
 # Pull requests get a downloadable preview. A tag like v0.5 attaches the
 # files to that GitHub release, and fails if the tag and the version
 # written in the spec disagree.
@@ -8,7 +8,7 @@ name: Render spec
 on:
   pull_request:
     paths:
-      - working-group/exchange-and-runtime/working-spec.md
+      - SPEC.md
       - tools/spec-render/**
       - .github/workflows/render-spec.yml
   push:
