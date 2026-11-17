@@ -1,6 +1,6 @@
 # Open Memory Protocol: Runtime Specification
 
-**Editors' draft v0.1, draft for review.** Runtime sub-thread. Not an adopted OMP standard. Companions: [editors' draft v0.6](2026-11-09-working-spec-v0.6.md) of the Exchange and Runtime spec (the memory object, its interchange and runtime forms, and exchange semantics); [agreed decisions](2026-11-09-working-spec-v0.6-decisions.md) and [open questions and record](2026-11-09-working-spec-v0.6-notes.md).
+**Editors' draft v0.1, draft for review.** Runtime sub-thread. Not an adopted OMP standard. Companions: [editors' draft v0.6](../../SPEC.md) of the Exchange and Runtime spec (the memory object, its interchange and runtime forms, and exchange semantics); [agreed decisions](2026-11-09-working-spec-v0.6-decisions.md) and [open questions and record](2026-11-09-working-spec-v0.6-notes.md).
 
 This document defines the **runtime plug-in points** that let an agent harness consume memory at runtime and where a memory system plugs in. It builds on the memory object defined in the Exchange and Runtime spec: every runtime object is a projection of that object (Section 3.4 of v0.6), and every runtime write produces a new memory object that conforms to the interchange schema of v0.6.
 
@@ -41,14 +41,17 @@ The runtime representation is the projection defined in v0.6, Section 3.4. The t
 |---|---|
 | `identifier`, `media_type`, `body` | yes (required) |
 | `stub` | yes, when true |
-| `title`, `tags`, `created_at` | yes |
+| `title`, `tags`, `valid_from` | yes |
+| `version`, `valid_until` | yes if set |
+| `weight` | yes with semantic description in tool definition |
 | `path` | MAY be shown, for progressive disclosure |
-| `protocol_version`, `version`, `updated_at`, `valid_from`, `valid_until`, `weight` | when the implementation needs them |
 | `provenance` | a summary MAY be shown (for example the author) |
 | `evidence`, `links` | MAY be shown |
 | `checksum` | no |
 | `scope` | no |
 | `status` | no |
+| `protocol_version` | no |
+| `created_at`, `updated_at` | no (prefer `valid_from` for semantic timestamp) |
 | tombstones, audit records | no |
 | `auditable` | MAY be shown (derived from provenance and evidence per v0.6, I-13) |
 
@@ -56,7 +59,7 @@ A memory system MAY add extension fields to the runtime projection under a dot-p
 
 ### 1.4 Provenance on write
 
-Every write — whether active (`remember`) or passive (`passive-create`) — MUST record who wrote the memory. The contributor list follows v0.6, Section 3.1.1:
+Every write — whether active (`remember`) or passive (`passive-create`) — SHOULD (MUST in audit profile) record who wrote the memory. The contributor list follows v0.6, Section 3.1.1:
 
 | Key | Meaning |
 |---|---|
@@ -67,13 +70,13 @@ Every write — whether active (`remember`) or passive (`passive-create`) — MU
 | `at` | When this contributor acted |
 | `accountable` | `true` only on a `human` entry, marking who is accountable (v0.6, I-3b) |
 
-A passive-create interceptor that observes a session and extracts a memory MUST attribute the write to the agent that runs the interceptor, with `contribution: authored` and `kind: agent`. If a human explicitly confirms or edits the extracted memory, that human's `contribution: instructed` / `edited` / `approved` entries are added.
+A passive-create interceptor that observes a session and extracts a memory MUST, when recording provenance, attribute the write to the agent that runs the interceptor, with `contribution: authored` and `kind: agent`. If a human explicitly confirms or edits the extracted memory, that human's `contribution: instructed` / `edited` / `approved` entries are added.
 
 ## Part 2. Active Memory Creation — the `remember` tool
 
 ### 2.1 Purpose
 
-The `remember` tool lets an agent explicitly create a new memory from a piece of knowledge it has encountered: a user instruction, an agent-authored summary, an observation, or a derived fact. The agent supplies the content and minimal metadata; the memory system constructs the full memory object, computes `checksum`, assigns `identifier` if absent, and returns the runtime representation of the stored memory.
+The `remember` tool lets an agent explicitly create a new memory from a piece of knowledge it has encountered: a user instruction, an agent-authored summary, an observation, or a derived fact. The agent supplies the content and minimal metadata; the memory system constructs the full memory object, computes `checksum`, assigns `identifier` if absent, and returns the runtime identifier of the stored memory.
 
 ### 2.2 The write contract
 
@@ -84,50 +87,48 @@ POST /remember
 Content-Type: application/json
 
 {
-  "body": string,                          // required: the memory content
-  "media_type": string,                    // required: MIME type of the body
-  "title": string,                         // optional: human-readable label
-  "tags": [string],                        // optional: semantic tags
-  "path": string,                          // optional: where this sits in the origin store
-  "created_at": string,                    // optional: ISO 8601; defaults to now
-  "valid_from": string,                    // optional: when the claim becomes true
-  "valid_until": string,                   // optional: when the claim stops being true
-  "version": integer | string,             // optional: for update; absent creates new
-  "links": [{ "target", "rel", ... }],     // optional: typed edges to other memories
+  "body": string,                           // required: the memory content
+  "media_type": string,                     // optional: MIME type of the body, text/plain if unset
+  "title": string,                          // optional: human-readable label
+  "tags": [string],                         // optional: semantic tags, system may exclude
+                                            //           for systems with well-defined tag sets
+  "path": string,                           // optional: where this sits in the origin store
+  "valid_from": string,                     // optional: when the claim becomes true
+  "valid_until": string,                    // optional: when the claim stops being true
+  "links": [{ "target", "rel", ... }],      // optional: typed edges to other memories
   "evidence": [{ "ref", "relation", ... }], // optional: sources this memory rests on
-  "provenance": [{ "id", "kind", "contribution", ... }], // optional: who contributed
-  "scope": [string],                       // NOT accepted: scope is set by the system (v0.6, U-11)
-  "checksum": string,                      // NOT accepted: computed by the system
-  "identifier": string                     // optional: client-supplied; system may override
+  "identifier": string                      // optional: used to indicate an update, treated as an
+                                            //           error otherwise
+  "created_at": string,                     // NOT accepted: set by system
+  "version": integer | string,              // NOT accepted: versioning managed by system
+  "provenance": [...],                      // NOT accepted: set by the system
+  "scope": [string],                        // NOT accepted: scope is set by the system (v0.6, U-11)
+  "checksum": string,                       // NOT accepted: computed by the system
 }
 ```
 
 The `remember` tool is binding-neutral. In MCP it is a tool; in a harness hook it is a function; in CLI it is a subcommand. The shape of the request and response is the same across bindings.
 
+In it's simplest form, `remember` may also simply take a `string`. This is inferred as the `"body"` field with `"media_type": "text/plain"` and all other fields unset.
+
 #### 2.2.1 `scope` is system-set, not client-supplied
 
-Per v0.6, U-11, a memory system MUST assign `scope` itself from the caller's identity and the write destination, and MUST ignore or reject a `scope` value supplied through a runtime surface. A `remember` request that carries `scope` is rejected or the field is dropped; the system sets its own scope tags.
+Per v0.6, U-11, a memory system MAY assign `scope` itself from the caller's identity and the write destination, and MUST ignore or reject a `scope` value supplied through a runtime surface. A `remember` request that carries `scope` is rejected or the field is dropped; the system sets its own scope tags.
 
 #### 2.2.2 Update vs create
 
-- **Create.** When `version` is absent and no memory with the supplied `identifier` exists, the system creates a new memory with a fresh `identifier` (or keeps the client-supplied one if present and unique).
-- **Update (revision).** When `version` is present, the system creates a new revision that supersedes the current one, per v0.6, 3.3.3 (immutable revisions). The new revision carries the supplied `version` plus an incremented comparator value, and a `supersedes` link to the previous revision. The client may supply a client-chosen `version`; the system validates it against its declared comparator (v0.6, I-4) and rejects incomparable or duplicate versions.
-- **Idempotent create.** When `origin` + `identifier` + `version` (if present) already exists with identical content, the system returns the existing revision without creating a duplicate (v0.6, U-14).
+- **Create.** When a memory is supplied without an `identifier`, the system creates a new memory with a fresh `identifier`.
+- **Update (revision).** When a client-supplied `identifier` collides with an existing memory, the system follows its versioning semantics to update the current one. If implementing immutable revisions (per v0.6, 3.3.3) the new revision is given an incremented `version` value following the system's comparitor semantics, and a `supersedes` link to the previous revision. The client may not supply a client-chosen `version`; versioning is the responsibility of the system, not the client.
+- **Idempotent create.** When `origin` + `identifier` already exists with identical content, the system returns the existing revision without creating a duplicate (v0.6, U-14).
 
 #### 2.2.3 `identifier` handling
 
-- If the client supplies `identifier`, the system MUST check that it is unique within the export/store for the given `origin` (v0.6, I-8). If occupied, the system returns an error or assigns a new identifier.
+- If the client supplies `identifier`, the system MUST check that it is present within the export/store for the given `origin` (v0.6, I-8). If occupied, the system treats it as an update. If unoccupied, the system treats this as a malformed request and returns an error. Identifier allocation belongs to the system, so unoccupied client-provided identifiers are not accepted.
 - If the client does not supply `identifier`, the system generates one (RECOMMENDED: a UUID). The returned memory always carries the `identifier` the system settled on.
 
 #### 2.2.4 `checksum` computation
 
-The system computes `checksum` over the metadata-covered fields plus the body per v0.6, U-1:
-1. UTF-8 bytes of `identifier`, followed by `0x0A`
-2. `version` where present, followed by `0x0A`
-3. `created_at`, followed by `0x0A`
-4. `updated_at` where present, followed by `0x0A`
-5. `media_type`, followed by `0x0A`
-6. The decoded body bytes
+The system computes `checksum` over the metadata fields plus the body per v0.6, U-1. The checksum MUST be deterministically computed by concatenating the values of all metadata fields in sorted order, followed by the raw body bytes. Fields MUST be separated by `0x0A` as a delimiter. All fields with a valid value MUST be included in the checksum. A field is valid if it is set to a value, including empty strings and lists. A field MUST NOT be included if its key is not present in the serialized representation of the memory.
 
 The result is encoded as `algorithm:hex` (e.g. `sha256:...`).
 
@@ -136,6 +137,8 @@ The result is encoded as `algorithm:hex` (e.g. `sha256:...`).
 `valid_from` records when the claim became true in the world; `valid_until` records when it stops being true. A memory with `valid_until` in the past is still stored (it may be resurrected by forgetting) but a recall implementation SHOULD exclude it from current reads unless explicitly requested (v0.6, 3.3.4).
 
 ### 2.3 Response
+
+The response to `remember` should carry all system-derived information that the client (agent) may have a legitimate semantic use for. The `body` MUST NOT be returned as this is likely to duplicate text in an agent's context. Full `body` content may be retrieved later using `recall`.
 
 ```
 200 OK
@@ -146,10 +149,7 @@ Content-Type: application/json
     // runtime representation per Section 1.3
     "identifier": string,
     "media_type": string,
-    "body": string,
-    "title": string,
     "tags": [string],
-    "path": string,
     "created_at": string,
     "version": integer | string,
     "provenance": [{ "id", "kind", "contribution", ... }],
