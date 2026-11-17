@@ -19,6 +19,7 @@ The output lands in `dist/`, which git ignores.
 `.github/workflows/render-spec.yml` runs the same script in the `pandoc/core` container.
 
 - On a pull request that touches the spec, it uploads the HTML and EPUB as a build artifact you can download from the run.
+- On a push to `main` that touches the spec, it publishes the HTML page to GitHub Pages, with the EPUB next to it as `working-spec.epub`.
 - On a tag such as `v0.6`, it attaches both files to the GitHub release for that tag. The build fails if the tag doesn't match the version written in the spec.
 
 ## Files
