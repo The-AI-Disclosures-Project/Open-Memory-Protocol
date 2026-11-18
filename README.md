@@ -111,6 +111,37 @@ GOVERNANCE.md · SECURITY.md · LICENSE · README.md
 
 Decisions go through a Technical Steering Group under the rules in [GOVERNANCE.md](GOVERNANCE.md): lazy consensus among maintainers, simple-majority TSG votes for unresolved questions, two-thirds for breaking changes. Contributions use a DCO sign-off. An external governance review in months 12–24 assesses the long-term home, with continued AI Disclosures Project / CS&S stewardship as the default. How the initiative got here: [docs/history.md](docs/history.md).
 
+## Supported by
+
+<p align="center">
+  <sub><b>Founding Partners</b></sub><br>
+  <a href="https://elevenlabs.io/"><img src="media/supported-by/elevenlabs.svg" alt="ElevenLabs" height="59"></a>
+</p>
+
+<p align="center">
+  <sub><b>Contributors and implementers</b></sub><br>
+  <a href="https://www.cloudflare.com/"><img src="media/supported-by/cloudflare.svg" alt="Cloudflare" height="52"></a>
+  <a href="https://www.mastercard.com/"><img src="media/supported-by/mastercard.svg" alt="Mastercard" height="52"></a>
+  <a href="https://huggingface.co/"><img src="media/supported-by/huggingface.svg" alt="Hugging Face" height="52"></a>
+  <a href="https://www.oreilly.com/"><img src="media/supported-by/oreilly.svg" alt="O'Reilly Media" height="52"></a>
+  <a href="https://www.langchain.com/"><img src="media/supported-by/langchain.svg" alt="LangChain" height="52"></a>
+  <a href="https://neo4j.com/"><img src="media/supported-by/neo4j.svg" alt="Neo4j" height="52"></a>
+  <a href="https://www.pinecone.io/"><img src="media/supported-by/pinecone.svg" alt="Pinecone" height="52"></a>
+  <a href="https://www.getzep.com/"><img src="media/supported-by/zep.svg" alt="Zep" height="52"></a>
+  <a href="https://dare.cmu.edu/"><img src="media/supported-by/dare.png" alt="DARE: A Carnegie Mellon University Project" height="52"></a>
+  <a href="https://www.cognee.ai/"><img src="media/supported-by/cognee.svg" alt="Cognee" height="52"></a>
+  <a href="https://dosu.dev/"><img src="media/supported-by/dosu.svg" alt="Dosu" height="52"></a>
+  <a href="https://causality.ai/"><img src="media/supported-by/causality.svg" alt="Causality" height="52"></a>
+  <a href="https://miso.ai/"><img src="media/supported-by/miso.svg" alt="Miso.ai" height="52"></a>
+  <a href="https://koodos.com/"><img src="media/supported-by/koodos.svg" alt="Koodos Labs" height="52"></a>
+  <a href="https://promptowl.ai/"><img src="media/supported-by/promptowl.png" alt="PromptOwl" height="52"></a>
+  <a href="https://spnc.ai/"><img src="media/supported-by/sapience.png" alt="Sapience Labs" height="52"></a>
+  <a href="https://speqq.com/"><img src="media/supported-by/speqq.svg" alt="Speqq" height="52"></a>
+  <a href="https://egoistmachines.com/"><img src="media/supported-by/egoist-machines.svg" alt="Egoist Machines" height="52"></a>
+</p>
+
+<p align="center"><b>Block</b> · <b>goose</b> · <b>LlamaIndex</b> · <b>Letta</b> · <b>Basic Memory</b></p>
+
 ## License
 
 - Specification documents: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
