@@ -1,6 +1,6 @@
-# Open Memory Protocol: The Memory Object (Exchange and Runtime)
+# Open Memory Protocol: The Memory Object
 
-**Editors' draft v0.6, 2026-11-09.** Exchange and Runtime sub-thread. Not an adopted OMP standard. v0.6 reorders v0.5 (2026-11-06) without normative change and adds a proposed resolution for every open question. Companions: [agreed decisions](2026-11-09-working-spec-v0.6-decisions.md) and [open questions, proposals and record](2026-11-09-working-spec-v0.6-notes.md), which holds the issue register, the discussion record and the change history with the v0.5 section map.
+**Editors' draft v0.6, 2026-11-09.** Not an adopted OMP standard. v0.6 reorders v0.5 (2026-11-06) without normative change and adds a proposed resolution for every open question. Companions: [agreed decisions](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-decisions.md) and [open questions, proposals and record](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md), which holds the issue register, the discussion record and the change history with the v0.5 section map.
 
 **How to read.** MUST, SHOULD and MAY are RFC 2119 keywords; all of them are editors' proposals until adopted. Unmarked text was carried from v0.5. **[agreed]** marks what the group agreed on a call. **Proposed (I-n)** blocks are new in v0.6 and resolve the question with that id; the group accepts or rejects each one. A mark at the end of a paragraph covers it.
 

@@ -1,0 +1,9 @@
+/* Minimal EPUB styles. Reading apps apply their own fonts and themes. */
+.st { font-size: .75em; font-weight: bold; white-space: nowrap; }
+.st::before { content: "["; }
+.st::after { content: "]"; }
+.kw { font-variant: small-caps; letter-spacing: .04em; font-weight: bold; }
+.lede { font-style: italic; }
+table { border-collapse: collapse; font-size: .85em; }
+th, td { border-bottom: 1px solid #999; padding: .3em .5em; text-align: left; vertical-align: top; }
+pre { font-size: .8em; white-space: pre-wrap; }
