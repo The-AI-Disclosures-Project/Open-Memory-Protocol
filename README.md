@@ -29,7 +29,7 @@
 
 # Open Memory Protocol Initiative
 
-The [Open Memory Protocol Initiative (OMPI)](https://openmemoryprotocol.org) is building an open protocol to transport and convert memory between different AI systems for shared, interoperable memory. It is hosted at the [AI Disclosures Project](https://ai-disclosures.org/) ([Code for Science & Society](https://www.codeforsociety.org/)) and co-convened with IBM and Mozilla. This repository holds the working specification, the contributed proposals, prototypes and the governance documents.
+The [Open Memory Protocol Initiative (OMPI)](https://openmemoryprotocol.org) is building an open protocol to *transport* and *convert* memory between different AI systems for **shared, interoperable memory**. It is hosted at the [AI Disclosures Project](https://ai-disclosures.org/) ([Code for Science & Society](https://www.codeforsociety.org/)) and co-convened with IBM and Mozilla. This repository holds the working specification, the contributed proposals, prototypes and the governance documents.
 
 ## Current work
 
