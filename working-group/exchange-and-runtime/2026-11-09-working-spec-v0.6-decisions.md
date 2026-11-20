@@ -6,7 +6,7 @@ Companion to [editors' draft v0.6](../../SPEC.md). Section numbers refer to that
 
 | Topic | Decision | Meeting | Where | Open remainder |
 |---|---|---|---|---|
-| Goals and scope | Full audit is a multi-user enterprise requirement, not a single-user one; audit obligations sit in tiers so individual users do not carry them. | 2026-09-28 call (inferred; v0.5 cites no meeting) | 2.1, 1.3 | |
+| Goals and scope | Full audit is a multi-user enterprise requirement, not a single-user one; audit obligations sit in tiers so individual users do not carry them. | 2026-09-28 call (inferred; v0.5 cites no meeting) | 2.1, 1.4 | |
 | Goals and scope | The base object is metadata plus a typed body, not a markdown file, and markdown is not preferred. Closes I-1. | 2026-10-14 | 2.2, 1.1 | |
 | Goals and scope | This document is the individual memory spec; the export/import manifest is a follow-up proposal. | 2026-11-06 | 2.2, 3.5.1 | U-8 (who owns the manifest proposal); working text in 5.3 |
 | Memory object | A memory is metadata plus a body: the metadata is a schema for the managing system, the body is what is semantically relevant to the agent. | 2026-09-28 call | 1.1 | |
@@ -27,7 +27,7 @@ Companion to [editors' draft v0.6](../../SPEC.md). Section numbers refer to that
 - `version` is audit-required, not required, and stores that change memories in place and stores that never change them are both supported (2026-10-14, changelog; the issue list calls I-4 "mostly settled" while the field row and the store sentence are tagged proposed). Remainder: the form of `version` and its comparator, including incomparable versions (I-4). Where: 1.2, 3.3.1, 3.3.2.
 - `created_at` records when the system learned something; `valid_from` records when it became true (2026-10-14, changelog; the two field rows are tagged "no objection" and proposed). Where: 1.2, 3.3.4.
 - The protocol defines no portable accuracy or confidence score; accuracy travels as provenance and evidence, plus the agreed `weight` (settled 2026-11-06 in the issue list, I-20, while the section heading still said proposed). Remainder: an optional confidence on each evidence entry (I-20 residual). Where: 3.1.6.
-- Tier assignments: `version` (audit-required) and `updated_at` (optional) were read back on 2026-10-14; `protocol_version` and `weight` (both optional) were set on 2026-11-06; every other tier is the editors' (I-16). Where: 1.3, 1.2.
+- Tier assignments: `version` (audit-required) and `updated_at` (optional) were read back on 2026-10-14; `protocol_version` and `weight` (both optional) were set on 2026-11-06; every other tier is the editors' (I-16). Where: 1.4, 1.2.
 - "Header" is now "metadata" (2026-10-14, changelog). Where: 1.1.
 - `type` is now `media_type`, provenance `role` is now `contribution`, and `model` is now `name` (closed in review of PR #13, not on a call). Where: 1.2, 3.1.1.
 

@@ -1,9 +1,70 @@
 # Open Memory Protocol: The Memory Object
 
-**Editors' draft v0.6, 2026-11-09.** 
+**Editors' draft v0.6, 2026-11-09.**
+
+## Part 1. The memory object
+
+### 1.1 What is a memory object
+Memory in the Open Memory Protocol is defined as a **body** plus **metadata**. The body is the part of the memory that is relevant to an agent. The metadata is there to help transfer additional information alongside the body to other memory stores that the agent interacts with. It also helps the memory systems keep track of provenance and versioning, linking memories to each other, and controlling who can access them.
+
+We do not enforce the size of a memory. Different systems may have more granular information, such as making memories consist of a single fact only, others may include entire essays as a single memory, we aim to support both. A memory server can process memories to better fit their particular memory format once they receive it, our goal for the memory object is only to transfer it over.
+
+**Body Format**
+
+The body MUST be a string. Non-text content, such as images or audio, MAY be carried as a base64-encoded string with `body_encoding: base64`. Implementations are not required to interpret every media type.
+
+In cases where a memory is stored as a structured object such as JSON or XML the metadata SHOULD include a `media_type` field with a value such as `application/json` or `application/xml`.
+
+The body of a memory also does not need to include full documents inline. It can instead indicate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
 
 
-## Example
+### 1.2 Field table
+
+The table defines every standardized field within the Open Memory Protocol. Unstandardized metadata fields may be added by implementations if a field they need is not covered by the fields below. Future versions of the protocol will aim to officially adopt fields that are missed below but commonly used.
+
+| Field | Type | Tier | Definition |
+|---|---|---|---|
+| `identifier` | string | required | Identifies the memory within its origin system. UUIDs are RECOMMENDED. MUST be unique among the memories in one export. |
+| `path` | string | optional | The local file path of the memory if applicable |
+| `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories |
+| `protocol_version` | string | optional | The version of this protocol the memory was written in. |
+| `media_type` | string | required | The media type of the body. MUST be a valid MIME type. |
+| `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched |
+| `body_uri` | string (URI) | optional | Where the full body can be fetched when `stub` is `true` |
+| `body_encoding` | string | optional | How the body string is encoded. `base64` for non-text content; absent for text |
+| `tags` | list of strings | optional | Semantic tags, free-form or from a vocabulary declared elsewhere.|
+| `scope` | list of strings | ACL-required | A list of scopes the user or agent needs to access memory. |
+| `created_at` | ISO 8601 timestamp | required | When the system recorded the memory. |
+| `valid_from` | ISO 8601 timestamp | optional | When the claim became true in the world |
+| `valid_until` | ISO 8601 timestamp | optional | When the claim stops being true. MAY be in the future. |
+| `version` | opaque, with a declared comparator | audit-required | The current version of this memory |
+| `updated_at` | ISO 8601 timestamp | optional | When this revision was written |
+| `checksum` | string | audit-required | An integrity hash of the metadata-covered fields plus the body |
+| `provenance` | list of contributors | optional; audit-required, with an accountable human | Everyone and everything that contributed to a memory. |
+| `evidence` | list of references or strings | optional; audit-required | A list of items the memory is based on. |
+| `links` | list of edges | optional | References to other memories. |
+| `weight` | float | optional | An opaque weight score describing how "useful" the memory is. A receiving system MAY interpret `weight` however it wants. |
+| `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1) |
+
+> **Proposed (I-19).** Hierarchy is carried by `path` alone: a `/`-separated relative path with no leading or trailing slash, no empty segment and no `.` or `..` segment; a receiver derives folder structure from its segments. No folder, taxonomy or parent field is added; a folder's own description (a root `MEMORY.md`, an index file) is itself a memory whose `path` is that file's path and which names its children in its body or links to them (3.2). A projection that cannot keep `path` MUST declare the loss (3.6.6).
+
+> **Proposed (I-26).** The field is named `protocol_version`, on the memory and in the manifest, matching the thin core's `semantic_conventions_version`. Its value is a string: once the protocol is adopted, the date `YYYY-MM-DD` of the adopted revision, the form MCP's `MCP-Protocol-Version` uses, so revisions order without a registry; editors' drafts use their draft number (`"0.6"`) until then. A receiver MUST treat a value it does not know as a revision it does not implement and import the memory anyway, preserving the field.
+
+> **Proposed (U-1).** `checksum` covers, in this order, the UTF-8 bytes of `identifier`, `version` where present, `created_at`, `updated_at` where present and `media_type`, each followed by `0x0A`, then the decoded body bytes (I-17), so two systems compute the same value. An optional `body_checksum` (string, `algorithm:hex`, same algorithms) hashes the decoded body bytes alone; a receiver MAY use it to detect identical content across memories or exports but MUST NOT merge memories or revisions on that basis alone, because identity is `origin` plus `identifier`.
+
+> **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a delete and its tombstone (3.3.5).
+
+`status`, a lifecycle or visibility state inside a store, is parked and not a standard field; its description is in Notes D.2, and 3.4 shows where it would sit if kept.
+
+> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.2). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
+
+Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
+
+> **Proposed (I-21).** An extension field MUST be named with a dot-separated prefix that identifies the system defining it (`cognee.accuracy`, `contextnest.type`); names without a dot are reserved for standard fields, and the same prefix form names an implementation's own values where a rule allows them (a comparator, 3.3.2; a `rel`, 3.2). Unknown fields, whether extension fields or standard fields the receiver does not implement, MUST be preserved on export and MUST NOT change the meaning of a standard field; a receiving system MAY ignore their values. Fields proposed for the table but not yet adopted SHOULD travel this way.
+
+> **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_schema` (I-18), `body_checksum` (U-1), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
+
+### 1.3 Example memory object
 
 ```json
 {
@@ -36,67 +97,9 @@
 }
 ```
 
-## Part 1. The memory object
+### 1.4 Profiles at a glance
 
-### 1.1 What is a memory object
-Memory in the Open Memory Protocol is defined as a **body** plus **metadata**. The body is the part of the memory that is relevent to an agent. The metadata is there to help tranfer additional information alongside the body to other memory stores that the agent interacts with. It also helps the memory systems keep track of provenence and 
-
-We do not enforce the size of a memory. Different systems may have more granular information, such as making memories consist of a single fact only, others may include entire essays as a single memory, we aim to support both. A memory server can proccess memories to better fit thier perticular memory format once they recieve it, our goal for the memory object is only to transfer it over.  
-
-**Body Format**
-
-The body MUST be a string. Non-text content, such as images or audio, MAY be carried as a base64-encoded string with `body_encoding: base64`. Implementations are not required to interpret every media type.
-
-In cases where a memory is stored as a structured object such as JSON or XML the metadata SHOULD include a `media_type` field with a value such as `application/json` or `application/xml`.
-
-The body of a memory also does not need to include full documents inline. It can instead indecate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
-
-
-### 1.2 Field table
-
-The table defines every standard field; a memory carries each at the tier 1.3 defines, and 3.4 says which reach the agent.
-
-| Field | Type | Tier | Definition |
-|---|---|---|---|
-| `identifier` | string | required | Identifies the memory within its origin system and stays the same across its versions. Carries no required meaning. UUIDs are RECOMMENDED. MUST be unique among the memories in one export. With the manifest's `origin` (Notes D), the memory's global key |
-| `path` | string | optional | Where the memory sat in the origin store's hierarchy, for example a folder path. Separate from `identifier` because folder structure carries discovery and progressive-disclosure information |
-| `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories |
-| `protocol_version` | string | optional | The version of this protocol the memory was written against, so a system can bring memories at rest forward as the protocol changes, including self-to-self export and import. Optional on the memory so a folder of markdown stays conformant; the manifest (Notes D) is expected to require it. [agreed] An exporter MAY add it at export |
-| `media_type` | string | required | The media type of the body. MUST be a valid MIME type (for example `text/markdown`, `application/json`, `text/html`, `text/csv`, `application/xml`). A system SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type. Not a semantic ontology. [agreed] |
-| `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched (1.1) |
-| `tags` | list of strings | optional | Semantic tags, free-form or from a vocabulary declared elsewhere (for example a JSON-LD `@context` or schema.org). Where a system records the kind of a memory (fact, preference, decision, observation) without the protocol requiring an ontology. Tags MAY cross into the runtime representation (3.4) |
-| `scope` | list of strings | ACL-required | Scope tags that access policy attaches to. Set by the system, never by the agent. Interchange only (3.4). Neither an access grant nor proof of ownership. Runtime access control is enforced by the serving system using interchange fields; the agent does not need to see them |
-| `created_at` | ISO 8601 timestamp | required | When the system recorded the memory. Distinct from when the claim became true (`valid_from`) |
-| `valid_from` | ISO 8601 timestamp | optional | When the claim became true in the world |
-| `valid_until` | ISO 8601 timestamp | optional | When the claim stops being true. MAY be in the future, for example a temporary workaround to retry at a set time. [agreed] |
-| `version` | opaque, with a declared comparator | audit-required | The revision of this memory. Shape and comparator: 3.3.2 (I-4) |
-| `updated_at` | ISO 8601 timestamp | optional | When this revision was written |
-| `checksum` | string (`algorithm:hex`, for example `sha256:abcdefg...`) | audit-required | An integrity hash of the metadata-covered fields plus the body |
-| `provenance` | list of contributors (3.1.1) | optional; audit-required, with an accountable human | Everyone and everything that contributed. A missing `provenance` means the author is unknown (3.1.5) |
-| `evidence` | list of references or strings | optional; audit-required when the memory is derived from other memories (3.1.4) | What the memory rests on, inside or outside the store (3.1.4) |
-| `links` | list of edges | optional | References to other memories (3.2) |
-| `weight` | float | optional | A relative ordering among memories from one `origin`. Not bounded, with no prescribed mathematical meaning, so not a probability or a confidence. Values from different origins are not comparable. A memory MAY carry it; a receiving system MAY interpret `weight` however it wants. [agreed] |
-| `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1) |
-
-> **Proposed (I-19).** Hierarchy is carried by `path` alone: a `/`-separated relative path with no leading or trailing slash, no empty segment and no `.` or `..` segment; a receiver derives folder structure from its segments. No folder, taxonomy or parent field is added; a folder's own description (a root `MEMORY.md`, an index file) is itself a memory whose `path` is that file's path and which names its children in its body or links to them (3.2). A projection that cannot keep `path` MUST declare the loss (3.6.6).
-
-> **Proposed (I-26).** The field is named `protocol_version`, on the memory and in the manifest, matching the thin core's `semantic_conventions_version`. Its value is a string: once the protocol is adopted, the date `YYYY-MM-DD` of the adopted revision, the form MCP's `MCP-Protocol-Version` uses, so revisions order without a registry; editors' drafts use their draft number (`"0.6"`) until then. A receiver MUST treat a value it does not know as a revision it does not implement and import the memory anyway, preserving the field.
-
-> **Proposed (U-1).** `checksum` covers, in this order, the UTF-8 bytes of `identifier`, `version` where present, `created_at`, `updated_at` where present and `media_type`, each followed by `0x0A`, then the decoded body bytes (I-17), so two systems compute the same value. An optional `body_checksum` (string, `algorithm:hex`, same algorithms) hashes the decoded body bytes alone; a receiver MAY use it to detect identical content across memories or exports but MUST NOT merge memories or revisions on that basis alone, because identity is `origin` plus `identifier`.
-
-> **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a delete and its tombstone (3.3.5).
-
-`status`, a lifecycle or visibility state inside a store, is parked and not a standard field; its description is in Notes D.2, and 3.4 shows where it would sit if kept.
-
-> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.2). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
-
-Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
-
-> **Proposed (I-21).** An extension field MUST be named with a dot-separated prefix that identifies the system defining it (`cognee.accuracy`, `contextnest.type`); names without a dot are reserved for standard fields, and the same prefix form names an implementation's own values where a rule allows them (a comparator, 3.3.2; a `rel`, 3.2). Unknown fields, whether extension fields or standard fields the receiver does not implement, MUST be preserved on export and MUST NOT change the meaning of a standard field; a receiving system MAY ignore their values. Fields proposed for the table but not yet adopted SHOULD travel this way.
-
-> **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_encoding`, `body_uri` (I-17), `body_schema` (I-18), `body_checksum` (U-1), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
-
-### 1.3 Field tiers
+A deployment claims only what it implements. **Minimal**: the required fields, a body, and unknown fields preserved; a folder of markdown memories with no other metadata meets it. **Audit**: every memory traces to an accountable human (3.1.3), carries `checksum` and `version`, and keeps a verifiable history (3.3.3); meant for multi-user deployments. A system that claims it is audit-grade. Two more profiles set no field requirements: the markdown loading profile (3.6.6) and the federation binding (3.6.4). The checklists are 3.7.
 
 Each field in 1.2 carries one tier:
 
@@ -109,11 +112,7 @@ Each field in 1.2 carries one tier:
 
 > **Proposed (I-16).** The tier assignments of 1.2 hold as the v0.6 baseline: `identifier`, `media_type`, `created_at` and `body` required; `version`, `checksum` and `provenance` (with an accountable human) audit-required; `evidence` audit-required when the memory is derived (U-2 says when a memory is derived); `scope` required in the access-controlled profile (U-7); every other field optional. A validator MUST apply the tiers exactly as the table states them and MUST NOT infer a requirement the table does not state. A tier changes only by a recorded group decision.
 
-> **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.2), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.3 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
-
-### 1.4 Profiles at a glance
-
-A deployment claims only what it implements. **Minimal**: the required fields, a body, and unknown fields preserved; a folder of markdown memories with no other metadata meets it. **Audit**: every memory traces to an accountable human (3.1.3), carries `checksum` and `version`, and keeps a verifiable history (3.3.3); meant for multi-user deployments. A system that claims it is audit-grade. Two more profiles set no field requirements: the markdown loading profile (3.6.6) and the federation binding (3.6.4). The checklists are 3.7.
+> **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.2), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.4 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
 
 ## Part 2. Goals and scope
 
@@ -124,7 +123,7 @@ The protocol standardizes two things: an **exchange format**, the metadata that 
 Three goals judge the design.
 
 1. **Adoption.** A folder of markdown memories, a database-backed store and a graph store can all conform with little work; most fields are optional and today's harnesses can meet the minimal profile (3.7). Optional fields go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small.
-2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.3) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
+2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.4) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
 3. **Room for innovation.** The protocol standardizes interfaces and the shape of data, not algorithms; Notes E lists what is left to implementations.
 
 ### 2.2 Non-goals and scope
