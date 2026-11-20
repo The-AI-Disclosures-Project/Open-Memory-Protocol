@@ -34,8 +34,8 @@ Every open question of v0.5 carries a proposed resolution in the specification, 
 | U-6 | 3.3.1 | Reconciles the unique-identifier rule with the 10-14 full-history export by qualifying uniqueness with the export kind the manifest already declares. Precedent: Sapience §3.1 (one stable identity shared by all versions, each version distinct), Context Nest's per-version history entries, the agreed rule that attribution is per revision. |
 | I-4 | 3.3.2 | Keeps the agreed decisions (audit-required, in-place updates allowed, a declared comparator, incomparable versions allowed, wall-clock SHOULD NOT be the comparator) and picks the sequence number Gabe suggested on the call as the default; precedent: IBM's declared comparator, Context Nest's `version: integer >= 1`, Sapience's incremented version number, Mike's incomparable versions (10-14). |
 | U-5 | 3.3.3 | Keeps the editors' audit-profile REQUIRED while honouring the 10-14 decision that in-place stores are supported and Gabe's call objection that all-immutable memory breaks markdown-on-disk, by stating immutability as an exchange outcome rather than a storage rule; the precedents are Cognee §3.1 (a correction "does not silently rewrite the exchanged history"), Context Nest's append-only chain with `verify`, and Sapience's reading that history is optional in the base form and required only in audit. |
-| I-7a | 3.3.5 | Follows the editors' resolution in 5.1.4 and Gabe's call position that full audit is an enterprise, multi-user obligation, while taking from Context Nest §6.3.4 ("an importing implementation MUST honor them and MUST NOT reconstruct forgotten versions") and Cognee §3.5 ("a permitted tombstone may prevent resurrection") the one receiver-side duty that costs a minimal importer only an identifier check. |
-| U-10 | 3.3.6 | Names exactly the three things 3.3.6 says a tombstone records (when, who, why) as fields and leaves the rest to implementations, as 5.4 intends. Precedent: Context Nest §6.3.2 (`tombstone: true`, `forgotten_at`, `forgotten_by`, closed `reason_code`, hashes retained so the chain verifies) and Cognee §3.5 (lifecycle events carry target revision, authorized actor, effective time and reason; a permitted tombstone prevents resurrection). |
+| I-7a | 3.3.5 (now plain text) | Follows the editors' resolution in 5.1.4 and Gabe's call position that full audit is an enterprise, multi-user obligation, while taking from Context Nest §6.3.4 ("an importing implementation MUST honor them and MUST NOT reconstruct forgotten versions") and Cognee §3.5 ("a permitted tombstone may prevent resurrection") the one receiver-side duty that costs a minimal importer only an identifier check. |
+| U-10 | 3.3.5 (now plain text) | Replaced after v0.6 by the tombstone record of 3.3.5 (issue #38). A receiver needs only what was deleted to keep it from coming back, so `identifier` is the one required field; when, who and why are optional on the record, because exporting them discloses the metadata the delete was meant to remove, and the audit profile keeps them in the store's own record instead. A tombstone without `version` retires the whole `identifier`, which the earlier one-tombstone-per-revision shape could not express. Field names follow the earlier U-10 text and its precedents: Context Nest §6.3.2 (`forgotten_at`, closed `reason_code`, hashes retained so the chain verifies) and Cognee §3.5 (a permitted tombstone prevents resurrection). |
 | U-12 | 3.4 | Gabe's call position (omit scope from the runtime format, keep it in interchange because ACLs attach to it) and the agreed two-representation rule only hold if the `no` rows bind; the rest stays guidance per the review comment that each memory system takes the interchange form and uses whatever subset helps. The MUST rows are exactly the minimal profile's required fields, so no new obligation is created. |
 | I-13 | 3.4 | The call agreed that auditable means traceable to one or more accountable humans and that audit-log storage is left to implementers, and the September 28 notes asked only for "the small hook" on the memory or the retrieval response; deriving the flag from the agreed definition gives consumers that hook without a stored field that could contradict the provenance it summarizes. |
 | I-8 | 3.5.2 | Follows Cognee §3.1 (local identifiers allowed, mapping kept), which 3.5.2 already carries as an unmarked MUST, and PR #16's origin qualifier (5.1.2) so a store that re-exports memories from several origins can still name each one; IBM's new-memory-on-import case survives as re-derivation with a lineage link rather than as a lost identity. |
@@ -51,7 +51,9 @@ Every open question of v0.5 carries a proposed resolution in the specification, 
 | I-12 | 3.6.5 | Follows the only position on record, Context Nest on the call ("no nested memories, compiled at runtime"), while keeping separate objects as the default since the existing 3.6.5 sentence already gives each its own metadata; naming compiled sources keeps the agreed 3.2 rule that an audit-grade system can reconstruct the chain behind what the agent saw. |
 | U-15 | 3.6.6 | Raised in review of this draft: the minimal profile's headline case, a bare folder of markdown files, had no rule for deriving the three required fields or for where metadata sits. |
 | U-13 | 3.7 | Gabe's 10-14 dangling rules were motivated by adoption (an import must not fail on a missing target) and Wes added that a dangling reference still means something in the audit chain, which splits cleanly into a minimal duty and an audit mark; copy as the default is the behaviour of every store that has no manifest (the source keeps its memories), matches IBM's one-system-at-a-time import, and leaves Cognee §3.6's explicit intent in force wherever a manifest exists. |
-| I-7b | 3.7 | Context Nest §6.3.4 refuses to auto-delete derived content ("a summary of ten transcripts is not erased because one was") but flags it `review_required` and lists it in the forget result, and Cognee §3.5 leaves dependents to be deleted, invalidated or recomputed by policy; reusing 3.5.5 gives both outcomes without a new field. |
+| I-7b | 3.3.5, 3.7 (now plain text) | Context Nest §6.3.4 refuses to auto-delete derived content ("a summary of ten transcripts is not erased because one was") but flags it `review_required` and lists it in the forget result, and Cognee §3.5 leaves dependents to be deleted, invalidated or recomputed by policy; reusing 3.5.5 gives both outcomes without a new field. |
+
+I-7a, I-7b and U-10 no longer appear as Proposed blocks: 3.3.5 was rewritten after v0.6 and states their subject as plain text (H). Their rows above are kept for the record.
 
 This document holds what the specification leaves out: the proposals that did not make it into the text, the questions still open, the items set aside or handed to another document, and the list of what the protocol leaves to implementations.
 
@@ -78,7 +80,7 @@ Cognee's PR #16 proposes `subject`, `kind`, `accuracy`, an `origin` qualifier, `
 
 ### B.4 Editors' resolution for I-7
 
-Forget, tombstones and anti-resurrection (3.3.6) belong to the audit profile (3.7), not the core. The group has not decided (I-7 in C).
+The editors' resolution in v0.5 was that forget, tombstones and anti-resurrection belong to the audit profile (3.7), not the core. The 3.3.5 rewrite after v0.6 takes the other side: the delete requirements and the receiver's duty to honour tombstones apply to every conforming store and receiver, and the audit profile adds only the record of when, who and why. The group has not decided (I-7 in C).
 
 ### B.5 Text the editors added without discussion, by section
 
@@ -109,7 +111,7 @@ This register is the single owner of every issue's full description; the body ca
 | I-4 | Versioning: the form of `version` and its comparator, including incomparable versions. Mostly settled 10-14: audit-required, and in-place updates allowed (C.2); the form and the comparator remain. See U-6 for where the comparator is declared | 1.3, 3.3.2 |
 | I-5 | Links: inline, metadata edges, or both; what a link targets (an identifier, or an identifier at a version); whether edges are typed in the core; how transcripts are exported or linked to. Appendix A pre-decides the edge shape (U-2) | 3.1.4, 3.2 |
 | I-6 | Lineage depth required for audit: n hops back, or the full chain. The sentence in 3.2 marked agreed says an audit-grade system MUST be able to reconstruct the full chain, while the 2026-09-28 call left how the graph is built, stored and traversed to the implementation and v0.5 kept the minimum depth open | 3.2 |
-| I-7 | Tombstones, anti-resurrection and delete of derived memories: core or audit profile, and what a delete means for memories derived from the deleted one. The editors propose audit (B.4) | 3.3.5, 3.3.6, 3.7 |
+| I-7 | Tombstones, anti-resurrection and delete of derived memories: core or audit profile, and what a delete means for memories derived from the deleted one. The editors proposed audit in v0.5; 3.3.5 as rewritten after v0.6 puts them in the core (B.4) | 3.3.5, 3.7 |
 | I-8 | Identity on import: keep the origin `identifier`, or assign a new one with a recorded mapping. IBM's draft treats a memory as valid in one system at a time, with an import creating a new memory in the receiving system; Cognee's draft keeps the origin identity across copies. With `origin` in the manifest (D), the origin key survives either way. U-14 depends on this | 3.5.2 |
 | I-10 | Runtime binding: MCP, hooks, CLI, or several. MCP was proposed as the home for the runtime binding: tools for remember and recall, interceptors for hooks, and file access as a tool (IBM; call). It is not agreed. Some implementers find hooks more controllable than MCP tools, and some find a CLI more reliable for retrieval isolation (call). SEP-2640 (Skills over MCP) was suggested as a way to get progressive disclosure over MCP without a file system (AIDP, thread) | 3.6.1 |
 | I-12 | Compiled vs separate memories at runtime, and nesting | 3.6.5 |
@@ -152,7 +154,7 @@ I-24: the number is not used in v0.5 (the sequence jumps from I-23 to I-25, and 
 | U-7 | The ACL-required tier maps to no profile: 3.7 defines minimal and audit, and no profile in which ACL-required fields are required | 1.2 |
 | U-8 | The manifest proposal: its content, author and timeline are unassigned (D) | D |
 | U-9 | The federation binding's endpoint set includes `search` while 3.6.2 says the protocol MUST NOT fix a signature for recall; I-15 brushes this without owning it | 3.6.4 |
-| U-10 | Which tombstone fields are standard (a tombstone records when, who and why) and which belong to the implementation's format: E defers to "the fields named in 3.3.6", which names no field keys | 3.3.6, E |
+| U-10 | Which tombstone fields are standard and which belong to the implementation's format. 3.3.5 as rewritten after v0.6 defines the tombstone record and its fields (issue #38) | 3.3.5, E |
 | U-11 | How `scope` being "set by the system, never by the agent" is enforced (no keyword, no rule), and how scopes combine under federation when `scope` is interchange-only and federation carries the runtime representation | 1.3 scope row, 3.6.4 |
 | U-12 | Whether the placement table in 3.4 is normative at all ("guidance, not a requirement") while Appendix B relies on it to drop the audit fields | 3.4, Appendix B |
 | U-13 | Whether transfer intent (3.5.2) and the dangling-reference rules (3.5.5) belong to the minimal profile or only to the audit profile; 3.7 lists dangling references under audit and intent under neither | 3.7 |
@@ -168,12 +170,12 @@ Every export SHOULD begin with a manifest that declares:
 
 - `protocol_version`, and the profiles the export follows (3.7);
 - `origin`: an identifier generated once per store. `origin` plus `identifier` is the global key of a memory (review; Cognee PR #16). Without it, two people who each export a `MEMORY.md` produce colliding identifiers;
-- `exported_at`: the time the export is as of. It orders exports, and shows that a copy predates a forget (3.3.6) (review);
+- `exported_at`: the time the export is as of. It orders exports (review). Honouring a tombstone does not depend on it (3.3.5);
 - the body formats present;
 - whether it is a complete snapshot, a selection, or a full history (including memories no longer valid, for example for forensic review (10-14));
 - any required extensions (Cognee §3.6).
 
-The rule that absence from a partial export is not deletion stays in 3.5.1 and depends on the snapshot-or-selection declaration above. The thin-core proposal (B.1) would add `semantic_conventions_version` beside `protocol_version`. Appendix A of v0.5 illustrated the manifest as:
+The rule that absence from a partial export is not deletion stays in 3.5.1 and depends on the snapshot-or-selection declaration above. Whether the `tombstones` list of 3.3.5 sits in the manifest or in a file of its own is for the manifest proposal to settle (issue #38). The thin-core proposal (B.1) would add `semantic_conventions_version` beside `protocol_version`. Appendix A of v0.5 illustrated the manifest as:
 
 ```json
 {
@@ -207,7 +209,7 @@ In v0.5 the "markdown loading profile" (3.6.6) and the "federation binding" (3.6
 
 ### D.6 Raised, no issue number
 
-- Immediate removal of wrongly stored content, whatever the retention rules, for example classified information stored by mistake: something the spec should make implementable, though not a requirement for every store (Wes, 10-14). The outcomes a forget delivers are in 3.3.6.
+- Immediate removal of wrongly stored content, whatever the retention rules, for example classified information stored by mistake: something the spec should make implementable, though not a requirement for every store (Wes, 10-14). The outcomes a delete delivers are in 3.3.5.
 
 ## E. Out of scope: left to implementations
 
@@ -219,7 +221,7 @@ Left to implementations, so that they can compete and improve on them:
 - Confidence, accuracy and decay scoring, and how they weigh recency (10-14; 3.1.6).
 - Federation merge and ranking logic (3.6.4) [agreed].
 - Memory-maintenance agents (forget, consolidation, "dream" agents) and their algorithms. Their writes still carry provenance (3.1.2).
-- Forget mechanics: how content is erased, what a store keeps so its history still verifies, and the tombstone format beyond the fields named in 3.3.6 [open U-10].
+- Delete mechanics: how content is erased and what a store keeps so its history still verifies. The tombstone record is defined in 3.3.5; fields a store adds to it are its own extensions.
 - Retrieval isolation, such as limits on graph traversal depth.
 - Audit-log storage and delivery. The protocol may define a flag saying whether a memory or a retrieval is auditable [open I-13], but not the log.
 - Access-control systems. The protocol carries `scope` tags that access policy attaches to, but does not define the policy language (IBM; CN).
@@ -300,8 +302,9 @@ This section keeps every "who said what, when" and every source-draft citation t
 - Recording time distinct from when a claim applies: Cognee §3.5; 10-14. A memory stops applying at `valid_until` without being deleted: IBM; 10-14. The reverse pointer `invalidated_by` on the superseded memory: Cognee PR #16. Historical reads explicit: Cognee §3.5.
 - Delete: IBM; AIDP `/fmp/delete`; Cognee; CN. What a delete means for derived memories (I-7): review.
 - Forget and tombstones: Cognee §3.5; CN §6.3. Immediate removal whatever the retention rules, for example classified information stored by mistake, as something the spec should make implementable though not a requirement for every store: Wes, 10-14.
-- `origin` plus `identifier` to recognize a re-import and `exported_at` to show a copy predates the forget: review.
-- Without tombstones, an interchange rule that turns every re-import into a new memory lets an invalidated or deleted memory come back from an old archive: Cognee §3.5. Cross-draft adapter fixtures reproduce this case. Placing the whole of forget, tombstones and anti-resurrection in the audit profile is the editors' resolution of I-7.
+- `origin` plus `identifier` to recognize a re-import and `exported_at` to show a copy predates the forget: review. The 3.3.5 rewrite drops the `exported_at` test, since a store that never received the delete can export its unchanged copy after it, a gap Ilan identified in review: recounted in PR #17 §5.
+- The tombstone as a separate minimal record, not a memory object, with a form that retires a whole `identifier`: Sruly, issue #38. Anti-resurrection as a property of interchange that belongs in the core and attaches to `origin` plus `identifier`: Wes, PR #17 §5.
+- Without tombstones, an interchange rule that turns every re-import into a new memory lets an invalidated or deleted memory come back from an old archive: Cognee §3.5. Cross-draft adapter fixtures reproduce this case. Placing the whole of forget, tombstones and anti-resurrection in the audit profile was the editors' resolution of I-7 in v0.5 (B.4).
 
 **3.4 Representations.**
 - Two representations of one memory, interchange and runtime: call. Metadata the agent does not need can make it perform worse: 10-14.
@@ -346,6 +349,16 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 
 ## H. Change history
 
+### Changes since v0.6
+
+- 3.3.5 Delete and 3.3.6 Forget, tombstones and anti-resurrection are merged into one section, 3.3.5 Removing and deleting memories, written as plain text with no Proposed blocks (issue #38). It replaces the blocks I-7a and U-10, and I-7b in 3.7.
+- A tombstone is now a separate record in a `tombstones` list, not a memory object. Only `identifier` is required; a tombstone without `version` retires the whole `identifier`. The proposed memory fields `tombstone`, `forgotten_at` and `reason` are withdrawn from 1.3.
+- The delete requirements and the receiver's duty to honour tombstones move from the audit profile to every conforming store and receiver (3.7). The audit profile keeps the record of when, who and why, and the history that still verifies after a delete (3.3.3).
+- I-7a's rule that a delete MUST NOT by itself delete derived memories becomes SHOULD NOT. A store SHOULD, not MUST, leave a tombstone when it deletes.
+- A receiver no longer needs `exported_at` to honour a tombstone (3.5.1): a tombstone covers every copy of the revision, whenever the copy was exported.
+- A snapshot or full-history export SHOULD carry every tombstone the store holds, where a snapshot used to carry one only for a memory whose every revision was forgotten (U-6). A snapshot of a memory whose current revision is deleted SHOULD export the latest remaining revision alongside the tombstone (3.3.5).
+- Consequential edits: U-6 (tombstones fall outside the uniqueness rules), U-5, 3.1.2, 3.5.1, 3.5.2 (a move leaves no tombstones) and the cross-references in I-6, I-14, I-23b and I-25.
+
 ### Changes since v0.5
 
 - The draft is now three documents: the specification, this notes document (open questions, proposals, alternatives, the discussion record, sources and change history) and the decisions document (what the group has agreed).
@@ -387,7 +400,7 @@ The § references in the two verbatim entries below are v0.5 section numbers. Th
 | §6.2 Immutable revisions | 3.3.3 |
 | §6.3 Invalidation and supersession | 3.3.4 |
 | §6.4 Delete | 3.3.5 |
-| §6.5 Forget, tombstones and anti-resurrection | 3.3.6 |
+| §6.5 Forget, tombstones and anti-resurrection | 3.3.5 (merged after v0.6) |
 | §7.1 Interchange is a superset of runtime | 3.4 |
 | §7.2 Field placement | 3.4 (table); last sentence → 1.3 (`scope` row) |
 | §8.1 Manifest | D (working text); 3.5.1; 2.2 |
