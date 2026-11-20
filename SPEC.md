@@ -1,6 +1,6 @@
 # Open Memory Protocol: The Memory Object
 
-**Editors' draft v0.6, 2026-11-09.**
+**Editors' draft v0.6.1, 2026-11-20.**
 
 Proposals the group has not yet adopted are kept in [Notes J](2026-11-09-working-spec-v0.6-notes.md#j-proposals-not-yet-in-the-text) until they are accepted or rejected.
 
@@ -15,7 +15,7 @@ We do not enforce the size of a memory. Different systems may have more granular
 
 The body MUST be a string. Non-text content, such as images or audio, MAY be carried as a base64-encoded string with `body_encoding: base64`. Implementations are not required to interpret every media type.
 
-In cases where a memory is stored as a structured object such as JSON or XML the metadata SHOULD include a `media_type` field with a value such as `application/json` or `application/xml`.
+In cases where a memory is stored as a structured object such as JSON or XML the metadata MUST include a `media_type` field with a value such as `application/json` or `application/xml`.
 
 The body of a memory also does not need to include full documents inline. It can instead indicate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
 
