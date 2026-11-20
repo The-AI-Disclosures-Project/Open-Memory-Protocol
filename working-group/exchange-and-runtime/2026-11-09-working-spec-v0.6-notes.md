@@ -357,6 +357,7 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 - I-7a's rule that a delete MUST NOT by itself delete derived memories becomes SHOULD NOT. A store SHOULD, not MUST, leave a tombstone when it deletes.
 - A receiver no longer needs `exported_at` to honour a tombstone (3.5.1): a tombstone covers every copy of the revision, whenever the copy was exported.
 - A snapshot or full-history export SHOULD carry every tombstone the store holds, where a snapshot used to carry one only for a memory whose every revision was forgotten (U-6). A snapshot of a memory whose current revision is deleted SHOULD export the latest remaining revision alongside the tombstone (3.3.5).
+- Proposed blocks not yet adopted move out of the specification into J, starting with Part 1 (I-23b, I-14, I-21, I-16, U-7 and the proposed-fields list). I-19, I-26 and U-1 are written into 1.2 as plain text; `body_checksum` is dropped.
 - Part 1 is reordered: 1.1 What is a memory object, 1.2 the field table, 1.3 the example memory (moved from the top of the document), 1.4 profiles at a glance, which now also holds the field tiers. References in this document and the decisions document are renumbered to match.
 - Consequential edits: U-6 (tombstones fall outside the uniqueness rules), U-5, 3.1.2, 3.5.1, 3.5.2 (a move leaves no tombstones) and the cross-references in I-6, I-14, I-23b and I-25.
 
@@ -455,3 +456,31 @@ The § references in the two verbatim entries below are v0.5 section numbers. Th
 ## I. Acknowledgements
 
 Built from the proposals by Charles Packer (Letta), Gabe Goodhart and colleagues (IBM), Sruly Rosenblat and Ilan Strauss (AI Disclosures Project), Vasilije Markovic (Cognee), Misha Sulpovar (Context Nest), and Mila and Mozilla (AMS Card). It also draws on the 2026-09-28 call with Gabe Goodhart, Sruly Rosenblat, Vasilije Markovic, Alex Hancock and Misha Sulpovar, and on the review comments on PR #13 by Gabe Goodhart (with Rynne and Anna Lisa), Sruly Rosenblat and Ilan Strauss. v0.2 also reflects the 2026-10-14 technical working meeting and its participants, including Wes Jackson. v0.5 reflects the 2026-11-06 technical working meeting and its participants. The knowledge object papers shared by lvrzhn on PR #13 (arXiv 2601.15313, 2603.15994, 2603.17781; SSRN 10.2139/ssrn.5773922, revised 10.2139/ssrn.5812343) informed the atomic-unit discussion (C, I-2) and 3.1.6.
+
+## J. Proposals not yet in the text
+
+Proposed blocks moved out of the specification during the text cleanup, word for word, under the section they were written for. Each stays here until the group accepts it, and it is written into the text, or rejects it. Their reasoning is in A.
+
+**From 1.2.**
+
+> **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a delete and its tombstone (3.3.5).
+
+**From 1.2.**
+
+> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.2). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
+
+**From 1.2.**
+
+> **Proposed (I-21).** An extension field MUST be named with a dot-separated prefix that identifies the system defining it (`cognee.accuracy`, `contextnest.type`); names without a dot are reserved for standard fields, and the same prefix form names an implementation's own values where a rule allows them (a comparator, 3.3.2; a `rel`, 3.2). Unknown fields, whether extension fields or standard fields the receiver does not implement, MUST be preserved on export and MUST NOT change the meaning of a standard field; a receiving system MAY ignore their values. Fields proposed for the table but not yet adopted SHOULD travel this way.
+
+**From 1.2.**
+
+> **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_schema` (I-18), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
+
+**From 1.4.**
+
+> **Proposed (I-16).** The tier assignments of 1.2 hold as the v0.6 baseline: `identifier`, `media_type`, `created_at` and `body` required; `version`, `checksum` and `provenance` (with an accountable human) audit-required; `evidence` audit-required when the memory is derived (U-2 says when a memory is derived); `scope` required in the access-controlled profile (U-7); every other field optional. A validator MUST apply the tiers exactly as the table states them and MUST NOT infer a requirement the table does not state. A tier changes only by a recorded group decision.
+
+**From 1.4.**
+
+> **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.2), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.4 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
