@@ -27,25 +27,28 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 |---|---|---|---|
 | `identifier` | string | required | Identifies the memory within its origin system. UUIDs are RECOMMENDED. MUST be unique among the memories in one export. |
 | `path` | string | optional | Where the memory sits in the origin store, as a relative path with `/` separators, for example `team/preferences/status.md`. A receiver MAY rebuild folder structure from it. |
-| `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories |
+| `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories. |
 | `protocol_version` | string | optional | The version of this protocol the memory was written in. A receiver MUST import a memory whose `protocol_version` it does not recognise, and preserve the field. |
 | `media_type` | string | required | The media type of the body. MUST be a valid MIME type. All systems SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type. |
-| `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched |
-| `body_uri` | string (URI) | optional | Where the full body can be fetched when `stub` is `true` |
-| `body_encoding` | string | optional | How the body string is encoded. `base64` for non-text content; absent for text |
-| `tags` | list of strings | optional | Semantic tags, free-form or from a vocabulary declared elsewhere.|
+| `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched. |
+| `body_uri` | string (URI) | optional | Where the full body can be fetched when `stub` is `true`. |
+| `body_encoding` | string | optional | How the body string is encoded. `base64` for non-text content; absent for text. |
+| `tags` | list of strings | optional | Semantic tags, free-form or from a vocabulary declared elsewhere. |
 | `scope` | list of strings | ACL-required | A list of scopes the user or agent needs to access memory. |
 | `created_at` | ISO 8601 timestamp | required | When the system recorded the memory. |
-| `valid_from` | ISO 8601 timestamp | optional | When the claim became true in the world |
+| `valid_from` | ISO 8601 timestamp | optional | When the claim became true in the world. |
 | `valid_until` | ISO 8601 timestamp | optional | When the claim stops being true. MAY be in the future. |
-| `version` | opaque, with a declared comparator | audit-required | The current version of this memory |
-| `updated_at` | ISO 8601 timestamp | optional | When this revision was written |
-| `checksum` | string | audit-required | An integrity hash of the metadata-covered fields plus the body |
+| `version` | opaque, with a declared comparator | audit-required | The current version of this memory. |
+| `updated_at` | ISO 8601 timestamp | optional | When this revision was written. |
+| `checksum` | string | audit-required | An integrity hash of the metadata-covered fields plus the body. |
 | `provenance` | list of contributors | optional; audit-required, with an accountable human | Everyone and everything that contributed to a memory. |
 | `evidence` | list of references or strings | optional; audit-required | A list of items the memory is based on. |
 | `links` | list of edges | optional | References to other memories. |
 | `weight` | float | optional | A relative ordering of importance among memories from one `origin`. Values from different origins are not comparable. A receiving system MAY interpret `weight` however it wants. |
-| `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1) |
+| `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1). |
+
+
+The Tier column in the table above says when a memory must carry a field: **required** fields are carried by every memory, **audit-required** fields in the audit profile (3.7), and **ACL-required** fields wherever access control applies. **Optional** fields may be omitted in every profile.
 
 `checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes, decoded first if `body_encoding` is set. Its value is `algorithm:hex`; implementations MUST support `sha256`.
 
@@ -84,19 +87,6 @@ Implementations MAY add fields. Unknown fields MUST be preserved on export and M
 }
 ```
 
-### 1.4 Profiles at a glance
-
-A deployment claims only what it implements. **Minimal**: the required fields, a body, and unknown fields preserved; a folder of markdown memories with no other metadata meets it. **Audit**: every memory traces to an accountable human (3.1.3), carries `checksum` and `version`, and keeps a verifiable history (3.3.3); meant for multi-user deployments. A system that claims it is audit-grade. Two more profiles set no field requirements: the markdown loading profile (3.6.6) and the federation binding (3.6.4). The checklists are 3.7.
-
-Each field in 1.2 carries one tier:
-
-| Tier | Meaning |
-|---|---|
-| **required** | Every conforming memory carries it |
-| **audit-required** | Required in the audit profile (1.4, 3.7); optional otherwise |
-| **ACL-required** | Required where access control applies; interchange only |
-| **optional** | May be omitted in every profile |
-
 ## Part 2. Goals and scope
 
 ### 2.1 Goals
@@ -106,7 +96,7 @@ The protocol standardizes two things: an **exchange format**, the metadata that 
 Three goals judge the design.
 
 1. **Adoption.** A folder of markdown memories, a database-backed store and a graph store can all conform with little work; most fields are optional and today's harnesses can meet the minimal profile (3.7). Optional fields go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small.
-2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.4) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
+2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.2) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
 3. **Room for innovation.** The protocol standardizes interfaces and the shape of data, not algorithms; Notes E lists what is left to implementations.
 
 ### 2.2 Non-goals and scope
@@ -133,14 +123,14 @@ How a memory is attributed, linked, changed, represented, exchanged, served, and
 
 `provenance` is a list of contributors, one entry each:
 
-| Key | Tier | Meaning |
+| Key | Tier | Definition |
 |---|---|---|
-| `id` | required | An identifier for the contributor (a person, an agent, a system) |
-| `kind` | required | `human`, `agent` or `system` |
-| `contribution` | optional | What the contributor did, for example `authored`, `instructed`, `approved`, `edited`, `imported`, `verified`, `corrected`, `contradicted` |
-| `ai_usage` | optional | How much AI was involved. Values to be aligned directly with EU AI Act terminology |
-| `name` | optional | A name for the contributor, whether a human, an agent, a model or a system |
-| `at` | optional | When this contributor acted |
+| `id` | required | An identifier for the contributor (a person, an agent, a system). |
+| `kind` | required | `human`, `agent` or `system`. |
+| `contribution` | optional | What the contributor did, for example `authored`, `instructed`, `approved`, `edited`, `imported`, `verified`, `corrected`, `contradicted`. |
+| `ai_usage` | optional | How much AI was involved. Values to be aligned directly with EU AI Act terminology. |
+| `name` | optional | A name for the contributor, whether a human, an agent, a model or a system. |
+| `at` | optional | When this contributor acted. |
 
 > **Proposed (U-4).** The key is `contribution`; `role` is not a standard key of a `provenance` entry and MUST NOT be written. A receiver that reads `role` in a memory written against protocol version 0.1 MUST rewrite it as `contribution` on export; `role` is the one key exempt from preservation (I-21).
 
@@ -238,15 +228,15 @@ Tombstones are separate records, not memory objects, and are not subject to the 
 
 Tombstones are defined as follows:
 
-| Field | Required | Description |
+| Field | Tier | Definition |
 |---|---|---|
-| `identifier` | Required | Identifier of the forgotten memory |
-| `version` | Optional | Identifies a forgotten revision. If absent, the entire identifier is retired |
-| `origin` | Optional | Identifies the originating system if different from the export manifest's `origin` |
-| `checksum` | Optional | Checksum of the forgotten revision for history verification (3.3.3). Only permitted with `version` |
-| `forgotten_at` | Optional | ISO 8601 timestamp of the delete |
-| `reason` | Optional | One of `user_request`, `legal`, `retention_expiry`, or `error` |
-| `provenance` | Optional | Identifies who performed the delete, using `contribution: forgot` and `at` (3.1.1) |
+| `identifier` | required | Identifier of the forgotten memory. |
+| `version` | optional | Identifies a forgotten revision. If absent, the entire identifier is retired. |
+| `origin` | optional | Identifies the originating system if different from the export manifest's `origin`. |
+| `checksum` | optional | Checksum of the forgotten revision for history verification (3.3.3). Only permitted with `version`. |
+| `forgotten_at` | optional | ISO 8601 timestamp of the delete. |
+| `reason` | optional | One of `user_request`, `legal`, `retention_expiry`, or `error`. |
+| `provenance` | optional | Identifies who performed the delete, using `contribution: forgot` and `at` (3.1.1). |
 
 Apart from the optional `checksum`, a tombstone MUST NOT include the forgotten memory's body, title, tags, evidence or other fields derived from its content. Additional implementation-specific fields MAY be included as extensions, subject to the same restriction.
 
@@ -412,7 +402,7 @@ The markdown loading profile is the directory and loading contract of a root `ME
 
 ### 3.7 Conformance profiles
 
-What each profile of 1.4 requires, each item pointing to the section that states the rule. An export's manifest declares the profiles it follows (Notes D). Whether "markdown loading" and "federation binding" remain declarable profile names is handed to the manifest proposal (Notes D).
+What each profile requires, each item pointing to the section that states the rule. An export's manifest declares the profiles it follows (Notes D). Whether "markdown loading" and "federation binding" remain declarable profile names is handed to the manifest proposal (Notes D).
 
 **Minimal profile.** The required fields of 1.2 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields (1.2). Reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (3.1.5, 3.3.2). A store that deletes a memory meets the requirements of 3.3.5, and a receiver honours the tombstones it receives (3.3.5).
 
