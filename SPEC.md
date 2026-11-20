@@ -17,7 +17,6 @@ In cases where a memory is stored as a structured object such as JSON or XML the
 
 The body of a memory also does not need to include full documents inline. It can instead indicate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
 
-
 ### 1.2 Field table
 
 The table defines every standardized field within the Open Memory Protocol. Unstandardized metadata fields may be added by implementations if a field they need is not covered by the fields below. Future versions of the protocol will aim to officially adopt fields that are missed below but commonly used.
@@ -25,9 +24,9 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | Field | Type | Tier | Definition |
 |---|---|---|---|
 | `identifier` | string | required | Identifies the memory within its origin system. UUIDs are RECOMMENDED. MUST be unique among the memories in one export. |
-| `path` | string | optional | The local file path of the memory if applicable |
+| `path` | string | optional | Where the memory sits in the origin store, as a relative path with `/` separators, for example `team/preferences/status.md`. A receiver MAY rebuild folder structure from it. |
 | `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories |
-| `protocol_version` | string | optional | The version of this protocol the memory was written in. |
+| `protocol_version` | string | optional | The version of this protocol the memory was written in. A receiver MUST import a memory whose `protocol_version` it does not recognise, and preserve the field. |
 | `media_type` | string | required | The media type of the body. MUST be a valid MIME type. |
 | `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched |
 | `body_uri` | string (URI) | optional | Where the full body can be fetched when `stub` is `true` |
@@ -46,11 +45,7 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | `weight` | float | optional | An opaque weight score describing how "useful" the memory is. A receiving system MAY interpret `weight` however it wants. |
 | `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1) |
 
-> **Proposed (I-19).** Hierarchy is carried by `path` alone: a `/`-separated relative path with no leading or trailing slash, no empty segment and no `.` or `..` segment; a receiver derives folder structure from its segments. No folder, taxonomy or parent field is added; a folder's own description (a root `MEMORY.md`, an index file) is itself a memory whose `path` is that file's path and which names its children in its body or links to them (3.2). A projection that cannot keep `path` MUST declare the loss (3.6.6).
-
-> **Proposed (I-26).** The field is named `protocol_version`, on the memory and in the manifest, matching the thin core's `semantic_conventions_version`. Its value is a string: once the protocol is adopted, the date `YYYY-MM-DD` of the adopted revision, the form MCP's `MCP-Protocol-Version` uses, so revisions order without a registry; editors' drafts use their draft number (`"0.6"`) until then. A receiver MUST treat a value it does not know as a revision it does not implement and import the memory anyway, preserving the field.
-
-> **Proposed (U-1).** `checksum` covers, in this order, the UTF-8 bytes of `identifier`, `version` where present, `created_at`, `updated_at` where present and `media_type`, each followed by `0x0A`, then the decoded body bytes (I-17), so two systems compute the same value. An optional `body_checksum` (string, `algorithm:hex`, same algorithms) hashes the decoded body bytes alone; a receiver MAY use it to detect identical content across memories or exports but MUST NOT merge memories or revisions on that basis alone, because identity is `origin` plus `identifier`.
+`checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes, decoded first if `body_encoding` is set. Its value is `algorithm:hex`; implementations MUST support `sha256`.
 
 > **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a delete and its tombstone (3.3.5).
 
