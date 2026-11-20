@@ -2,7 +2,7 @@
 
 **Editors' draft v0.6, 2026-11-09.** Exchange and Runtime sub-thread. Not an adopted OMP standard. v0.6 reorders v0.5 (2026-11-06) without normative change and adds a proposed resolution for every open question. Companions: [agreed decisions](2026-11-09-working-spec-v0.6-decisions.md) and [open questions, proposals and record](2026-11-09-working-spec-v0.6-notes.md), which holds the issue register, the discussion record and the change history with the v0.5 section map.
 
-**How to read.** MUST, SHOULD and MAY are RFC 2119 keywords; all of them are editors' proposals until adopted. Unmarked text was carried from v0.5. **[agreed]** marks what the group agreed on a call. **Proposed (I-n)** blocks are new in v0.6 and resolve the question with that id; the group accepts or rejects each one. A mark at the end of a paragraph covers it.
+**How to read.** MUST, SHOULD and MAY are RFC 2119 keywords; all of them are editors' proposals until adopted. Unmarked text was carried from v0.5, except 3.3.5, which was rewritten after v0.6 (Notes H). **[agreed]** marks what the group agreed on a call. **Proposed (I-n)** blocks are new in v0.6 and resolve the question with that id; the group accepts or rejects each one. A mark at the end of a paragraph covers it.
 
 ## Example
 
@@ -102,17 +102,17 @@ The table defines every standard field; a memory carries each at the tier 1.2 de
 
 > **Proposed (U-1).** `checksum` covers, in this order, the UTF-8 bytes of `identifier`, `version` where present, `created_at`, `updated_at` where present and `media_type`, each followed by `0x0A`, then the decoded body bytes (I-17), so two systems compute the same value. An optional `body_checksum` (string, `algorithm:hex`, same algorithms) hashes the decoded body bytes alone; a receiver MAY use it to detect identical content across memories or exports but MUST NOT merge memories or revisions on that basis alone, because identity is `origin` plus `identifier`.
 
-> **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a forget and tombstone (3.3.6).
+> **Proposed (I-23b).** A memory MAY carry `use_constraints`, an optional, interchange-only list of strings naming constraints the origin attaches to it, with the RECOMMENDED values `no_export` (consent to hand the memory to another system was not given), `no_derive` (it MUST NOT be consolidated into or used to derive other memories) and `no_train` (it MUST NOT be used as training data); an unknown value MUST be preserved. An exporter MUST NOT include a memory carrying `no_export` in a copy or move export to another `origin`; an export whose receiver is the same origin (migration, backup) carries it with the constraint. A receiver that cannot honour a constraint MUST reject or restrict the memory at import and say so in the receipt (3.5.4). Withdrawal of consent after a hand-over travels as a delete and its tombstone (3.3.5).
 
 `status`, a lifecycle or visibility state inside a store, is parked and not a standard field; its description is in Notes D.2, and 3.4 shows where it would sit if kept.
 
-> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.6); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.3). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
+> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.3). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
 
 Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
 
 > **Proposed (I-21).** An extension field MUST be named with a dot-separated prefix that identifies the system defining it (`cognee.accuracy`, `contextnest.type`); names without a dot are reserved for standard fields, and the same prefix form names an implementation's own values where a rule allows them (a comparator, 3.3.2; a `rel`, 3.2). Unknown fields, whether extension fields or standard fields the receiver does not implement, MUST be preserved on export and MUST NOT change the meaning of a standard field; a receiving system MAY ignore their values. Fields proposed for the table but not yet adopted SHOULD travel this way.
 
-> **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_encoding`, `body_uri` (I-17), `body_schema` (I-18), `body_checksum` (U-1), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8), `tombstone`, `forgotten_at`, `reason` (U-10); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
+> **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_encoding`, `body_uri` (I-17), `body_schema` (I-18), `body_checksum` (U-1), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
 
 ### 1.4 Profiles at a glance
 
@@ -169,11 +169,11 @@ How a memory is attributed, linked, changed, represented, exchanged, served, and
 
 Attribution is per revision: `provenance` records who contributed to a revision and in what sequence, not who wrote each line. An implementation that needs line-level attribution MAY derive it from the diffs between revisions. [agreed]
 
-> **Proposed (I-25).** No field for line-level attribution is defined; an implementation that needs it derives it from the diffs between the retained revisions (3.3.3), and a revision a forget has emptied (3.3.6) cannot be attributed line by line. An extension field carrying precomputed line attribution MUST name the revisions it was computed between and MUST NOT change the meaning of `provenance`.
+> **Proposed (I-25).** No field for line-level attribution is defined; an implementation that needs it derives it from the diffs between the retained revisions (3.3.3), and a deleted revision (3.3.5) cannot be attributed line by line. An extension field carrying precomputed line attribution MUST name the revisions it was computed between and MUST NOT change the meaning of `provenance`.
 
 #### 3.1.2 Writers are contributors
 
-Any process that writes a memory, including forget, consolidation and other maintenance agents, MUST appear in `provenance` like any other writer. What those agents do is not defined (Notes E).
+Any process that writes a memory, including forget, consolidation and other maintenance agents, MUST appear in `provenance` like any other writer. A delete writes no memory; who performed it MAY be recorded on the tombstone (3.3.5). What those agents do is not defined (Notes E).
 
 #### 3.1.3 Accountable human
 
@@ -213,7 +213,7 @@ An implementation MAY carry its own score as an extension field. It SHOULD name 
 
 Evidence and lineage form a graph whose nodes are memories and sources. How the graph is built, stored and traversed is left to the implementation. An audit-grade system MUST be able to reconstruct the full chain behind a memory; other systems MAY leave nodes unconnected. [agreed] The protocol does not require full provenance on every object. Consolidation SHOULD name all its inputs.
 
-> **Proposed (I-6).** The minimum lineage an audit-grade system keeps is one hop per memory: every derived memory MUST name its direct inputs, as `evidence` entries (3.1.4) or `derived_from` links (3.2), at the revision that was processed where the input is versioned; the full chain is reconstructed by following those hops, so no fixed depth is standardized. Consolidation MUST name all its inputs in the audit profile and SHOULD elsewhere, except re-graining at import (I-2b), which MUST name them in every profile. An input that was forgotten (3.3.6) or left out of an export is still part of the chain as a tombstone or a dangling reference (3.5.5); reconstruction reaches it and stops there.
+> **Proposed (I-6).** The minimum lineage an audit-grade system keeps is one hop per memory: every derived memory MUST name its direct inputs, as `evidence` entries (3.1.4) or `derived_from` links (3.2), at the revision that was processed where the input is versioned; the full chain is reconstructed by following those hops, so no fixed depth is standardized. Consolidation MUST name all its inputs in the audit profile and SHOULD elsewhere, except re-graining at import (I-2b), which MUST name them in every profile. An input that was deleted (3.3.5) or left out of an export is still part of the chain as a tombstone or a dangling reference (3.5.5); reconstruction reaches it and stops there.
 
 Memories MAY reference each other, by inline links in the body (for example wiki syntax `[[identifier]]`, which works in any format that carries text) or by typed edges in the metadata (`links: [{target, rel}]`, with `rel` values such as `derived_from`, `supersedes`, `relates_to`). The two are not exclusive.
 
@@ -231,7 +231,7 @@ Stores that change memories in place and stores that only write superseding revi
 
 By default an export is a snapshot as of the manifest's `exported_at` (Notes D). History travels only when the export declares it (audit profile, 3.7; federation, 3.6.4).
 
-> **Proposed (U-6).** In a full-history export each revision is serialized as its own memory object; every revision of one memory carries the same `identifier` and its own `version`, `updated_at`, `checksum` and `provenance`, and the pair `identifier` plus `version` MUST be unique among the objects of the export. This refines the uniqueness rule of the `identifier` row (1.3), which stands for snapshots and selections: there one object per memory is exported and `identifier` alone MUST be unique; a tombstone (U-10) counts as a revision, and a snapshot carries a tombstone only for a memory whose every revision is forgotten. A receiver MUST read objects sharing an `identifier` as revisions of one memory, ordered by the declared comparator, never as duplicates.
+> **Proposed (U-6).** In a full-history export each revision is serialized as its own memory object; every revision of one memory carries the same `identifier` and its own `version`, `updated_at`, `checksum` and `provenance`, and the pair `identifier` plus `version` MUST be unique among the objects of the export. This refines the uniqueness rule of the `identifier` row (1.3), which stands for snapshots and selections: there one object per memory is exported and `identifier` alone MUST be unique. Tombstones are not memory objects and fall outside both rules; which exports carry them is 3.3.5. A receiver MUST read objects sharing an `identifier` as revisions of one memory, ordered by the declared comparator, never as duplicates.
 
 #### 3.3.2 Version
 
@@ -241,34 +241,68 @@ When present, the format of `version` is left to the implementation (a sequence 
 
 #### 3.3.3 Immutable revisions
 
-A change SHOULD create a new revision that supersedes the old one, rather than overwrite it in place, so history can be read as of a point in time. This is RECOMMENDED, not required. In the audit profile (3.7), immutable revisions and a verifiable history (for example a hash chain) are REQUIRED.
+A change SHOULD create a new revision that supersedes the old one, rather than overwrite it in place, so history can be read as of a point in time. This is RECOMMENDED, not required. In the audit profile (3.7), immutable revisions and a verifiable history (for example a hash chain) are REQUIRED. A store that offers a verifiable history MUST still verify after a delete (3.3.5); a tombstone MAY carry the deleted revision's `checksum` for that purpose.
 
-> **Proposed (U-5).** In the audit profile a store MUST keep every revision it has exported, and every revision a current revision supersedes, as a stored revision or a tombstone (3.3.6), and MUST be able to export them as a full history (3.3.1); a delete of a retained revision is a forget and leaves a tombstone. A revision, once written, MUST NOT later appear under the same `identifier` and `version` with a different `checksum`; how a store achieves that (append-only files, a database log, retained copies) is left to the implementation. The history SHOULD be verifiable by a hash chain: each revision MAY carry `previous_checksum` (string), the `checksum` of the revision it supersedes, which a receiver checks under 3.5.3. This is the audit-profile item of 3.7.
+> **Proposed (U-5).** In the audit profile a store MUST keep every revision it has exported, and every revision a current revision supersedes, as a stored revision or a tombstone (3.3.5), and MUST be able to export them as a full history (3.3.1); a delete of a retained revision leaves a tombstone. A revision, once written, MUST NOT later appear under the same `identifier` and `version` with a different `checksum`; how a store achieves that (append-only files, a database log, retained copies) is left to the implementation. The history SHOULD be verifiable by a hash chain: each revision MAY carry `previous_checksum` (string), the `checksum` of the revision it supersedes, which a receiver checks under 3.5.3. This is the audit-profile item of 3.7.
 
-Even where the body never changes, a system MAY update lifecycle metadata such as `valid_until`, supersession links and forget markers.
+Even where the body never changes, a system MAY update lifecycle metadata such as `valid_until` and supersession links.
 
 #### 3.3.4 Invalidation and supersession
 
 A memory stops applying at its `valid_until` without being deleted. A newer revision or another memory MAY supersede it with a `supersedes` link (3.2). Current reads SHOULD exclude memories past `valid_until` and superseded memories. Historical reads SHOULD be explicit.
 
-#### 3.3.5 Delete
+#### 3.3.5 Removing and deleting memories
 
-A conforming store MAY delete a memory. A delete SHOULD leave an audit record (who, when, why) with no content. A delete does not by itself stop the content from coming back on a later import (3.3.6).
+Because OMP transfers memories between systems, removing a memory from one store does not guarantee its deletion elsewhere. A store MAY remove a memory without retaining a record, but this is not a true delete as an older copy may later be imported and resurrect it. Preventing this requires a tombstone.
 
-> **Proposed (I-7a).** A delete or forget MUST NOT by itself delete memories derived from its target. Every `evidence` entry or link that pointed at the deleted memory becomes a dangling reference (3.5.5), kept and marked, so each derived memory stays until the deployment's policy deletes it, invalidates it with `valid_until` (3.3.4) or re-derives it; which policy applies is left to implementations. A reviewer finds the affected memories by those marks; neither the audit record nor the tombstone lists them. The rule applies in every profile.
+Tombstones are separate records, not memory objects, and are not subject to the required memory fields in 1.3. They are exported in a separate `tombstones` list alongside memories and MUST NOT be served to agents at runtime.
 
-#### 3.3.6 Forget, tombstones and anti-resurrection
+Tombstones are defined as follows:
 
-A **forget** erases a memory's content on purpose, for example to honor an erasure request, while its history stays verifiable. A **tombstone** is the record a forget leaves behind. This section states the outcomes a conforming store delivers; how it achieves them is left to implementations (Notes E).
+| Field | Required | Description |
+|---|---|---|
+| `identifier` | Required | Identifier of the forgotten memory |
+| `version` | Optional | Identifies a forgotten revision. If absent, the entire identifier is retired |
+| `origin` | Optional | Identifies the originating system if different from the export manifest's `origin` |
+| `checksum` | Optional | Checksum of the forgotten revision for history verification (3.3.3). Only permitted with `version` |
+| `forgotten_at` | Optional | ISO 8601 timestamp of the delete |
+| `reason` | Optional | One of `user_request`, `legal`, `retention_expiry`, or `error` |
+| `provenance` | Optional | Identifies who performed the delete, using `contribution: forgot` and `at` (3.1.1) |
 
-- After a forget, the content of every revision it covers MUST NOT be retrievable from the store or from its exports.
-- A store that offers a verifiable history (3.3.3) MUST still verify after a forget.
-- A forget MUST leave a tombstone that records when it happened, who did it and why. The tombstone MUST NOT contain the forgotten content.
-- **Anti-resurrection.** A receiving system MUST NOT restore forgotten content from an older archive or a pre-forget copy.
+Apart from the optional `checksum`, a tombstone MUST NOT include the forgotten memory's body, title, tags, evidence or other fields derived from its content. Additional implementation-specific fields MAY be included as extensions, subject to the same restriction.
 
-Tombstones travel with exports (3.5) so that receivers can tell. Recognizing a re-imported memory needs `origin` plus `identifier`; showing that a copy predates the forget needs `exported_at` (both from the manifest, Notes D).
+For example:
 
-> **Proposed (U-10).** A tombstone is serialized as a memory object that carries the required fields of 1.3 with the covered memory's `created_at`, an empty `body` under `media_type: text/plain`, `tombstone: true`, `forgotten_at` (ISO 8601), `reason` (one of `user_request`, `legal`, `retention_expiry`, `error`; no free text) and a `provenance` list naming who forgot it with `contribution: forgot` and `at`, since a forget is a writer (3.1.2); in the audit profile that list names the operator as the accountable human (3.1.3). It keeps the `identifier` and, where versioning is in use, the `version` of the revision it covers (one tombstone per covered revision in a full-history export, U-6), and MAY keep that revision's `checksum`, so a hash chain (U-5) still verifies. It MUST NOT carry `title`, `tags`, `evidence` or any other field that restates the forgotten content; a store MAY add its own tombstone fields as extension keys. Anti-resurrection (3.3.6) binds a receiver for the covered revisions only.
+```json
+{
+  "tombstones": [
+    {
+      "identifier": "9b2e7c14-...",
+      "version": 3
+    },
+    {
+      "identifier": "4f1a0d22-..."
+    }
+  ]
+}
+```
+
+When deleting a memory a store SHOULD leave a tombstone to prevent it from being restored by a later import. A receiver MUST NOT import or restore a revision covered by a tombstone it has received, including from older archives or copies made before the delete.
+
+A tombstone with a `version` applies only to that revision. Other revisions MAY remain available, and new revisions MAY be created under the same identifier.
+
+A tombstone without a `version` retires the entire identifier, covering all existing and future revisions. A store MUST NOT create new revisions under a retired identifier, and receivers MUST NOT accept them. Unversioned memories MUST use this form of tombstone.
+
+A snapshot or full-history export SHOULD carry every tombstone the store holds. If the current revision of a memory is deleted and earlier revisions remain, a snapshot SHOULD export the latest remaining revision alongside the tombstone.
+
+A conforming store MUST meet the following requirements:
+
+- After a delete, the content of every covered revision MUST NOT be retrievable from the store or its exports.
+- In the audit profile (3.7), the store MUST record when the delete occurred, who performed it and why. Exporting this information is optional.
+
+Deleting a memory SHOULD NOT automatically delete memories derived from it. References to deleted memories or revisions become dangling references (3.5.5) and MUST be preserved and marked as such. Derived memories remain until the implementation's policy deletes them, invalidates them using `valid_until` (3.3.4), or re-derives them.
+
+Receivers identify forgotten memories by their `origin` and `identifier`, and by `version` where provided. A tombstone applies to every copy of the covered revision, regardless of when that copy was exported. The `forgotten_at` timestamp is not required for anti-resurrection.
 
 ### 3.4 Representations: interchange and runtime
 
@@ -305,18 +339,19 @@ Runtime access control is enforced by the serving system using interchange field
 
 This draft depends on these manifest fields (working text in Notes D):
 
-- `origin`: with `identifier`, the memory's global key (1.3); identifies a re-imported memory (3.3.6); the party whose claims imported provenance and evidence are (3.5.7).
-- `exported_at`: the time the export is as of (3.3.1); shows whether a copy predates a forget (3.3.6).
+- `origin`: with `identifier`, the memory's global key (1.3); matches a tombstone to the memory it covers (3.3.5); the party whose claims imported provenance and evidence are (3.5.7).
+- `exported_at`: the time the export is as of (3.3.1).
 - `protocol_version`, and the profiles the export follows (3.7).
 - The body formats present (1.3).
 - Whether the export is a complete snapshot, a selection or a full history (3.3.1).
 - The transfer intent (3.5.2).
+- Where the `tombstones` list sits in an export (3.3.5).
 
 The version comparator is declared in the manifest (I-4). Absence from a partial export MUST NOT be read as deletion.
 
 #### 3.5.2 Transfer intent
 
-An export MUST declare its intent: **copy**, the source keeps its memories; **move**, the source deletes its memories only after a durable, conforming import on the receiving side; **federation**, no transfer, the memory is read where it resides (3.6.4). A receiving system that assigns its own identifiers MUST keep the origin-to-local mapping.
+An export MUST declare its intent: **copy**, the source keeps its memories; **move**, the source removes its memories only after a durable, conforming import on the receiving side, and leaves no tombstones for them (3.3.5); **federation**, no transfer, the memory is read where it resides (3.6.4). A receiving system that assigns its own identifiers MUST keep the origin-to-local mapping.
 
 > **Proposed (I-8).** An imported memory MUST keep its `identifier`; `origin` plus `identifier` (1.3) names the same memory in every store it passes through, and a receiver MUST NOT mint a new `identifier` for a memory it preserves. A receiver MAY address the memory by a local identifier of its own, in which case it MUST keep the origin-to-local mapping and report it in the receipt (3.5.4), and on re-export it MUST emit the origin pair, carrying an optional per-memory `origin` field (string) wherever the memory's origin is not the manifest's. A receiver that re-derives rather than preserves MUST give the new memory its own `identifier` under its own `origin` and a `derived_from` link (3.2) to the origin pair.
 
@@ -400,7 +435,7 @@ The markdown loading profile is the directory and loading contract of a root `ME
 
 What each profile of 1.4 requires, each item pointing to the section that states the rule. An export's manifest declares the profiles it follows (Notes D). Whether "markdown loading" and "federation binding" remain declarable profile names is handed to the manifest proposal (Notes D).
 
-**Minimal profile.** The required fields of 1.3 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields (1.3). Reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (3.1.5, 3.3.2).
+**Minimal profile.** The required fields of 1.3 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields (1.3). Reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (3.1.5, 3.3.2). A store that deletes a memory meets the requirements of 3.3.5, and a receiver honours the tombstones it receives (3.3.5).
 
 > **Proposed (U-13).** The dangling-reference rules of 3.5.5 belong to the minimal profile: every conforming import MUST keep a reference it cannot resolve and MUST NOT fail because of it, and a kept reference whose target the receiver cannot resolve counts as marked; the explicit `dangling` marker on the entry (U-2) and the evaluation note stay audit-profile items. Transfer intent is a rule on the export, not a field requirement of any profile (U-3), so a bare folder of markdown stays conformant.
 
@@ -414,11 +449,8 @@ What each profile of 1.4 requires, each item pointing to the section that states
 - `checksum` and `version` on every memory (1.3);
 - immutable revisions with a verifiable history (3.3.3);
 - evidence on derived memories (3.1.4);
-- recorded lifecycle events, including deletes (3.3.5);
-- dangling references kept and marked (3.5.5); when a system is evaluated against this profile, its dangling references are noted;
-- forget, tombstones and anti-resurrection (3.3.6).
-
-> **Proposed (I-7b).** Forget, tombstones and anti-resurrection (3.3.6) belong to the minimal profile, not only the audit profile: every conforming store MUST deliver the four outcomes of 3.3.6 when it forgets, and every conforming receiver MUST honour anti-resurrection for the revisions a tombstone covers (U-10), because a receiver without the audit profile is exactly the one that would otherwise bring forgotten content back. The audit profile adds only the verifiable history over the tombstones (U-5).
+- recorded lifecycle events, including when each delete occurred, who performed it and why (3.3.5);
+- dangling references kept and marked (3.5.5); when a system is evaluated against this profile, its dangling references are noted.
 
 ## Appendix A. The example memory in runtime form (markdown with front matter)
 
