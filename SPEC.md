@@ -29,7 +29,7 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | `path` | string | optional | Where the memory sits in the origin store, as a relative path with `/` separators, for example `team/preferences/status.md`. A receiver MAY rebuild folder structure from it. |
 | `title` | string | optional | A human-readable label. May duplicate the body for fact-sized memories |
 | `protocol_version` | string | optional | The version of this protocol the memory was written in. A receiver MUST import a memory whose `protocol_version` it does not recognise, and preserve the field. |
-| `media_type` | string | required | The media type of the body. MUST be a valid MIME type. |
+| `media_type` | string | required | The media type of the body. MUST be a valid MIME type. All systems SHOULD support `text/plain` and `text/markdown`, and MAY support any other valid MIME type. |
 | `stub` | boolean | optional | `true` when the body is a summary or pointer and the full body may be fetched |
 | `body_uri` | string (URI) | optional | Where the full body can be fetched when `stub` is `true` |
 | `body_encoding` | string | optional | How the body string is encoded. `base64` for non-text content; absent for text |
@@ -44,12 +44,10 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | `provenance` | list of contributors | optional; audit-required, with an accountable human | Everyone and everything that contributed to a memory. |
 | `evidence` | list of references or strings | optional; audit-required | A list of items the memory is based on. |
 | `links` | list of edges | optional | References to other memories. |
-| `weight` | float | optional | An opaque weight score describing how "useful" the memory is. A receiving system MAY interpret `weight` however it wants. |
+| `weight` | float | optional | A relative ordering of importance among memories from one `origin`. Values from different origins are not comparable. A receiving system MAY interpret `weight` however it wants. |
 | `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1) |
 
 `checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes, decoded first if `body_encoding` is set. Its value is `algorithm:hex`; implementations MUST support `sha256`.
-
-`status`, a lifecycle or visibility state inside a store, is parked and not a standard field; its description is in Notes D.2, and 3.4 shows where it would sit if kept.
 
 Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
 
