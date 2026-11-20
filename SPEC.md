@@ -1,12 +1,9 @@
 # Open Memory Protocol: The Memory Object
 
-**Editors' draft v0.6, 2026-11-09.** Not an adopted OMP standard. v0.6 reorders v0.5 (2026-11-06) without normative change and adds a proposed resolution for every open question. Companions: [agreed decisions](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-decisions.md) and [open questions, proposals and record](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md), which holds the issue register, the discussion record and the change history with the v0.5 section map.
+**Editors' draft v0.6, 2026-11-09.** 
 
-**How to read.** MUST, SHOULD and MAY are RFC 2119 keywords; all of them are editors' proposals until adopted. Unmarked text was carried from v0.5, except 3.3.5, which was rewritten after v0.6 (Notes H). **[agreed]** marks what the group agreed on a call. **Proposed (I-n)** blocks are new in v0.6 and resolve the question with that id; the group accepts or rejects each one. A mark at the end of a paragraph covers it.
 
 ## Example
-
-One memory in interchange form, meeting the audit profile (3.7). The shapes of `version`, `evidence` and `links` are the v0.5 shapes; proposals I-4, U-2 and I-5b would change them.
 
 ```json
 {
@@ -41,19 +38,19 @@ One memory in interchange form, meeting the audit profile (3.7). The shapes of `
 
 ## Part 1. The memory object
 
-### 1.1 Metadata plus body
+### 1.1 What is a memory object
+Memory in the Open Memory Protocol is defined as a **body** plus **metadata**. The body is the part of the memory that is relevent to an agent. The metadata is there to help tranfer additional information alongside the body to other memory stores that the agent interacts with. It also helps the memory systems keep track of provenence and 
 
-A memory is **metadata** plus a **body**. The metadata is a rigorous schema that can be rendered into any format that renders schemas (JSON, YAML front matter, a database row), for the system that manages the memory. The body is what is semantically relevant to the agent; `media_type` (1.3) declares its format, and it is usually a string in a text format. The contract is two-sided: stable metadata that changes only through versioning or lifecycle events (3.3.3), and a free-form payload the protocol does not prescribe. The object is not a markdown file; a markdown folder is one way to carry it (3.6.6). [agreed]
+We do not enforce the size of a memory. Different systems may have more granular information, such as making memories consist of a single fact only, others may include entire essays as a single memory, we aim to support both. A memory server can proccess memories to better fit thier perticular memory format once they recieve it, our goal for the memory object is only to transfer it over.  
 
-The body MAY be in any format with a valid MIME type; `media_type` declares which (1.3). Implementations need not process every format; non-text bodies such as image or audio are allowed but not required. [agreed]
+**Body Format**
 
-> **Proposed (I-17).** `body` MUST be a string. A structured value is carried as its serialization in the declared `media_type` (a JSON document as text under `application/json`), never as a nested object. A body whose bytes are not UTF-8 text MUST be carried inline, base64-encoded, with the optional field `body_encoding: base64`, or by reference: `stub: true`, `media_type` the content's own type, and the optional field `body_uri` (string, a URI) naming where the content is, the body then empty or a summary. `checksum` and `body_checksum` (U-1) hash the decoded inline bytes, or for a by-reference stub the body string as carried.
+The body MUST be a string. Non-text content, such as images or audio, MAY be carried as a base64-encoded string with `body_encoding: base64`. Implementations are not required to interpret every media type.
 
-> **Proposed (I-18).** One optional field is added, `body_schema` (string): a URI or name identifying the schema a structured body conforms to (a JSON Schema URL, a CSV header contract, an ontology IRI); absent when the body has none. No source-type field is added: the kind of memory travels in `tags`, since `media_type` is agreed not to be a semantic ontology. An opaque document such as a PDF is carried under its MIME type (I-17); text extracted from it is a separate memory linked `derived_from` with the document as evidence. A query-backed memory is the query output; the query and the system of record are its evidence with `relation: observed`.
+In cases where a memory is stored as a structured object such as JSON or XML the metadata SHOULD include a `media_type` field with a value such as `application/json` or `application/xml`.
 
-> **Proposed (I-2a).** A memory is one addressable object, whatever grain the origin system gives its own `identifier`, `created_at`, `media_type` and body: a single claim (a knowledge object), a fact with its evidence, or a whole document. The protocol fixes no grain; every field of 1.3 MUST be usable at every grain, and a receiving system MUST accept a memory at the grain it arrives in. A system MAY name its grain in `tags` (`claim`, `document`); the manifest proposal MAY declare the grains an export contains.
+The body of a memory also does not need to include full documents inline. It can instead indecate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
 
-A memory MAY be a **stub**: its body is a summary or pointer, and the full body has to be fetched before use. It carries `stub: true` so an agent knows to fetch the full body if it needs it.
 
 ### 1.2 Field tiers
 
