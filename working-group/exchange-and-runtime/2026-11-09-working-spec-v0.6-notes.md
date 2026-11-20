@@ -1,6 +1,6 @@
 # Open Memory Protocol v0.6: Open questions, proposals and record
 
-Companion to [editors' draft v0.6](2026-11-09-working-spec-v0.6.md). Plain section numbers (1.3, 3.5.1) refer to that document; lettered sections (C.2, H) to this one. Agreed decisions are in [the decisions document](2026-11-09-working-spec-v0.6-decisions.md).
+Companion to [editors' draft v0.6](working-spec.md). Plain section numbers (1.3, 3.5.1) refer to that document; lettered sections (C.2, H) to this one. Agreed decisions are in [the decisions document](2026-11-09-working-spec-v0.6-decisions.md).
 
 ## A. Proposed resolutions in v0.6
 
