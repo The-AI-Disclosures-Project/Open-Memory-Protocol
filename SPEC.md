@@ -41,14 +41,14 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | `version` | opaque, with a declared comparator | audit-required | The current version of this memory. |
 | `updated_at` | ISO 8601 timestamp | optional | When this revision was written. |
 | `checksum` | string | audit-required | An integrity hash of the metadata-covered fields plus the body. |
-| `provenance` | list of contributors | optional; audit-required, with an accountable human | Everyone and everything that contributed to a memory. |
-| `evidence` | list of references or strings | optional; audit-required | A list of items the memory is based on. |
+| `provenance` | list of contributors | audit-required | Everyone and everything that contributed to the memory (3.1.1). In the audit profile, it MUST include an accountable human (3.1.3). |
+| `evidence` | list of references or strings | optional | What the memory is based on: source material, transcript turns, other memories, or a person's statement (3.1.4). In the audit profile, it is required for derived memories. |
 | `links` | list of edges | optional | References to other memories. |
 | `weight` | float | optional | A relative ordering of importance among memories from one `origin`. Values from different origins are not comparable. A receiving system MAY interpret `weight` however it wants. |
 | `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1). |
 
 
-The Tier column in the table above says when a memory must carry a field: **required** fields are carried by every memory, **audit-required** fields in the audit profile (3.7), and **ACL-required** fields wherever access control applies. **Optional** fields may be omitted in every profile.
+Each field has one of four tiers: **required** fields are carried by every memory; **audit-required** fields are required in the audit profile (3.7) and optional otherwise; **ACL-required** fields are required wherever access control applies; and **optional** fields may be omitted in every profile.
 
 `checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes, decoded first if `body_encoding` is set. Its value is `algorithm:hex`; implementations MUST support `sha256`.
 
