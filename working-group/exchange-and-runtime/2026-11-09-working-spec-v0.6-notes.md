@@ -1,6 +1,6 @@
 # Open Memory Protocol v0.6: Open questions, proposals and record
 
-Companion to [editors' draft v0.6](../../SPEC.md). Plain section numbers (1.3, 3.5.1) refer to that document; lettered sections (C.2, H) to this one. Agreed decisions are in [the decisions document](2026-11-09-working-spec-v0.6-decisions.md).
+Companion to [editors' draft v0.6](2026-11-09-working-spec-v0.6.md). Plain section numbers (1.2, 3.5.1) refer to that document; lettered sections (C.2, H) to this one. Agreed decisions are in [the decisions document](2026-11-09-working-spec-v0.6-decisions.md).
 
 ## A. Proposed resolutions in v0.6
 
@@ -10,20 +10,20 @@ Every open question of v0.5 carries a proposed resolution in the specification, 
 |---|---|---|
 | I-17 | 1.1 | The smallest reading of the agreed rule that a body may be any MIME-typed format while implementations need not process every format: one string slot, one encoding flag, and the existing stub for references. Precedent: Cognee §3.2 (text as baseline, other media embedded or referenced through typed descriptors with verifiable integrity), Sapience KO-1 v2 §6 (media by reference), the 11-06 decision that non-text bodies are allowed but not required. |
 | I-18 | 1.1 | Answers both 10-14 sub-questions with the fields the draft already has plus one pointer field, keeping optional interchange fields few (2.1). Precedent: Cognee §3.2 epistemic roles and AIDP's ground truth / transcripts / inferences (now evidence relations), Context Nest's `type: source` and proposed `retrieval` block (the fetched copy is the memory, the fetch is its provenance), IBM's `source material` reference, Wes 10-14 on systems of record. |
-| I-2a | 1.1 | Follows the 10-14 decision to leave the grain out of scope and the Sapience draft's own reading that granularity is a deployment choice (KO-3 §3.1: a KO may be a fact, a chunk or a versioned belief), while giving implementers the one rule they need: identity, not size, makes a memory. The Cognee draft (§3.2) likewise lets profiles carry entities, facts, summaries or memory blocks over one core, and `tags` is already the agreed home for the kind of a memory (1.3). |
-| I-16 | 1.2 | Gabe proposed the tiers on the call and the group has since confirmed four assignments (`version`, `updated_at` on 10-14; `protocol_version`, `weight` on 11-06) without objecting to the rest, so the smallest resolution is to adopt the editors' table as the baseline and let objections name a row; the validator rule makes the table checkable by code. |
-| U-7 | 1.2 | Gabe's call proposal named three tiers (audit-required, ACL-required, optional) and the group recorded that scope feeds access control and is system-set (IBM, AIDP, Cognee §3.3, CN); mapping the tier to a profile of its own, as Context Nest layers L0-L3 and Cognee §5 lets a deployment claim only what it implements, closes the gap without changing `scope`'s tier or its row. |
-| I-19 | 1.3 | The smallest rule that lets the markdown loading profile round-trip: Packer's progressive disclosure is a directory tree, Context Nest derives `INDEX.md` and folder indexes from the files rather than storing them, and Sruly's 10-14 reason for keeping `path` was that folder structure already carries the discovery information. |
-| I-26 | 1.3 | Keeps the agreed part of the row (optional on the memory, required by the manifest) and takes the 11-06 suggestion of a date-based format to match MCP, the binding most implementers named (I-10); the import rule follows the unknown-fields rule so an older store never rejects a newer memory. |
-| U-1 | 1.3 | Gives Cognee PR #16 its deduplication hash as one optional field without touching the agreed `checksum` over metadata plus body, and carries Cognee §3.1's rule that identity is not text equality. Context Nest's body-only `checksum` shows the hash is cheap to compute on markdown stores. |
-| I-23b | 1.3 | Uses the two mechanisms I-23 itself names and that 3.1.6 already relies on (a `contradicts` rel and `contribution: contradicted`, which v0.6's 3.1.1 vocabulary lists), and follows Cognee §3.5, where concurrent or unordered claims surface as conflicts instead of being silently resolved; it leaves resolution to implementations (5.4). |
-| I-14 | 1.3 | Follows the call, where Gabe placed `status` outside the runtime format and overlapping versioning, and Misha's own description of it as approval state inside a store (Context Nest A.1 serves `published` only by default), so the protocol fixes the serving outcome and not the enum. Closes the parked item without adding an optional field that would go unimplemented (2.1). |
-| I-21 | 1.3 | The group's agreed decisions since 10-14 (`media_type` required, `protocol_version` and `weight` optional, `version` audit-required) are decisions about rows of the table, so keeping the table as the core preserves them unchanged, while a second version number would multiply the compatibility matrix the manifest (5.3) and I-26 already have to handle. Profiles as the layering mechanism follow the Cognee draft §5 (RFC 6906 representation profiles over a common core) and the editors' note that the table stands until the group decides (5.1.1). |
-| fields | 1.3 | Added in review so a validator built from the field table knows which optional fields the proposals introduce before they are accepted. |
+| I-2a | 1.1 | Follows the 10-14 decision to leave the grain out of scope and the Sapience draft's own reading that granularity is a deployment choice (KO-3 §3.1: a KO may be a fact, a chunk or a versioned belief), while giving implementers the one rule they need: identity, not size, makes a memory. The Cognee draft (§3.2) likewise lets profiles carry entities, facts, summaries or memory blocks over one core, and `tags` is already the agreed home for the kind of a memory (1.2). |
+| I-16 | 1.3 | Gabe proposed the tiers on the call and the group has since confirmed four assignments (`version`, `updated_at` on 10-14; `protocol_version`, `weight` on 11-06) without objecting to the rest, so the smallest resolution is to adopt the editors' table as the baseline and let objections name a row; the validator rule makes the table checkable by code. |
+| U-7 | 1.3 | Gabe's call proposal named three tiers (audit-required, ACL-required, optional) and the group recorded that scope feeds access control and is system-set (IBM, AIDP, Cognee §3.3, CN); mapping the tier to a profile of its own, as Context Nest layers L0-L3 and Cognee §5 lets a deployment claim only what it implements, closes the gap without changing `scope`'s tier or its row. |
+| I-19 | 1.2 | The smallest rule that lets the markdown loading profile round-trip: Packer's progressive disclosure is a directory tree, Context Nest derives `INDEX.md` and folder indexes from the files rather than storing them, and Sruly's 10-14 reason for keeping `path` was that folder structure already carries the discovery information. |
+| I-26 | 1.2 | Keeps the agreed part of the row (optional on the memory, required by the manifest) and takes the 11-06 suggestion of a date-based format to match MCP, the binding most implementers named (I-10); the import rule follows the unknown-fields rule so an older store never rejects a newer memory. |
+| U-1 | 1.2 | Gives Cognee PR #16 its deduplication hash as one optional field without touching the agreed `checksum` over metadata plus body, and carries Cognee §3.1's rule that identity is not text equality. Context Nest's body-only `checksum` shows the hash is cheap to compute on markdown stores. |
+| I-23b | 1.2 | Uses the two mechanisms I-23 itself names and that 3.1.6 already relies on (a `contradicts` rel and `contribution: contradicted`, which v0.6's 3.1.1 vocabulary lists), and follows Cognee §3.5, where concurrent or unordered claims surface as conflicts instead of being silently resolved; it leaves resolution to implementations (5.4). |
+| I-14 | 1.2 | Follows the call, where Gabe placed `status` outside the runtime format and overlapping versioning, and Misha's own description of it as approval state inside a store (Context Nest A.1 serves `published` only by default), so the protocol fixes the serving outcome and not the enum. Closes the parked item without adding an optional field that would go unimplemented (2.1). |
+| I-21 | 1.2 | The group's agreed decisions since 10-14 (`media_type` required, `protocol_version` and `weight` optional, `version` audit-required) are decisions about rows of the table, so keeping the table as the core preserves them unchanged, while a second version number would multiply the compatibility matrix the manifest (5.3) and I-26 already have to handle. Profiles as the layering mechanism follow the Cognee draft §5 (RFC 6906 representation profiles over a common core) and the editors' note that the table stands until the group decides (5.1.1). |
+| fields | 1.2 | Added in review so a validator built from the field table knows which optional fields the proposals introduce before they are accepted. |
 | U-8 | 2.2 | The content is the union of what 3.5.1 says this draft depends on and what 5.3 already lists, so nothing new is invented; the owner follows the September 28 action (Vasilije to return with the missing exchange elements) and the fact that the working text derives from Cognee §3.6 and PR #16. |
 | U-4 | 3.1.1 | The rename was done in review of PR #13 and is recorded in the v0.2 changelog and in Part 4's "recorded as decided" list; the open tag in the v0.5 key table was a leftover, so the smallest resolution is to record closure and the one migration rule a reader of old exports needs. |
 | I-3a | 3.1.1 | Sruly on the 2026-09-28 call: a plain list of contributors avoids grading the result, which the group preferred to Gabe's none/draft/full AI-usage trailer; deriving the EU AI Act class from `kind` and `contribution` gives IBM's AI-usage disclosure without a second field, honouring the goal of keeping interchange-relevant optional fields few (2.1). |
-| I-25 | 3.1.1 | Follows the 2026-11-06 agreement (attribution per revision, line-level MAY be derived from diffs) and Context Nest's precedent of storing history as keyframes plus diffs with `edited_by` per version, so no new standard field is needed; the extension clause reuses the 1.3 extension rule. |
+| I-25 | 3.1.1 | Follows the 2026-11-06 agreement (attribution per revision, line-level MAY be derived from diffs) and Context Nest's precedent of storing history as keyframes plus diffs with `edited_by` per version, so no new standard field is needed; the extension clause reuses the 1.2 extension rule. |
 | I-3b | 3.1.3 | Answers the split-accountability question from the September 28 notes (Misha's case: an agent writes on one person's instructions and another approves, ideally both named; regulators care who the accountable human is) with the smallest shape, one boolean, and keeps the agreed MUST of 3.1.3 intact while turning the editors' SHOULD into a checkable rule. |
 | U-2 | 3.1.4 | Makes the Appendix A keys normative, which is the smallest shape an importer can code against, and resolves the unavailable-evidence case with the dangling marker Gabe proposed on 10-14 rather than a new field. Precedent: Cognee §3.2 (a derived memory with unavailable evidence must say so), Sapience §3.5 (source kept apart from version links), Context Nest's floating-versus-pinned `@N` links for the optional `version`. |
 | I-20 | 3.1.4 | Takes the 10-15 review variant recorded in 5.1.3 and the Sapience draft's knowledge-object placement (confidence is an extraction estimate inside provenance, next to its source, never on the claim), while keeping the settled main question of I-20 and the 10-14 concern that a bare score cannot move between systems. |
@@ -46,8 +46,8 @@ Every open question of v0.5 carries a proposed resolution in the specification, 
 | I-10 | 3.6.1 | The call did not agree on MCP as the home (IBM proposed it; Cognee prefers hooks for control, Context Nest a CLI for retrieval isolation), so the smallest rule that lets an implementer ship is Context Nest §4.3's: expose at least one binding and serve the same set through each, with Cognee §5's view that bindings are carriers of one object. Declaring the surface reuses the capability endpoint the federation binding already requires. |
 | I-15a | 3.6.2 | Answers Vasilije's call question (one org server plus one personal server breaks; per-workspace may be too coarse) with Cognee §3.3's scope kinds as examples rather than a closed vocabulary, and the comparison notes' row on identity pass-through (point to existing auth, carry only what the union view needs). The qualified form is already the shape of the Appendix A example. |
 | I-15b | 3.6.4 | Keeps the agreed rule (the protocol defines what recall returns, not how it is called) by confining the one query shape federation needs to the binding that AIDP contributed, where every endpoint but capability is optional; Gabe's read-back that the merge protocol comes second means the layer adapts to servers, not the reverse. |
-| U-11 | 3.6.4 | Turns the call's common ground (scope feeds access control and the system sets it; Gabe's read-back that the layer takes the union of the servers' results) into one enforcement rule and one floor, following Cognee §3.3's "never silent access expansion" and the 1.3 rule that access control is enforced by the serving system from interchange fields. It adds a floor without defining merge or scope combination, which Part 4 leaves to implementations. |
-| U-9 | 3.6.4 | Reconciles the AIDP endpoint set with the agreed recall rule by scoping the signature to the federation binding and fixing only a string query plus filters on fields the protocol already defines, so a federation layer can call any member with no per-server adapter while servers still compete on retrieval. `scope` is deliberately not a filter: it is system-set and never crosses a runtime surface (1.3, U-11). |
+| U-11 | 3.6.4 | Turns the call's common ground (scope feeds access control and the system sets it; Gabe's read-back that the layer takes the union of the servers' results) into one enforcement rule and one floor, following Cognee §3.3's "never silent access expansion" and the 1.2 rule that access control is enforced by the serving system from interchange fields. It adds a floor without defining merge or scope combination, which Part 4 leaves to implementations. |
+| U-9 | 3.6.4 | Reconciles the AIDP endpoint set with the agreed recall rule by scoping the signature to the federation binding and fixing only a string query plus filters on fields the protocol already defines, so a federation layer can call any member with no per-server adapter while servers still compete on retrieval. `scope` is deliberately not a filter: it is system-set and never crosses a runtime surface (1.2, U-11). |
 | I-12 | 3.6.5 | Follows the only position on record, Context Nest on the call ("no nested memories, compiled at runtime"), while keeping separate objects as the default since the existing 3.6.5 sentence already gives each its own metadata; naming compiled sources keeps the agreed 3.2 rule that an audit-grade system can reconstruct the chain behind what the agent saw. |
 | U-15 | 3.6.6 | Raised in review of this draft: the minimal profile's headline case, a bare folder of markdown files, had no rule for deriving the three required fields or for where metadata sits. |
 | U-13 | 3.7 | Gabe's 10-14 dangling rules were motivated by adoption (an import must not fail on a missing target) and Wes added that a dangling reference still means something in the audit chain, which splits cleanly into a minimal duty and an audit mark; copy as the default is the behaviour of every store that has no manifest (the source keeps its memories), matches IBM's one-system-at-a-time import, and leaves Cognee §3.6's explicit intent in force wherever a manifest exists. |
@@ -67,11 +67,11 @@ Ilan proposes in review (PR #13) to follow OpenTelemetry and keep the protocol c
 { "identifier": "MEMORY.md", "media_type": "text/markdown", "body": "The user prefers concise answers.", "attributes": {} }
 ```
 
-Every other field would become an attribute defined in **semantic conventions**. The conventions would be debated and versioned on their own schedule: the manifest declares `semantic_conventions_version` separately from `protocol_version` (D). Under this model the tiers of 1.2 and the profiles of 1.4 and 3.7 would become named sets of conventions. This was not reached on 2026-10-14 and is not adopted. The field table (1.3) stands until the group decides.
+Every other field would become an attribute defined in **semantic conventions**. The conventions would be debated and versioned on their own schedule: the manifest declares `semantic_conventions_version` separately from `protocol_version` (D). Under this model the tiers of 1.3 and the profiles of 1.4 and 3.7 would become named sets of conventions. This was not reached on 2026-10-14 and is not adopted. The field table (1.2) stands until the group decides.
 
 ### B.2 Cognee's further fields (PR #16)
 
-Cognee's PR #16 proposes `subject`, `kind`, `accuracy`, an `origin` qualifier, `invalidated_by` (a reverse pointer on the superseded memory, the counterpart of the `supersedes` link in 3.3.4), a list shape for `evidence`, and a second hash of the body alone for deduplication (U-1 in C). They are reflected where they overlap (1.3 `checksum` row via U-1, 3.1.4, 3.1.6, 3.3.4, D) and are otherwise left for review in PR #16.
+Cognee's PR #16 proposes `subject`, `kind`, `accuracy`, an `origin` qualifier, `invalidated_by` (a reverse pointer on the superseded memory, the counterpart of the `supersedes` link in 3.3.4), a list shape for `evidence`, and a second hash of the body alone for deduplication (U-1 in C). They are reflected where they overlap (1.2 `checksum` row via U-1, 3.1.4, 3.1.6, 3.3.4, D) and are otherwise left for review in PR #16.
 
 ### B.3 Alternatives to 3.1.6
 
@@ -86,15 +86,15 @@ The editors' resolution in v0.5 was that forget, tombstones and anti-resurrectio
 
 Profiles as a construct (1.4, 3.7) and the names "minimal" and "audit" are editors-added, as are the "markdown loading profile" (3.6.6) and "federation binding" (3.6.4) as named profiles; the thin core (B.1) would replace them with convention sets. The following sentences have the same status:
 
-- 1.2: every field tier in 1.3 except `version`, `updated_at`, `protocol_version` and `weight` (I-16 in C).
-- 1.3: the body row, which restates the body's place in the object and in the minimal profile; the key tiers of the contributor list in 3.1.1.
+- 1.3: every field tier in 1.2 except `version`, `updated_at`, `protocol_version` and `weight` (I-16 in C).
+- 1.2: the body row, which restates the body's place in the object and in the minimal profile; the key tiers of the contributor list in 3.1.1.
 - 3.1.2: writers are contributors, maintenance agents included.
 - 3.1.3: the accountable human for a maintenance agent MAY be the operator who runs it (from review).
 - 3.1.4: a derived memory whose evidence is unavailable MUST say so (from Cognee §3.2).
 - 3.3.3: immutable revisions with a verifiable history REQUIRED in the audit profile (U-5 in C).
 - 3.5.2: a receiving system that assigns its own identifiers MUST keep the origin-to-local mapping (from Cognee §3.1).
 - 3.5.6: credentials are not memory and MUST NOT be exported as memory (from Cognee §3.3).
-- 1.3 (`protocol_version` row): the clause "an exporter MAY add it at export" is the editors'; the agreed part of that row is the optional tier and the manifest's expected requirement.
+- 1.2 (`protocol_version` row): the clause "an exporter MAY add it at export" is the editors'; the agreed part of that row is the optional tier and the manifest's expected requirement.
 - 3.7: the markdown loading profile and the federation binding listed as profiles with checklists.
 - Deleted from the body, recorded here: the v0.5 opening sentence of the provenance chapter, "Provenance and evidence are the protocol's main tools for answering who stands behind a memory and why to believe it. Trust and accuracy build on them."
 
@@ -106,9 +106,9 @@ This register is the single owner of every issue's full description; the body ca
 
 | # | Issue | Where |
 |---|---|---|
-| I-2 | The atomic unit. Three views: a memory is the smallest semantic unit that carries meaning and can be evaluated true or false (Cognee, call); memories are documents with titles and authors, as in document stores (CN; Packer); a single claim is the unit, carrying its provenance, a confidence estimate, its versions and what it superseded (the knowledge object: arXiv 2601.15313, Appendix A; arXiv 2603.15994; arXiv 2603.17781; SSRN 10.2139/ssrn.5812343). The metadata of 1.3 is written to work for all three. Deferred 10-14 (D) | 2.2, 1.1 |
+| I-2 | The atomic unit. Three views: a memory is the smallest semantic unit that carries meaning and can be evaluated true or false (Cognee, call); memories are documents with titles and authors, as in document stores (CN; Packer); a single claim is the unit, carrying its provenance, a confidence estimate, its versions and what it superseded (the knowledge object: arXiv 2601.15313, Appendix A; arXiv 2603.15994; arXiv 2603.17781; SSRN 10.2139/ssrn.5812343). The metadata of 1.2 is written to work for all three. Deferred 10-14 (D) | 2.2, 1.1 |
 | I-3 | The shape of provenance: whether `contribution` and `ai_usage` are core, the EU AI Act terms for `ai_usage`, and how to record several accountable humans | 3.1.1, 3.1.3 |
-| I-4 | Versioning: the form of `version` and its comparator, including incomparable versions. Mostly settled 10-14: audit-required, and in-place updates allowed (C.2); the form and the comparator remain. See U-6 for where the comparator is declared | 1.3, 3.3.2 |
+| I-4 | Versioning: the form of `version` and its comparator, including incomparable versions. Mostly settled 10-14: audit-required, and in-place updates allowed (C.2); the form and the comparator remain. See U-6 for where the comparator is declared | 1.2, 3.3.2 |
 | I-5 | Links: inline, metadata edges, or both; what a link targets (an identifier, or an identifier at a version); whether edges are typed in the core; how transcripts are exported or linked to. Appendix A pre-decides the edge shape (U-2) | 3.1.4, 3.2 |
 | I-6 | Lineage depth required for audit: n hops back, or the full chain. The sentence in 3.2 marked agreed says an audit-grade system MUST be able to reconstruct the full chain, while the 2026-09-28 call left how the graph is built, stored and traversed to the implementation and v0.5 kept the minimum depth open | 3.2 |
 | I-7 | Tombstones, anti-resurrection and delete of derived memories: core or audit profile, and what a delete means for memories derived from the deleted one. The editors proposed audit in v0.5; 3.3.5 as rewritten after v0.6 puts them in the core (B.4) | 3.3.5, 3.7 |
@@ -118,23 +118,23 @@ This register is the single owner of every issue's full description; the body ca
 | I-13 | An auditable flag on memories and retrievals: the protocol may define the flag, not the log | E |
 | I-14 | `status` and visibility: standardize or leave to implementations. Parked, row in D | D |
 | I-15 | Identity and scope granularity for federation, and whether federation needs any standard recall (review). See U-9 and U-11 | 3.6.2, 3.6.4 |
-| I-16 | Whether the tier assignments in 1.3 hold | 1.2 |
-| I-17 | Whether a body can be a structured value rather than a string (review), and how a non-text body such as image or audio is carried (11-06) | 1.1, 1.3 body row |
+| I-16 | Whether the tier assignments in 1.2 hold | 1.3 |
+| I-17 | Whether a body can be a structured value rather than a string (review), and how a non-text body such as image or audio is carried (11-06) | 1.1, 1.2 body row |
 | I-18 | An optional schema or source-type field for structured or relational sources and opaque documents such as PDFs; whether a query-backed memory is the query output or its source data (10-14) | 1.1 |
-| I-19 | Folder taxonomy and other hierarchy metadata beyond `path` (10-14) | 1.3 path row, 3.6.6 |
+| I-19 | Folder taxonomy and other hierarchy metadata beyond `path` (10-14) | 1.2 path row, 3.6.6 |
 | I-20 (residual) | Confidence on evidence entries, the variant from review (10-15) described in B.3; the main question is settled (C.2) | 3.1.6 |
 | I-21 | A thin core with separately versioned semantic conventions (review). Full proposal in B.1 | B |
 | I-22 | Trust and sanitization of imported memories | 3.5.7 |
 | I-23 | Use cases not yet covered (#use-cases list): contradictions kept and flagged rather than resolved (for example a `contradicts` link rel, or `contribution: contradicted` per 3.1.6), consent to hand a memory over, and consent to learn from a memory. Note: 3.1.6 uses `contribution: contradicted`, a value the `contribution` list in 3.1.1 does not name | 3.1.6, 3.2 |
 | I-25 | Whether line-level attribution needs an optional field, or stays derived from diffs between revisions (11-06) | 3.1.1 |
-| I-26 | The name of the version field, `protocol_version` or `omp_version`, and its format, for example date-based to match MCP's `MCP-Protocol-Version` (11-06) | 1.3 protocol_version row |
+| I-26 | The name of the version field, `protocol_version` or `omp_version`, and its format, for example date-based to match MCP's `MCP-Protocol-Version` (11-06) | 1.2 protocol_version row |
 
 ### C.2 Resolved
 
 | # | Issue | Where |
 |---|---|---|
 | I-1 | ~~Markdown as the common body format vs the base object~~. Settled 10-14: the base object is metadata plus a typed body, and markdown is not preferred | 2.2 |
-| I-4 (main) | ~~Whether `version` is required, and whether in-place updates are allowed~~. Mostly settled 10-14: audit-required, in-place allowed. The remainder stays open above; the decisions document lists the decision as recorded, not tagged | 1.3, 3.3.2 |
+| I-4 (main) | ~~Whether `version` is required, and whether in-place updates are allowed~~. Mostly settled 10-14: audit-required, in-place allowed. The remainder stays open above; the decisions document lists the decision as recorded, not tagged | 1.2, 3.3.2 |
 | I-9 | ~~How an export declares inferred provenance~~. Replaced by 3.1.5 (review): absent provenance means unknown | 3.1.5 |
 | I-11 | ~~Change notification during a session~~: how a harness learns that a memory it already loaded has changed (for example through MCP resource subscriptions). Left to implementations (review); closed unless the group reopens it | 2.2 |
 | I-20 (main) | ~~Accuracy and confidence as a standard field~~. Settled 11-06: provenance and evidence carry accuracy, plus an optional `weight` for relative ordering within one `origin`. the decisions document asks the group to confirm, since only `weight` carried an agreed tag in v0.5. The residual stays open above | 3.1.6 |
@@ -145,17 +145,17 @@ I-24: the number is not used in v0.5 (the sequence jumps from I-23 to I-25, and 
 
 | # | Question | Where |
 |---|---|---|
-| U-1 | A second hash of the body alone, for deduplication (Cognee, PR #16): tagged open in v0.5's checksum row with no issue number | 1.3 checksum row |
+| U-1 | A second hash of the body alone, for deduplication (Cognee, PR #16): tagged open in v0.5's checksum row with no issue number | 1.2 checksum row |
 | U-2 | The shape of an evidence entry and of a link edge. `evidence` is "a list of references or strings" and the keys `ref`, `relation` and `dangling` that Appendix A uses are never defined; the link edge `{target, version, rel}` in Appendix A pre-decides what I-5 leaves open. Also undefined is how a derived memory "says so" when its evidence is unavailable (3.1.4), given that evidence pointing outside the store MAY be excluded from an export while the audit profile requires evidence on derived memories | 3.1.4, 3.2, Appendix A |
 | U-3 | Whether an export MUST declare a transfer intent at all, and where the declaration lives once the manifest proposal exists (D); v0.5 tagged the section open but tracked only I-8 there | 3.5.2 |
 | U-4 | The rename `role` to `contribution`: recorded as done in the changelog (review) but tagged open in v0.5's key table | 3.1.1 |
 | U-5 | Immutable revisions and a verifiable history REQUIRED in the audit profile: editors-only text in a section v0.5 tagged open, and I-4 does not cover the audit requirement | 3.3.3, 3.7 |
-| U-6 | Where the version comparator is declared: in the manifest (static per system version, D), by "the implementation" (3.3.2), or on each memory as Appendix A does (`"version": { "value": 2, "comparator": "integer" }`, while Appendix B carries the scalar `version: 2`). Also how several revisions of one `identifier` are serialized in a full-history export against the rule that `identifier` MUST be unique among the memories in one export | 3.3.2, 1.3 identifier row, Appendix A, Appendix B |
-| U-7 | The ACL-required tier maps to no profile: 3.7 defines minimal and audit, and no profile in which ACL-required fields are required | 1.2 |
+| U-6 | Where the version comparator is declared: in the manifest (static per system version, D), by "the implementation" (3.3.2), or on each memory as Appendix A does (`"version": { "value": 2, "comparator": "integer" }`, while Appendix B carries the scalar `version: 2`). Also how several revisions of one `identifier` are serialized in a full-history export against the rule that `identifier` MUST be unique among the memories in one export | 3.3.2, 1.2 identifier row, Appendix A, Appendix B |
+| U-7 | The ACL-required tier maps to no profile: 3.7 defines minimal and audit, and no profile in which ACL-required fields are required | 1.3 |
 | U-8 | The manifest proposal: its content, author and timeline are unassigned (D) | D |
 | U-9 | The federation binding's endpoint set includes `search` while 3.6.2 says the protocol MUST NOT fix a signature for recall; I-15 brushes this without owning it | 3.6.4 |
 | U-10 | Which tombstone fields are standard and which belong to the implementation's format. 3.3.5 as rewritten after v0.6 defines the tombstone record and its fields (issue #38) | 3.3.5, E |
-| U-11 | How `scope` being "set by the system, never by the agent" is enforced (no keyword, no rule), and how scopes combine under federation when `scope` is interchange-only and federation carries the runtime representation | 1.3 scope row, 3.6.4 |
+| U-11 | How `scope` being "set by the system, never by the agent" is enforced (no keyword, no rule), and how scopes combine under federation when `scope` is interchange-only and federation carries the runtime representation | 1.2 scope row, 3.6.4 |
 | U-12 | Whether the placement table in 3.4 is normative at all ("guidance, not a requirement") while Appendix B relies on it to drop the audit fields | 3.4, Appendix B |
 | U-13 | Whether transfer intent (3.5.2) and the dangling-reference rules (3.5.5) belong to the minimal profile or only to the audit profile; 3.7 lists dangling references under audit and intent under neither | 3.7 |
 | U-14 | "Retries MUST NOT duplicate memories" (3.5.4) needs `origin` plus `identifier` identity, which I-8 leaves open and the manifest text in D is being replaced | 3.5.4 |
@@ -250,11 +250,11 @@ This section keeps every "who said what, when" and every source-draft citation t
 - The atomic unit (I-2): "the smallest semantic unit that carries meaning and can be evaluated true or false" is Cognee's view from the call; "documents with titles and authors" is the CN and Packer view; the single claim carrying provenance, confidence, versions and what it superseded is the knowledge object of arXiv 2601.15313 (Appendix A), arXiv 2603.15994, arXiv 2603.17781 and SSRN 10.2139/ssrn.5812343. 10-14 kept the question out of scope for now; the metadata is written to work for all three views.
 - Stubs, whose body is a summary or pointer fetched before use "much as skills sit in context as stubs": Wes, 10-14; put forward on 10-14.
 
-**1.2 Field tiers.**
+**1.3 Field tiers.**
 - The four tiers were proposed by Gabe on the call.
 - Every tier assignment in the field table is the editors', except `version` and `updated_at`, read back on 10-14, and `protocol_version` and `weight`, set on 11-06.
 
-**1.3 Field table.**
+**1.2 Field table.**
 - `identifier` replaces `title` as the key: call; IBM's "memory identifier"; Cognee §3.1. Stability across versions and the RECOMMENDED UUIDs: 10-14. `identifier` plus `origin` as a global key: review; Cognee PR #16.
 - `path` kept separate from `identifier` because folder structure carries discovery and progressive-disclosure information: Sruly, 10-14; put forward on 10-14. Hierarchy metadata beyond `path` (I-19): 10-14.
 - `title` may duplicate the body for fact-sized memories: call.
@@ -352,11 +352,12 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 ### Changes since v0.6
 
 - 3.3.5 Delete and 3.3.6 Forget, tombstones and anti-resurrection are merged into one section, 3.3.5 Removing and deleting memories, written as plain text with no Proposed blocks (issue #38). It replaces the blocks I-7a and U-10, and I-7b in 3.7.
-- A tombstone is now a separate record in a `tombstones` list, not a memory object. Only `identifier` is required; a tombstone without `version` retires the whole `identifier`. The proposed memory fields `tombstone`, `forgotten_at` and `reason` are withdrawn from 1.3.
+- A tombstone is now a separate record in a `tombstones` list, not a memory object. Only `identifier` is required; a tombstone without `version` retires the whole `identifier`. The proposed memory fields `tombstone`, `forgotten_at` and `reason` are withdrawn from 1.2.
 - The delete requirements and the receiver's duty to honour tombstones move from the audit profile to every conforming store and receiver (3.7). The audit profile keeps the record of when, who and why, and the history that still verifies after a delete (3.3.3).
 - I-7a's rule that a delete MUST NOT by itself delete derived memories becomes SHOULD NOT. A store SHOULD, not MUST, leave a tombstone when it deletes.
 - A receiver no longer needs `exported_at` to honour a tombstone (3.5.1): a tombstone covers every copy of the revision, whenever the copy was exported.
 - A snapshot or full-history export SHOULD carry every tombstone the store holds, where a snapshot used to carry one only for a memory whose every revision was forgotten (U-6). A snapshot of a memory whose current revision is deleted SHOULD export the latest remaining revision alongside the tombstone (3.3.5).
+- The field table now comes before the field tiers: the table is 1.2 and the tiers are 1.3. References in this document and the decisions document are renumbered to match.
 - Consequential edits: U-6 (tombstones fall outside the uniqueness rules), U-5, 3.1.2, 3.5.1, 3.5.2 (a move leaves no tombstones) and the cross-references in I-6, I-14, I-23b and I-25.
 
 ### Changes since v0.5
@@ -364,7 +365,7 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 - The draft is now three documents: the specification, this notes document (open questions, proposals, alternatives, the discussion record, sources and change history) and the decisions document (what the group has agreed).
 - The specification is reordered: the example memory first, then Part 1 the memory object (definition, tiers, field table, profiles at a glance), Part 2 goals and scope, Part 3 the remaining rules. Prose is shortened throughout; no MUST, SHOULD or MAY of v0.5 is removed, strengthened or weakened.
 - Every open question (I-2 to I-26 still open, U-1 to U-14, and U-15 raised in review) carries a **Proposed (id)** block under the section it affects: new normative text, marked as proposed, for the group to accept or reject. Section A lists the reason behind each. Where an issue needed two proposals they are labelled a and b.
-- Editorial changes to tables and examples: a body row is added to the field table (1.3); the parked `status` row moves from the field table to D.2; the manifest JSON moves from the appendix to D.1; `protocol_version` is removed from the minimal example; the runtime-projection caption says what the example shows.
+- Editorial changes to tables and examples: a body row is added to the field table (1.2); the parked `status` row moves from the field table to D.2; the manifest JSON moves from the appendix to D.1; `protocol_version` is removed from the minimal example; the runtime-projection caption says what the example shows.
 - Attributions, meeting codes, PR numbers and source-draft citations move out of the specification into F.
 
 The § references in the two verbatim entries below are v0.5 section numbers. This map translates them; external references to v0.5 sections (PR #13, PR #16, the September 28 notes) resolve through it.
@@ -379,11 +380,11 @@ The § references in the two verbatim entries below are v0.5 section numbers. Th
 | §0.3 Conventions | front matter |
 | §1 Goals | 2.1; the left-to-implementations list → E |
 | §2.1 Metadata plus body | 1.1 |
-| §2.2 Body formats | 1.1; 1.3 (`media_type` row); 2.2 |
+| §2.2 Body formats | 1.1; 1.2 (`media_type` row); 2.2 |
 | §2.3 Atomic unit | 2.2; 1.1; C (I-2); D |
-| §2.4 Stubs | 1.1; 1.3 (`stub` row) |
-| §3.1 Tiers | 1.2 |
-| §3.2 Field table | 1.3; `status` row → D |
+| §2.4 Stubs | 1.1; 1.2 (`stub` row) |
+| §3.1 Tiers | 1.3 |
+| §3.2 Field table | 1.2; `status` row → D |
 | §3.3 A thin core with semantic conventions | B; C (I-21) |
 | §4 intro | B |
 | §4.1 Contributor list | 3.1.1 |
@@ -391,7 +392,7 @@ The § references in the two verbatim entries below are v0.5 section numbers. Th
 | §4.3 Accountable human | 3.1.3; 1.4 |
 | §4.4 Evidence | 3.1.4 |
 | §4.5 Unknown authorship | 3.1.5 |
-| §4.6 Accuracy, confidence and weight | 3.1.6; 1.3 (`weight` row); C (I-20) |
+| §4.6 Accuracy, confidence and weight | 3.1.6; 1.2 (`weight` row); C (I-20) |
 | §5.1 A graph | 3.2 |
 | §5.2 Depth | 3.2; C (I-6) |
 | §5.3 Links between memories | 3.2 |
@@ -402,7 +403,7 @@ The § references in the two verbatim entries below are v0.5 section numbers. Th
 | §6.4 Delete | 3.3.5 |
 | §6.5 Forget, tombstones and anti-resurrection | 3.3.5 (merged after v0.6) |
 | §7.1 Interchange is a superset of runtime | 3.4 |
-| §7.2 Field placement | 3.4 (table); last sentence → 1.3 (`scope` row) |
+| §7.2 Field placement | 3.4 (table); last sentence → 1.2 (`scope` row) |
 | §8.1 Manifest | D (working text); 3.5.1; 2.2 |
 | §8.2 Transfer intent | 3.5.2; C (I-8) |
 | §8.3 Fidelity | 3.5.3; 3.7 |

@@ -52,24 +52,9 @@ In cases where a memory is stored as a structured object such as JSON or XML the
 The body of a memory also does not need to include full documents inline. It can instead indecate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
 
 
-### 1.2 Field tiers
+### 1.2 Field table
 
-Each field in 1.3 carries one tier:
-
-| Tier | Meaning |
-|---|---|
-| **required** | Every conforming memory carries it |
-| **audit-required** | Required in the audit profile (1.4, 3.7); optional otherwise |
-| **ACL-required** | Required where access control applies; interchange only |
-| **optional** | May be omitted in every profile |
-
-> **Proposed (I-16).** The tier assignments of 1.3 hold as the v0.6 baseline: `identifier`, `media_type`, `created_at` and `body` required; `version`, `checksum` and `provenance` (with an accountable human) audit-required; `evidence` audit-required when the memory is derived (U-2 says when a memory is derived); `scope` required in the access-controlled profile (U-7); every other field optional. A validator MUST apply the tiers exactly as the table states them and MUST NOT infer a requirement the table does not state. A tier changes only by a recorded group decision.
-
-> **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.3), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.2 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
-
-### 1.3 Field table
-
-The table defines every standard field; a memory carries each at the tier 1.2 defines, and 3.4 says which reach the agent.
+The table defines every standard field; a memory carries each at the tier 1.3 defines, and 3.4 says which reach the agent.
 
 | Field | Type | Tier | Definition |
 |---|---|---|---|
@@ -103,13 +88,28 @@ The table defines every standard field; a memory carries each at the tier 1.2 de
 
 `status`, a lifecycle or visibility state inside a store, is parked and not a standard field; its description is in Notes D.2, and 3.4 shows where it would sit if kept.
 
-> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.3). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
+> **Proposed (I-14).** `status` is not a standard field. The lifecycle states the protocol needs are carried by `valid_until`, `supersedes` links and tombstones (3.3.4, 3.3.5); an approval or visibility state inside a store (draft, published, rejected) is an implementation field under an extension key, interchange only, preserved on export like any unknown field (1.2). A snapshot export SHOULD contain every memory the store holds except those in a non-served store state (draft, rejected); superseded and expired memories are included. 3.4 drops its `status` row.
 
 Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
 
 > **Proposed (I-21).** An extension field MUST be named with a dot-separated prefix that identifies the system defining it (`cognee.accuracy`, `contextnest.type`); names without a dot are reserved for standard fields, and the same prefix form names an implementation's own values where a rule allows them (a comparator, 3.3.2; a `rel`, 3.2). Unknown fields, whether extension fields or standard fields the receiver does not implement, MUST be preserved on export and MUST NOT change the meaning of a standard field; a receiving system MAY ignore their values. Fields proposed for the table but not yet adopted SHOULD travel this way.
 
 > **Proposed (fields).** Fields the proposals introduce, all optional and joining the table only when their proposal is accepted: `body_encoding`, `body_uri` (I-17), `body_schema` (I-18), `body_checksum` (U-1), `previous_checksum` (U-5), `use_constraints` (I-23b), `origin` (I-8); the provenance key `accountable` (I-3b); the evidence keys `version`, `origin` (U-2), `confidence`, `assessed_by`, `assessed_at` (I-20); and the runtime-only `auditable` (I-13).
+
+### 1.3 Field tiers
+
+Each field in 1.2 carries one tier:
+
+| Tier | Meaning |
+|---|---|
+| **required** | Every conforming memory carries it |
+| **audit-required** | Required in the audit profile (1.4, 3.7); optional otherwise |
+| **ACL-required** | Required where access control applies; interchange only |
+| **optional** | May be omitted in every profile |
+
+> **Proposed (I-16).** The tier assignments of 1.2 hold as the v0.6 baseline: `identifier`, `media_type`, `created_at` and `body` required; `version`, `checksum` and `provenance` (with an accountable human) audit-required; `evidence` audit-required when the memory is derived (U-2 says when a memory is derived); `scope` required in the access-controlled profile (U-7); every other field optional. A validator MUST apply the tiers exactly as the table states them and MUST NOT infer a requirement the table does not state. A tier changes only by a recorded group decision.
+
+> **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.2), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.3 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
 
 ### 1.4 Profiles at a glance
 
@@ -124,7 +124,7 @@ The protocol standardizes two things: an **exchange format**, the metadata that 
 Three goals judge the design.
 
 1. **Adoption.** A folder of markdown memories, a database-backed store and a graph store can all conform with little work; most fields are optional and today's harnesses can meet the minimal profile (3.7). Optional fields go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small.
-2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.2) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
+2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.3) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
 3. **Room for innovation.** The protocol standardizes interfaces and the shape of data, not algorithms; Notes E lists what is left to implementations.
 
 ### 2.2 Non-goals and scope
@@ -184,7 +184,7 @@ Accountability is assigned, not a sign-off on each memory. For a consolidation o
 
 `evidence` records what a memory rests on: source material, transcript turns, other memories, or a person's statement. Each entry is a reference, or a plain string when the source is not addressable. A reference MAY point outside the store: a file, a URL, a record in a system of record, or a turn in a transcript. Implementations SHOULD distinguish how the memory relates to its evidence: observed, stated by a person, inferred by a model, or derived from other memories. Evidence records origin, not truth. A derived memory whose evidence is unavailable MUST say so rather than omit the field silently. Evidence that points outside the store MAY be excluded from an export; what happens then is 3.5.5.
 
-> **Proposed (U-2).** An evidence entry is a plain string or an object with `ref` (a memory `identifier`, a URI or a path), `relation` (`observed`, `stated`, `inferred` or `derived`), `dangling` (boolean), `at` (ISO 8601, when the evidence was recorded) and, when `ref` is a memory, the optional `version` and `origin` keys with the meaning they have on a link edge (3.2); `ref` MAY be omitted only when `dangling` is true. A memory is derived when it carries a `derived_from` link or an evidence entry with `relation: derived` or `inferred`. A derived memory whose evidence is unavailable, or was excluded from the export, MUST keep one entry per missing source with `dangling: true`, so the audit requirement is met by a marked gap and never by an absent field. Unknown keys on an entry are extension keys and MUST be preserved (1.3).
+> **Proposed (U-2).** An evidence entry is a plain string or an object with `ref` (a memory `identifier`, a URI or a path), `relation` (`observed`, `stated`, `inferred` or `derived`), `dangling` (boolean), `at` (ISO 8601, when the evidence was recorded) and, when `ref` is a memory, the optional `version` and `origin` keys with the meaning they have on a link edge (3.2); `ref` MAY be omitted only when `dangling` is true. A memory is derived when it carries a `derived_from` link or an evidence entry with `relation: derived` or `inferred`. A derived memory whose evidence is unavailable, or was excluded from the export, MUST keep one entry per missing source with `dangling: true`, so the audit requirement is met by a marked gap and never by an absent field. Unknown keys on an entry are extension keys and MUST be preserved (1.2).
 
 > **Proposed (I-20).** An evidence entry MAY carry `confidence`, a number from 0 to 1 stating how strongly the entry supports the memory, but only together with `assessed_by` (a contributor `id`, 3.1.1) and `assessed_at` (ISO 8601); an entry MUST NOT carry `confidence` without both. The value is the assessor's estimate within one `origin`, not a portable score: a receiver MUST NOT compare it across origins and MAY ignore it. The memory itself carries no confidence field (3.1.6).
 
@@ -204,7 +204,7 @@ The protocol defines no portable accuracy or confidence score. Accuracy travels 
 - what the check rests on is evidence: the source, the transcript or the later memory that confirmed or contradicted it;
 - receivers compute their own confidence from those records, with their own algorithm (Notes E).
 
-An implementation MAY carry its own score as an extension field. It SHOULD name the system that produced the score, so that a receiver does not mistake it for a portable value. Relative ordering within one `origin` travels as `weight` (1.3).
+An implementation MAY carry its own score as an extension field. It SHOULD name the system that produced the score, so that a receiver does not mistake it for a portable value. Relative ordering within one `origin` travels as `weight` (1.2).
 
 ### 3.2 Links and lineage
 
@@ -228,11 +228,11 @@ Stores that change memories in place and stores that only write superseding revi
 
 By default an export is a snapshot as of the manifest's `exported_at` (Notes D). History travels only when the export declares it (audit profile, 3.7; federation, 3.6.4).
 
-> **Proposed (U-6).** In a full-history export each revision is serialized as its own memory object; every revision of one memory carries the same `identifier` and its own `version`, `updated_at`, `checksum` and `provenance`, and the pair `identifier` plus `version` MUST be unique among the objects of the export. This refines the uniqueness rule of the `identifier` row (1.3), which stands for snapshots and selections: there one object per memory is exported and `identifier` alone MUST be unique. Tombstones are not memory objects and fall outside both rules; which exports carry them is 3.3.5. A receiver MUST read objects sharing an `identifier` as revisions of one memory, ordered by the declared comparator, never as duplicates.
+> **Proposed (U-6).** In a full-history export each revision is serialized as its own memory object; every revision of one memory carries the same `identifier` and its own `version`, `updated_at`, `checksum` and `provenance`, and the pair `identifier` plus `version` MUST be unique among the objects of the export. This refines the uniqueness rule of the `identifier` row (1.2), which stands for snapshots and selections: there one object per memory is exported and `identifier` alone MUST be unique. Tombstones are not memory objects and fall outside both rules; which exports carry them is 3.3.5. A receiver MUST read objects sharing an `identifier` as revisions of one memory, ordered by the declared comparator, never as duplicates.
 
 #### 3.3.2 Version
 
-When present, the format of `version` is left to the implementation (a sequence number, a semantic version or other). The implementation MUST declare a comparator. The comparator MAY report two versions as **incomparable**, for example revisions on different branches where both are valid; versions need not be totally ordered. Wall-clock time SHOULD NOT be the comparator. `identifier` stays the same across versions (1.3).
+When present, the format of `version` is left to the implementation (a sequence number, a semantic version or other). The implementation MUST declare a comparator. The comparator MAY report two versions as **incomparable**, for example revisions on different branches where both are valid; versions need not be totally ordered. Wall-clock time SHOULD NOT be the comparator. `identifier` stays the same across versions (1.2).
 
 > **Proposed (I-4).** `version` MUST be a scalar, an integer or a string. The comparator MUST be one of `integer` (numeric order, the default), `semver` (Semantic Versioning 2.0.0 precedence), `opaque` (equality only; distinct values are incomparable) or a name an implementation registers under its own dot prefix (`contextnest.checkpoint`); a receiver that does not know a comparator MUST treat the versions as incomparable and MUST NOT fall back to `updated_at` or any wall-clock time. The exporting implementation declares the comparator once per export, in the manifest (3.5.1) as `version_comparator`; when the manifest omits it, or there is no manifest, the comparator is `integer`, and a memory MUST NOT carry a comparator of its own. The `{value, comparator}` object form is withdrawn in favour of the scalar `version: 2`.
 
@@ -252,7 +252,7 @@ A memory stops applying at its `valid_until` without being deleted. A newer revi
 
 Because OMP transfers memories between systems, removing a memory from one store does not guarantee its deletion elsewhere. A store MAY remove a memory without retaining a record, but this is not a true delete as an older copy may later be imported and resurrect it. Preventing this requires a tombstone.
 
-Tombstones are separate records, not memory objects, and are not subject to the required memory fields in 1.3. They are exported in a separate `tombstones` list alongside memories and MUST NOT be served to agents at runtime.
+Tombstones are separate records, not memory objects, and are not subject to the required memory fields in 1.2. They are exported in a separate `tombstones` list alongside memories and MUST NOT be served to agents at runtime.
 
 Tombstones are defined as follows:
 
@@ -326,9 +326,9 @@ Which fields reach the agent is left to each memory system. The table below is g
 | `status` (parked, Notes D.2) | yes, if kept | no |
 | tombstones, audit records | yes | no |
 
-> **Proposed (I-13).** `auditable` is an optional boolean of the runtime representation, computed by the serving system and never set by the agent or stored in interchange: `true` when the memory meets 3.1.3 (an accountable human) and, if derived, carries `evidence` (3.1.4); `false` otherwise, including when `provenance` is missing (3.1.5). A retrieval response MAY carry one `auditable` for the whole result, which MUST be `true` only when every memory returned is auditable. The flag is derived from fields 1.3 already defines and adds no field or tier to the memory; the audit log that records retrievals stays out of scope. The 3.4 table gains the row `auditable` (derived): interchange no, runtime MAY be shown.
+> **Proposed (I-13).** `auditable` is an optional boolean of the runtime representation, computed by the serving system and never set by the agent or stored in interchange: `true` when the memory meets 3.1.3 (an accountable human) and, if derived, carries `evidence` (3.1.4); `false` otherwise, including when `provenance` is missing (3.1.5). A retrieval response MAY carry one `auditable` for the whole result, which MUST be `true` only when every memory returned is auditable. The flag is derived from fields 1.2 already defines and adds no field or tier to the memory; the audit log that records retrievals stays out of scope. The 3.4 table gains the row `auditable` (derived): interchange no, runtime MAY be shown.
 
-Runtime access control is enforced by the serving system using interchange fields (1.3, `scope` row).
+Runtime access control is enforced by the serving system using interchange fields (1.2, `scope` row).
 
 ### 3.5 Exchange
 
@@ -336,10 +336,10 @@ Runtime access control is enforced by the serving system using interchange field
 
 This draft depends on these manifest fields (working text in Notes D):
 
-- `origin`: with `identifier`, the memory's global key (1.3); matches a tombstone to the memory it covers (3.3.5); the party whose claims imported provenance and evidence are (3.5.7).
+- `origin`: with `identifier`, the memory's global key (1.2); matches a tombstone to the memory it covers (3.3.5); the party whose claims imported provenance and evidence are (3.5.7).
 - `exported_at`: the time the export is as of (3.3.1).
 - `protocol_version`, and the profiles the export follows (3.7).
-- The body formats present (1.3).
+- The body formats present (1.2).
 - Whether the export is a complete snapshot, a selection or a full history (3.3.1).
 - The transfer intent (3.5.2).
 - Where the `tombstones` list sits in an export (3.3.5).
@@ -350,13 +350,13 @@ The version comparator is declared in the manifest (I-4). Absence from a partial
 
 An export MUST declare its intent: **copy**, the source keeps its memories; **move**, the source removes its memories only after a durable, conforming import on the receiving side, and leaves no tombstones for them (3.3.5); **federation**, no transfer, the memory is read where it resides (3.6.4). A receiving system that assigns its own identifiers MUST keep the origin-to-local mapping.
 
-> **Proposed (I-8).** An imported memory MUST keep its `identifier`; `origin` plus `identifier` (1.3) names the same memory in every store it passes through, and a receiver MUST NOT mint a new `identifier` for a memory it preserves. A receiver MAY address the memory by a local identifier of its own, in which case it MUST keep the origin-to-local mapping and report it in the receipt (3.5.4), and on re-export it MUST emit the origin pair, carrying an optional per-memory `origin` field (string) wherever the memory's origin is not the manifest's. A receiver that re-derives rather than preserves MUST give the new memory its own `identifier` under its own `origin` and a `derived_from` link (3.2) to the origin pair.
+> **Proposed (I-8).** An imported memory MUST keep its `identifier`; `origin` plus `identifier` (1.2) names the same memory in every store it passes through, and a receiver MUST NOT mint a new `identifier` for a memory it preserves. A receiver MAY address the memory by a local identifier of its own, in which case it MUST keep the origin-to-local mapping and report it in the receipt (3.5.4), and on re-export it MUST emit the origin pair, carrying an optional per-memory `origin` field (string) wherever the memory's origin is not the manifest's. A receiver that re-derives rather than preserves MUST give the new memory its own `identifier` under its own `origin` and a `derived_from` link (3.2) to the origin pair.
 
 > **Proposed (U-3).** Transfer intent is a requirement of the exchange, not of the memory, and this replaces the MUST of 3.5.2: it lives in the manifest as `intent`, one of `copy`, `move` or `federation` with the meanings in 3.5.2; an export with a manifest declares it there, and an export without a manifest or without the field is a `copy`, since copy obliges the source to nothing. No intent field is placed on the memory. This draft keeps what each intent means and the receiver's duties under it (the mapping in 3.5.2, the receipt in 3.5.4); the manifest proposal owns the field.
 
 #### 3.5.3 Fidelity
 
-The receiving side SHOULD be able to check that it received the same memory with the same history. In the audit profile, it MUST be able to, using `checksum` (1.3) and the verifiable history (3.3.3).
+The receiving side SHOULD be able to check that it received the same memory with the same history. In the audit profile, it MUST be able to, using `checksum` (1.2) and the verifiable history (3.3.3).
 
 #### 3.5.4 Receipts
 
@@ -424,7 +424,7 @@ Whether a server returns several memories compiled into one payload or as separa
 
 #### 3.6.6 Markdown loading profile
 
-The markdown loading profile is the directory and loading contract of a root `MEMORY.md`: deeper files deferred, deferred memory surfaced one level down, and selective reads. Metadata is carried as front matter or in a sidecar, and `path` (1.3) records each file's place. When a projection to this profile drops fields, it MUST declare the loss. Hierarchy metadata beyond `path`: I-19 (1.3).
+The markdown loading profile is the directory and loading contract of a root `MEMORY.md`: deeper files deferred, deferred memory surfaced one level down, and selective reads. Metadata is carried as front matter or in a sidecar, and `path` (1.2) records each file's place. When a projection to this profile drops fields, it MUST declare the loss. Hierarchy metadata beyond `path`: I-19 (1.2).
 
 > **Proposed (U-15).** A file without front matter or sidecar derives its required fields: `identifier` and `path` are the file's relative path, `media_type` follows the extension (`.md` is `text/markdown`, otherwise `text/plain`), and `created_at` is the file's creation time or, where unavailable, its modification time. Front matter is YAML between `---` lines at the top of the file; a sidecar is `<file>.meta.yaml` beside the file with the same keys; front matter wins where both exist.
 
@@ -432,18 +432,18 @@ The markdown loading profile is the directory and loading contract of a root `ME
 
 What each profile of 1.4 requires, each item pointing to the section that states the rule. An export's manifest declares the profiles it follows (Notes D). Whether "markdown loading" and "federation binding" remain declarable profile names is handed to the manifest proposal (Notes D).
 
-**Minimal profile.** The required fields of 1.3 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields (1.3). Reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (3.1.5, 3.3.2). A store that deletes a memory meets the requirements of 3.3.5, and a receiver honours the tombstones it receives (3.3.5).
+**Minimal profile.** The required fields of 1.2 (`identifier`, `media_type`, `created_at`), a body, and an export that preserves unknown fields (1.2). Reachable from a folder of markdown memories with no other metadata. Provenance and versioning are not required (3.1.5, 3.3.2). A store that deletes a memory meets the requirements of 3.3.5, and a receiver honours the tombstones it receives (3.3.5).
 
 > **Proposed (U-13).** The dangling-reference rules of 3.5.5 belong to the minimal profile: every conforming import MUST keep a reference it cannot resolve and MUST NOT fail because of it, and a kept reference whose target the receiver cannot resolve counts as marked; the explicit `dangling` marker on the entry (U-2) and the evaluation note stay audit-profile items. Transfer intent is a rule on the export, not a field requirement of any profile (U-3), so a bare folder of markdown stays conformant.
 
-**Markdown loading profile.** The loading contract of 3.6.6: a root `MEMORY.md`, deferred deeper files surfaced one level down, selective reads, metadata in front matter or a sidecar, `path` on each file (1.3), and a declared loss for every field the projection drops.
+**Markdown loading profile.** The loading contract of 3.6.6: a root `MEMORY.md`, deferred deeper files surfaced one level down, selective reads, metadata in front matter or a sidecar, `path` on each file (1.2), and a declared loss for every field the projection drops.
 
 **Federation binding.** The endpoint set of 3.6.4 with a capability endpoint, each server declaring its capabilities; memory objects cross it in the runtime representation (3.4); identity passes through to each server (3.6.4).
 
 **Audit profile.** Everything in the minimal profile, plus:
 
 - `provenance` on every memory, with an accountable human (3.1.3);
-- `checksum` and `version` on every memory (1.3);
+- `checksum` and `version` on every memory (1.2);
 - immutable revisions with a verifiable history (3.3.3);
 - evidence on derived memories (3.1.4);
 - recorded lifecycle events, including when each delete occurred, who performed it and why (3.3.5);
@@ -484,4 +484,4 @@ created_at: 2026-10-14T00:00:00Z
 The user prefers concise answers.
 ```
 
-No `provenance`, so the author is unknown (3.1.5). No `version`, so it cannot claim the audit profile (3.7). No `protocol_version`: the minimal profile does not require it on the memory (1.3); the manifest carries it for the export as a whole (Notes D).
+No `provenance`, so the author is unknown (3.1.5). No `version`, so it cannot claim the audit profile (3.7). No `protocol_version`: the minimal profile does not require it on the memory (1.2); the manifest carries it for the export as a whole (Notes D).
