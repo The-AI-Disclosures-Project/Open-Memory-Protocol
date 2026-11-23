@@ -1,6 +1,6 @@
 # Spec render
 
-`working-group/exchange-and-runtime/working-spec.md` is the only copy of the working spec that anyone edits. This folder turns it into a styled HTML page and an EPUB with [pandoc](https://pandoc.org).
+`SPEC.md` is the only copy of the working spec that anyone edits. This folder turns it into a styled HTML page and an EPUB with [pandoc](https://pandoc.org).
 
 The file name carries no date or version. The version lives in the spec itself, on the bold line under the title (for example `**Editors' draft v0.6, 2026-11-09.**`). The renderer reads that line and puts it in the page header.
 

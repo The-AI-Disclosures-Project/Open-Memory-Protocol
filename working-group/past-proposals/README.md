@@ -1,6 +1,6 @@
 # Contributed proposals
 
-The proposals the working group distilled into the [exchange-and-runtime editors' draft](../exchange-and-runtime/working-spec.md), plus the scoping note and the AMS card. This folder keeps the latest revision of each; earlier revisions are in [`archive/`](archive/). The [September 28 common-ground notes](../exchange-and-runtime/2026-09-28-common-ground.md) compare them primitive by primitive.
+The proposals the working group distilled into the [editors' draft](../../SPEC.md), plus the scoping note and the AMS card. This folder keeps the latest revision of each; earlier revisions are in [`archive/`](archive/). The [September 28 common-ground notes](../exchange-and-runtime/2026-09-28-common-ground.md) compare them primitive by primitive.
 
 ## Latest revisions
 

@@ -12,7 +12,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 root=$(cd "$here/../.." && pwd)
 cd "$root"
 
-src="working-group/exchange-and-runtime/working-spec.md"
+src="SPEC.md"
 out="${SPEC_OUT:-dist}"
 repo="${SPEC_REPO_URL:-https://github.com/The-AI-Disclosures-Project/Open-Memory-Protocol}"
 tag="${SPEC_TAG:-}"
