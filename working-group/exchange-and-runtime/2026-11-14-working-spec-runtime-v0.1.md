@@ -80,12 +80,9 @@ The `remember` tool lets an agent explicitly create a new memory from a piece of
 
 ### 2.2 The write contract
 
-The `remember` call accepts a request object and returns a response object. The request is a superset of the memory object's writable fields (the body and the fields an agent is permitted to set); the response is the runtime representation of the stored memory.
+The `remember` call accepts a request object and returns a response object. The request is a superset of the memory object's writable fields (the body and the fields an agent is permitted to set); the response is the runtime representation of the stored memory. The request object:
 
 ```
-POST /remember
-Content-Type: application/json
-
 {
   "body": string,                           // required: the memory content
   "media_type": string,                     // optional: MIME type of the body, text/plain if unset
@@ -141,9 +138,6 @@ The result is encoded as `algorithm:hex` (e.g. `sha256:...`).
 The response to `remember` should carry the system `identifier` and a `receipt` indicating the result of the `remember` request. All other fields for the memory beyond `identifier` may be recalled later using `lookup` (see section 6).
 
 ```
-200 OK
-Content-Type: application/json
-
 {
   "identifier": string,
   "receipt": {
@@ -190,10 +184,9 @@ The `recall` tool lets an agent query the memory system for memories relevant to
 
 ### 3.2 Request
 
-```
-POST /recall
-Content-Type: application/json
+The `recall` call accepts a request object. Its fields are:
 
+```
 {
   "query": string,                         // required: free-text search query
   "tags": [string],                        // optional: all must match
@@ -210,10 +203,9 @@ All fields are optional except `query`, which is required. `valid_at` filters to
 
 ### 3.3 Response
 
-```
-200 OK
-Content-Type: application/json
+A successful `recall` returns:
 
+```
 {
   "results": [
     {
