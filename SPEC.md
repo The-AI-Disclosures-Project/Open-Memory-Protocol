@@ -2,7 +2,7 @@
 
 **Editors' draft v0.6.1, 2026-11-20.**
 
-Proposals the group has not yet adopted are kept in [Notes J](2026-11-09-working-spec-v0.6-notes.md#j-proposals-not-yet-in-the-text) until they are accepted or rejected.
+Proposals the group has not yet adopted are kept in [Notes J](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md#j-proposals-not-yet-in-the-text) until they are accepted or rejected.
 
 ## Part 1. The memory object
 
