@@ -327,6 +327,10 @@ The MCP interceptor is invoked by the harness after each turn with `"type": "val
 
 The set of `"event"` subscriptions is an open question.
 
+---
+
+# MANUAL REVIEW BOUNDARY
+
 ## Part 5. Passive Memory Decoration — `passive-decorate` interceptor
 
 ### 5.1 Purpose
