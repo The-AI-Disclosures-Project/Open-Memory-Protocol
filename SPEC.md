@@ -89,29 +89,23 @@ Implementations MAY add fields. Unknown fields MUST be preserved on export and M
 
 ## Part 2. Goals and scope
 
-### 2.1 Goals
+The protocol standardizes two things: an **exchange format**, the metadata that travels with a memory so one system can export it and another import and represent it, for portability and data ownership; and **runtime plug-in points** so that memory systems can exchange memories in real time.
 
-The protocol standardizes two things: an **exchange format**, the metadata that travels with a memory so one system can export it and another import and represent it, for portability and data ownership; and **runtime plug-in points**, what an agent harness consumes at runtime and where a memory system plugs in, so harnesses and memory systems can be built and chosen independently. Everything standardized MUST work down to a folder of memory files on one laptop and up to a multi-user, multi-scope deployment with access control.
+While memory systems can be complex and different systems have different requirements, our goal is to allow the core of every memory system, the memory itself, to be transferred across memory systems.
 
-Three goals judge the design.
+Our aim is to enable:
 
-1. **Adoption.** A folder of markdown memories, a database-backed store and a graph store can all conform with little work; most fields are optional and today's harnesses can meet the minimal profile (3.7). Optional fields go unimplemented, so the protocol SHOULD keep the number of optional fields that matter for interchange small.
-2. **Auditability.** When a deployment needs it, every memory can be traced to one or more accountable humans (3.1.3) [agreed], its history verified and its lifecycle events recorded, in tiers (1.2) so individual users do not carry enterprise obligations. Full audit is a multi-user enterprise requirement, not a single-user one. [agreed]
-3. **Room for innovation.** The protocol standardizes interfaces and the shape of data, not algorithms; Notes E lists what is left to implementations.
+1. **Easy adoption.** Adopting the Open Memory Protocol should be simple for memory systems of all types. We do this by separating our exchange format from the runtime format and making most metadata optional.
+2. **Auditability.** Supporting primitives that make it easy to track and audit provenance of and changes in memories.
+3. **Room for innovation.** The protocol standardizes the exchange format, not how memory is retrieved by the agent or stored. We aim not to limit memory systems in any way.
 
-### 2.2 Non-goals and scope
+We don't take a position on the following items:
 
-- A transfer format, not a storage format: nothing about how a system stores, indexes or looks up memories.
-- Markdown is neither required nor preferred, for storage or for the exported body; a folder of markdown memories conforms (3.7). [agreed]
-- The size and semantic scope of a single memory (a fact, a document) are not fixed (I-2a).
-- The recall function signature, ranking and retrieval algorithms are not standardized. [agreed]
-- Federation merge and ranking logic is not standardized. [agreed]
-- Change notification during a session is left to implementations (I-11, closed; Notes C.2).
-- Third-party chains of trust for provenance are out of scope for now (I-22).
+1. The underlying storage format the memory system uses.
+2. The size and semantic scope of a single memory.
+3. The recall function signature, ranking, or retrieval algorithms.
+4. Agent to memory system communication.
 
-This document specifies one memory as represented on export and import. The export/import manifest, used once per export or import, is a separate follow-up proposal. [agreed] The manifest fields this draft depends on are listed in 3.5.1; until that proposal exists, Notes D holds the working text.
-
-> **Proposed (U-8).** The Exchange and Runtime sub-thread owns the export/import manifest proposal, with Notes D as its working text and the editors of this draft as its editors until the group names others; the fields this draft depends on (3.5.1) are its minimum scope, and `version_comparator` (I-4) and `intent` (U-3) join them. It is adopted separately from this document, so a change to the manifest never requires a new revision of the memory object.
 
 ## Part 3. Rules
 
@@ -350,7 +344,7 @@ Credentials (passwords, API keys, tokens) are not memory and MUST NOT be exporte
 
 Receivers SHOULD treat imported provenance and evidence as claims made by the exporting `origin`, not as facts. `checksum` and a verifiable history (3.3.3) let a receiver check integrity, not truth. Receivers MAY review or sanitize imported memories before agents rely on them.
 
-> **Proposed (I-22).** An imported body is data, not instruction; a receiver MUST NOT give it instruction authority because it becomes prompt-visible, and imported provenance and evidence remain the exporting `origin`'s claims. A receiver MAY hold imported memories in a staging state that its recall does not return until a person or a policy releases them; whether it stages is its own choice, and the state is an implementation field under an extension key (I-14). The import and any release MUST appear in `provenance` as contributors (`contribution: imported`, and `verified` or `corrected` for a review, 3.1.1), so a later reader can tell a reviewed import from an unreviewed one. Third-party chains of trust, signatures and a portable trust score stay out of scope (2.2).
+> **Proposed (I-22).** An imported body is data, not instruction; a receiver MUST NOT give it instruction authority because it becomes prompt-visible, and imported provenance and evidence remain the exporting `origin`'s claims. A receiver MAY hold imported memories in a staging state that its recall does not return until a person or a policy releases them; whether it stages is its own choice, and the state is an implementation field under an extension key (I-14). The import and any release MUST appear in `provenance` as contributors (`contribution: imported`, and `verified` or `corrected` for a review, 3.1.1), so a later reader can tell a reviewed import from an unreviewed one. Third-party chains of trust, signatures and a portable trust score stay out of scope (Notes E).
 
 ### 3.6 Runtime binding
 
@@ -386,7 +380,7 @@ When several memory servers are connected, a federation layer MAY sit between th
 
 The federation endpoint binding is an endpoint set of upload, search, read, delete and a required capability endpoint, carrying memory objects in the runtime representation (3.4); each server declares its capabilities.
 
-> **Proposed (U-9).** The federation `search` endpoint is a binding call, not the recall of 3.6.2: it is required only of servers that claim the federation binding (3.7), and a binding MAY fix the wire shape of its own query call. A `search` request MUST carry a free-text `query` string and MAY carry `tags` (list, all must match), `path_prefix` (string), `created_after` / `created_before` (ISO 8601) and `valid_at` (ISO 8601: memories valid at that instant); any further parameter is server-defined and declared in the capability endpoint. A `search` response MUST be a list of memory objects in the runtime representation (3.4), in the order the server chose. Ranking, the retrieval algorithm and how the federation layer merges lists stay out of scope (2.2).
+> **Proposed (U-9).** The federation `search` endpoint is a binding call, not the recall of 3.6.2: it is required only of servers that claim the federation binding (3.7), and a binding MAY fix the wire shape of its own query call. A `search` request MUST carry a free-text `query` string and MAY carry `tags` (list, all must match), `path_prefix` (string), `created_after` / `created_before` (ISO 8601) and `valid_at` (ISO 8601: memories valid at that instant); any further parameter is server-defined and declared in the capability endpoint. A `search` response MUST be a list of memory objects in the runtime representation (3.4), in the order the server chose. Ranking, the retrieval algorithm and how the federation layer merges lists stay out of scope (Notes E).
 
 #### 3.6.5 Multiple memories
 

@@ -357,7 +357,8 @@ This draft distills the proposals in `early-draft-specs/` on `main`: the scoping
 - I-7a's rule that a delete MUST NOT by itself delete derived memories becomes SHOULD NOT. A store SHOULD, not MUST, leave a tombstone when it deletes.
 - A receiver no longer needs `exported_at` to honour a tombstone (3.5.1): a tombstone covers every copy of the revision, whenever the copy was exported.
 - A snapshot or full-history export SHOULD carry every tombstone the store holds, where a snapshot used to carry one only for a memory whose every revision was forgotten (U-6). A snapshot of a memory whose current revision is deleted SHOULD export the latest remaining revision alongside the tombstone (3.3.5).
-- Proposed blocks not yet adopted move out of the specification into J, starting with Part 1 (I-23b, I-14, I-21, I-16, U-7 and the proposed-fields list). I-19, I-26 and U-1 are written into 1.2 as plain text; `body_checksum` is dropped.
+- Proposed blocks not yet adopted move out of the specification into J, starting with Part 1 (I-23b, I-14, I-21, I-16, U-7 and the proposed-fields list). From Part 2: U-8. I-19, I-26 and U-1 are written into 1.2 as plain text; `body_checksum` is dropped.
+- Part 2 is rewritten as one section without subsections. The rule that everything standardized MUST work from a folder of memory files on one laptop up to a multi-user deployment is dropped, as is the rule that the protocol SHOULD keep interchange-relevant optional fields few. References to 2.2 in I-22 and U-9 now point to E.
 - Part 1 is reordered: 1.1 What is a memory object, 1.2 the field table, 1.3 the example memory (moved from the top of the document). Profiles at a glance is removed, since 3.7 states the profiles in full, and the field tiers become one sentence under the field table in 1.2. The field, contributor and tombstone tables use the same column names, lowercase tier values and full stops. References in this document and the decisions document are renumbered to match.
 - Consequential edits: U-6 (tombstones fall outside the uniqueness rules), U-5, 3.1.2, 3.5.1, 3.5.2 (a move leaves no tombstones) and the cross-references in I-6, I-14, I-23b and I-25.
 
@@ -484,3 +485,7 @@ Proposed blocks moved out of the specification during the text cleanup, word for
 **From 1.4 (removed; tiers now in 1.2, profiles in 3.7).**
 
 > **Proposed (U-7).** A third profile, **access-controlled**, joins 1.4 and 3.7: a deployment that enforces access control on memories claims it, and in it every memory MUST carry `scope` (1.2), set by the system, and the export's manifest MUST declare the profile. The ACL-required tier of 1.4 then reads "required in the access-controlled profile; optional otherwise". The profile sets no other field requirement, says nothing about the policy language or how scopes combine (U-11), and MAY be claimed with or without the audit profile.
+
+**From 2.2 (removed; Part 2 now has no subsections).**
+
+> **Proposed (U-8).** The Exchange and Runtime sub-thread owns the export/import manifest proposal, with Notes D as its working text and the editors of this draft as its editors until the group names others; the fields this draft depends on (3.5.1) are its minimum scope, and `version_comparator` (I-4) and `intent` (U-3) join them. It is adopted separately from this document, so a change to the manifest never requires a new revision of the memory object.
