@@ -89,6 +89,8 @@ Content-Type: application/json
 {
   "body": string,                           // required: the memory content
   "media_type": string,                     // optional: MIME type of the body, text/plain if unset
+  "identifier": string                      // optional: used to indicate an update, treated as an
+                                            //           error otherwise
   "title": string,                          // optional: human-readable label
   "tags": [string],                         // optional: semantic tags, system may exclude
                                             //           for systems with well-defined tag sets
@@ -97,8 +99,6 @@ Content-Type: application/json
   "valid_until": string,                    // optional: when the claim stops being true
   "links": [{ "target", "rel", ... }],      // optional: typed edges to other memories
   "evidence": [{ "ref", "relation", ... }], // optional: sources this memory rests on
-  "identifier": string                      // optional: used to indicate an update, treated as an
-                                            //           error otherwise
   "created_at": string,                     // NOT accepted: set by system
   "version": integer | string,              // NOT accepted: versioning managed by system
   "provenance": [...],                      // NOT accepted: set by the system
@@ -138,41 +138,24 @@ The result is encoded as `algorithm:hex` (e.g. `sha256:...`).
 
 ### 2.3 Response
 
-The response to `remember` should carry all system-derived information that the client (agent) may have a legitimate semantic use for. The `body` MUST NOT be returned as this is likely to duplicate text in an agent's context. Full `body` content may be retrieved later using `recall`.
+The response to `remember` should carry the system `identifier` and a `receipt` indicating the result of the `remember` request. All other fields for the memory beyond `identifier` may be recalled later using `lookup` (see section 6).
 
 ```
 200 OK
 Content-Type: application/json
 
 {
-  "memory": {
-    // runtime representation per Section 1.3
-    "identifier": string,
-    "media_type": string,
-    "tags": [string],
-    "created_at": string,
-    "version": integer | string,
-    "provenance": [{ "id", "kind", "contribution", ... }],
-    "evidence": [{ "ref", "relation", ... }],
-    "links": [{ "target", "rel", ... }],
-    "weight": number,
-    "stub": boolean,
-    "auditable": boolean
-  },
+  "identifier": string,
   "receipt": {
     "action": "created" | "updated" | "transformed" | "rejected",
-    "reason": string,        // human-readable when action is rejected
-    "mapping": {              // present when origin-to-local mapping changed
-      "origin": string,
-      "local_id": string
-    }
+    "reason": string // human-readable when action is rejected
   }
 }
 ```
 
 The `receipt` echoes the write outcome per v0.6, 3.5.4. `action: created` means a brand-new memory; `updated` means a new revision was created; `transformed` means the system modified the client's input (for example, filling in missing provenance); `rejected` means the write was refused, with `reason` explaining why.
 
-### 2.4 The `remember` tool binding (MCP)
+### 2.4 Example `remember` tool binding (MCP)
 
 In MCP, `remember` is a tool with the schema above. The tool name is `remember`. The tool's description states:
 
@@ -185,19 +168,17 @@ An MCP tool schema example (JSON Schema form):
   "type": "object",
   "properties": {
     "body": { "type": "string", "description": "The memory content" },
-    "media_type": { "type": "string", "description": "MIME type of the body" },
+    "media_type": { "type": "string", "description": "MIME type of the body (default: text/plain)" },
+    "identifier": { "type": "string", "description": "Identifier of existing memory to update" },
     "title": { "type": "string" },
     "tags": { "type": "array", "items": { "type": "string" } },
     "path": { "type": "string" },
-    "created_at": { "type": "string", "format": "date-time" },
     "valid_from": { "type": "string", "format": "date-time" },
     "valid_until": { "type": "string", "format": "date-time" },
-    "version": { "oneOf": [{ "type": "integer" }, { "type": "string" }] },
     "links": { "type": "array", "items": { "$ref": "#/definitions/link" } },
     "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidence" } },
-    "provenance": { "type": "array", "items": { "$ref": "#/definitions/contributor" } }
   },
-  "required": ["body", "media_type"]
+  "required": ["body"]
 }
 ```
 
@@ -221,12 +202,11 @@ Content-Type: application/json
   "created_before": string,                // optional: ISO 8601
   "valid_at": string,                      // optional: ISO 8601; memories valid at this instant
   "limit": integer,                        // optional: max results to return
-  "sort": "recency" | "relevance" | "random", // optional: ranking hint
   "cursor": string                         // optional: pagination cursor
 }
 ```
 
-All fields are optional except `query`, which is required. The `sort` field is a hint to the implementation; a system may ignore it or interpret it differently. `valid_at` filters to memories whose validity window contains the given instant (v0.6, 3.6.4).
+All fields are optional except `query`, which is required. `valid_at` filters to memories whose validity window contains the given instant (v0.6, 3.6.4). Additional fields MAY be added by implementations. Implementations SHOULD NOT include fields with overlapping semantic meaning, but different field names/types.
 
 ### 3.3 Response
 
@@ -265,17 +245,9 @@ Content-Type: application/json
 }
 ```
 
-The `results` array holds memory objects in the runtime representation (v0.6, 3.4). Each result MAY carry an implementation-specific `score` and `highlight`; these are not standardized. `continuation` enables pagination per the `cursor` request field.
+The `results` array holds memory objects in the runtime representation (v0.6, 3.4). Each result MAY carry an implementation-specific `score` and `highlight`; these are not standardized. `continuation` enables pagination per the `cursor` request field for systems that implement pagination.
 
-### 3.4 The `recall` tool binding (MCP)
-
-In MCP, `recall` is a tool named `recall`. The tool's description states:
-
-> Query the memory system for memories relevant to a free-text query. The protocol does not standardize the retrieval algorithm or ranking; the system returns memory objects in the runtime representation. Optional filters: tags (all must match), path_prefix, created_after / created_before, valid_at, limit, sort hint, cursor.
-
-### 3.5 Recall returns only runtime fields
-
-A recall response MUST NOT include `checksum`, `scope`, or tombstone/audit-record fields (v0.6, U-12). The agent receives only the runtime representation. If the agent needs provenance for audit purposes, it may read the memory again with a different surface, or the system may include a summary `provenance` field in the runtime projection.
+A recall response MUST NOT include `checksum`, `scope`, or tombstone/audit-record fields (v0.6, U-12). The agent receives only the runtime representation. If the agent needs provenance for audit purposes, it may read the memory again with an identifier lookup (section 6), or the system may include a summary `provenance` field in the runtime projection.
 
 ## Part 4. Passive Memory Creation — `passive-create` interceptor
 
@@ -283,26 +255,26 @@ A recall response MUST NOT include `checksum`, `scope`, or tombstone/audit-recor
 
 Passive memory creation observes a session and autonomously creates memories from content the agent encounters. Unlike `remember` (which is agent-driven), `passive-create` is system-driven: an interceptor watches the conversation stream and, when it detects something worth remembering, creates a memory without the agent explicitly requesting it.
 
-This is the runtime surface for what IBM v0.1 calls "observe" and what the September 28 common-ground notes call "memory lifecycle interceptor."
-
 ### 4.2 The interceptor contract
 
-The interceptor is a function with this signature:
+The interceptor is a function with side-effects. It uses this signature:
 
 ```
 function passive-create(
   turn: Turn,
   session: SessionContext
-) -> Maybe<MemoryRequest>
+) -> None
 ```
 
 Where:
-- `Turn` is the agent-facing unit of conversation: a user message, an agent action, or an observation. At minimum it contains:
-  - `role`: `"user" | "assistant" | "system"`
-  - `content`: string
-  - `turn_number`: integer (monotonic within the session)
-  - `timestamp`: ISO 8601
-- `SessionContext` provides session-level state:
+- `Turn` is the agent-facing unit of conversation: a user message, an agent action, or an observation.
+  - At minimum it SHOULD contain:
+    - `role`: `"user" | "assistant" | "system"` | etc
+    - `content`: string
+  - It MAY also contain
+    - `turn_number`: integer (monotonic within the session)
+    - `timestamp`: ISO 8601
+- `SessionContext` provides session-level state and SHOULD contain the following:
   - `session_id`: string
   - `user_id`: string (the account this session belongs to)
   - `agent_id`: string (which agent is running)
@@ -310,43 +282,13 @@ Where:
   - `memory_scope`: string (derived from `project_id`/`user_id`; the system sets this per v0.6, U-11)
   - `origin`: string (the memory system's origin identifier, per v0.6, I-8)
 
-The interceptor returns either:
-- `null` / `None` — nothing to remember from this turn; or
-- A `MemoryRequest` — a request to create a memory, defined below.
+The interceptor returns nothing. All memories created from an invocation are created via side-effects on the memory system.
 
-### 4.3 The `MemoryRequest`
+### 4.3 Harness compatibility
 
-A `MemoryRequest` is a subset of the `remember` request, containing only the fields an interceptor is permitted to set:
+Each agent harness implements lifecycle hooks with different event names and representations of `Turn` and `SessionContext`. This standard does not aim to standardize those, but it does RECOMMEND the fields above. Memory system implementations are responsible for interceptor/harness compatibility checks and SHOULD report a list of harnesses that are known to support their interceptors.
 
-```json
-{
-  "body": string,                          // required: the extracted memory content
-  "media_type": string,                    // required: usually "text/markdown" or "text/plain"
-  "title": string,                         // recommended: a concise summary
-  "tags": [string],                        // recommended: e.g. ["observation", "session"]
-  "path": string,                          // optional: derived from session context
-  "created_at": string,                    // defaults to turn timestamp
-  "valid_from": string,                    // optional: when the observation became true
-  "version": integer,                      // for update; absent for create
-  "links": [{ "target", "rel" }],          // optional: links to source memories
-  "evidence": [{ "ref", "relation" }],     // optional: what the observation is based on
-  "provenance": [{ "id", "kind", "contribution", ... }] // REQUIRED: who/what contributed
-}
-```
-
-The interceptor MUST set `provenance` with `kind: agent` and `contribution: authored` for the extraction itself. If the turn contains an explicit user instruction that prompted the observation, the interceptor SHOULD also include a `provenance` entry with `kind: human`, `contribution: instructed`, and the user's `id`.
-
-### 4.4 The interceptor is a pure function (mostly)
-
-The interceptor is conceptually a pure transformation: `Turn × SessionContext → Maybe<MemoryRequest>`. It does not directly write to the memory store. Instead:
-
-1. The interceptor computes a `MemoryRequest` from the turn.
-2. The harness or memory system then calls the `remember` write path with that request.
-3. The `remember` path handles `identifier` assignment, `checksum` computation, `version` validation, and scope assignment per Sections 2.2–2.3.
-
-This separation lets the same interceptor be reused across different memory systems and lets the write path enforce the system-set `scope` rule (v0.6, U-11) uniformly.
-
-### 4.5 When the interceptor fires
+### 4.4 When the interceptor fires
 
 The harness invokes the interceptor after each turn it receives (after a user message, after an agent action, after an observation). The interceptor decides whether the turn contains something worth remembering:
 
@@ -355,53 +297,35 @@ The harness invokes the interceptor after each turn it receives (after a user me
 - A fact the user stated that is likely to recur: `"My timezone is UTC+2."`
 - A correction the user made: `"Actually, the project is called 'northwind', not 'north-wind'."`
 
-The interceptor should NOT fire for:
+The interceptor SHOULD NOT store memories for:
 - Greetings and small talk
 - Transient operational output (e.g., "File saved")
 - Content already captured in a previous memory (deduplicated by the memory system's `checksum`/`body_checksum` per v0.6, U-1)
 
-### 4.6 MCP interceptor binding
+### 4.5 MCP interceptor binding
 
-In MCP, interceptors are defined via the MCP specification's interceptor mechanism. The memory system declares an interceptor named `passive-create` (or a namespaced variant like `memory/passive-create`). The interceptor schema:
+In MCP, interceptors are defined via the MCP specification's interceptor mechanism (Currently [SEP-2624](https://github.com/Degiorgio/modelcontextprotocol/blob/SEP-1763/seps/2624-interceptors-for-model-context-protocol.md)). The memory system declares an interceptor (eg named `open-memory-observer`). The interceptor schema:
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "turn": {
-      "type": "object",
-      "properties": {
-        "role": { "type": "string", "enum": ["user", "assistant", "system"] },
-        "content": { "type": "string" },
-        "turn_number": { "type": "integer" },
-        "timestamp": { "type": "string", "format": "date-time" }
-      },
-      "required": ["role", "content", "turn_number", "timestamp"]
-    },
-    "session": {
-      "type": "object",
-      "properties": {
-        "session_id": { "type": "string" },
-        "user_id": { "type": "string" },
-        "agent_id": { "type": "string" },
-        "project_id": { "type": ["string", "null"] },
-        "memory_scope": { "type": "string" },
-        "origin": { "type": "string" }
-      },
-      "required": ["session_id", "user_id", "agent_id", "memory_scope", "origin"]
+  "name": "open-memory-observer",
+  "version": "0.1.0",
+  "description": "Create memories by observing the session",
+  "type": "validation",
+  "hooks": [
+    {
+      "events": ["agent/turn-*"],
+      "phase": "request"
     }
-  },
-  "required": ["turn", "session"]
+  ],
+  "mode": "audit",
+  "failOpen": true
 }
 ```
 
-The interceptor returns either `null` or a `MemoryRequest` object matching the schema in Section 4.3.
+The MCP interceptor is invoked by the harness after each turn with `"type": "validation"` (non-mutating) and `"mode": "audit"` (non-blocking) and `"failOpen": true` (non-invasive).
 
-The MCP interceptor is invoked by the harness after each turn. The harness then takes the returned `MemoryRequest` (if any) and calls the `remember` tool to persist it. The interceptor itself does not write; it only proposes.
-
-### 4.7 De-duplication and idempotency
-
-The interceptor may see the same content across multiple turns (e.g., a user repeating an instruction). The memory system's `remember` path handles deduplication via `checksum` (v0.6, U-1): if a memory with identical content already exists for the `origin`, the write is idempotent (v0.6, U-14). The interceptor does not need to maintain its own deduplication state, though it MAY for efficiency.
+The set of `"event"` subscriptions is an open question.
 
 ## Part 5. Passive Memory Decoration — `passive-decorate` interceptor
 
@@ -529,7 +453,11 @@ A turn may trigger both:
 
 The order is an implementation detail; the spec only requires that both interceptors receive the same `Turn` and `SessionContext` and can make independent decisions.
 
-## Part 6. Capability declaration
+## Part 6. Memory lookup
+
+In addition to content-based `recall`, a memory system MUST implement direct memory lookup in order to support following links and retrieving authored memories by ID.
+
+## Part 7. Capability declaration
 
 A memory system SHOULD declare which runtime surfaces it supports. The capability declaration follows the federation binding pattern (v0.6, 3.6.4): a JSON object with a `runtime` field:
 
