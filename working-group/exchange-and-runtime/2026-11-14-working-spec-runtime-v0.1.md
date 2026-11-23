@@ -14,8 +14,8 @@ The protocol standardizes four runtime plug-in points and nothing more:
 |---|---|---|
 | **remember** | agent → memory system | The shape of the write call and the resulting memory object |
 | **recall** | memory system → agent | The shape of the read response (memory objects in the runtime representation) |
-| **passive-create** | memory system observes session | The interceptor signature that observes turns and may create a memory |
-| **passive-decorate** | memory system decorates turns | The interceptor signature that decorates a turn with relevant memories before the agent sees it |
+| **open-memory-observe** | memory system observes session | The interceptor signature that observes turns and may create a memory |
+| **open-memory-decorate** | memory system decorates turns | The interceptor signature that decorates a turn with relevant memories before the agent sees it |
 
 The protocol does **not** standardize:
 - The recall function signature, ranking or retrieval algorithms (v0.6, 3.6.2). Implementations need room for different flavors of recall.
@@ -27,7 +27,7 @@ The protocol does **not** standardize:
 ### 1.2 Binding neutrality
 
 The protocol is binding-neutral (v0.6, I-10): it fixes the object that crosses a runtime surface, the runtime representation, and no transport. A memory system may expose its runtime surface through:
-- **MCP tools** — `remember` and `recall` as explicit tool calls; `passive-create` and `passive-decorate` as MCP interceptors
+- **MCP tools** — `remember` and `recall` as explicit tool calls; `open-memory-observe` and `open-memory-decorate` as MCP interceptors
 - **Harness hooks** — a supervisor callback that the harness invokes around each turn
 - **CLI / HTTP** — command-line or REST endpoints the harness calls explicitly
 
@@ -59,7 +59,7 @@ A memory system MAY add extension fields to the runtime projection under a dot-p
 
 ### 1.4 Provenance on write
 
-Every write — whether active (`remember`) or passive (`passive-create`) — SHOULD (MUST in audit profile) record who wrote the memory. The contributor list follows v0.6, Section 3.1.1:
+Every write — whether active (`remember`) or passive (`open-memory-observe`) — SHOULD (MUST in audit profile) record who wrote the memory. The contributor list follows v0.6, Section 3.1.1:
 
 | Key | Meaning |
 |---|---|
@@ -70,7 +70,7 @@ Every write — whether active (`remember`) or passive (`passive-create`) — SH
 | `at` | When this contributor acted |
 | `accountable` | `true` only on a `human` entry, marking who is accountable (v0.6, I-3b) |
 
-A passive-create interceptor that observes a session and extracts a memory MUST, when recording provenance, attribute the write to the agent that runs the interceptor, with `contribution: authored` and `kind: agent`. If a human explicitly confirms or edits the extracted memory, that human's `contribution: instructed` / `edited` / `approved` entries are added.
+A open-memory-observe interceptor that observes a session and extracts a memory MUST, when recording provenance, attribute the write to the agent that runs the interceptor, with `contribution: authored` and `kind: agent`. If a human explicitly confirms or edits the extracted memory, that human's `contribution: instructed` / `edited` / `approved` entries are added.
 
 ## Part 2. Active Memory Creation — the `remember` tool
 
@@ -249,18 +249,18 @@ The `results` array holds memory objects in the runtime representation (v0.6, 3.
 
 A recall response MUST NOT include `checksum`, `scope`, or tombstone/audit-record fields (v0.6, U-12). The agent receives only the runtime representation. If the agent needs provenance for audit purposes, it may read the memory again with an identifier lookup (section 6), or the system may include a summary `provenance` field in the runtime projection.
 
-## Part 4. Passive Memory Creation — `passive-create` interceptor
+## Part 4. Passive Memory Creation — `open-memory-observe` interceptor
 
 ### 4.1 Purpose
 
-Passive memory creation observes a session and autonomously creates memories from content the agent encounters. Unlike `remember` (which is agent-driven), `passive-create` is system-driven: an interceptor watches the conversation stream and, when it detects something worth remembering, creates a memory without the agent explicitly requesting it.
+Passive memory creation observes a session and autonomously creates memories from content the agent encounters. Unlike `remember` (which is agent-driven), `open-memory-observe` is system-driven: an interceptor watches the conversation stream and, when it detects something worth remembering, creates a memory without the agent explicitly requesting it.
 
 ### 4.2 The interceptor contract
 
 The interceptor is a function with side-effects. It uses this signature:
 
 ```
-function passive-create(
+function open-memory-observe(
   turn: Turn,
   session: SessionContext
 ) -> None
@@ -327,11 +327,7 @@ The MCP interceptor is invoked by the harness after each turn with `"type": "val
 
 The set of `"event"` subscriptions is an open question.
 
----
-
-# MANUAL REVIEW BOUNDARY
-
-## Part 5. Passive Memory Decoration — `passive-decorate` interceptor
+## Part 5. Passive Memory Decoration — `open-memory-decorate` interceptor
 
 ### 5.1 Purpose
 
@@ -344,7 +340,7 @@ The September 28 common-ground notes list "decorate" as a runtime verb alongside
 The interceptor is a function with this signature:
 
 ```
-function passive-decorate(
+function open-memory-decorate(
   turn: Turn,
   session: SessionContext
 ) -> DecoratedTurn
@@ -365,7 +361,7 @@ Where `Turn` and `SessionContext` are the same as in Section 4.2, and `Decorated
         "title": string,
         "tags": [string],
         "path": string,
-        "created_at": string,
+        "valid_from": string,
         "version": integer | string,
         "provenance": [{ "id", "kind", "contribution", ... }],
         "evidence": [{ "ref", "relation", ... }],
@@ -377,22 +373,21 @@ Where `Turn` and `SessionContext` are the same as in Section 4.2, and `Decorated
       "reason": string,                      // why this memory is relevant
       "score": number                        // optional: relevance score
     }
-  ],
-  "mask": boolean                            // if true, suppress the original turn's content
+  ]
 }
 ```
 
-The `memories` array holds memory objects most relevant to this turn, in the runtime representation. The `reason` field explains why each memory was selected (e.g., "matches project scope", "user mentioned this earlier", "tagged 'preference'"). The optional `score` is implementation-specific. The optional `mask` flag, if true, instructs the harness to suppress the original turn's content and replace it with the decorated memories — useful when the turn is a raw user utterance that should be rephrased through memory recall.
+The `memories` array holds memory objects most relevant to this turn, in the runtime representation. The `reason` field explains why each memory was selected (e.g., "matches project scope", "user mentioned this earlier", "tagged 'preference'"). The optional `score` is implementation-specific.
 
 ### 5.3 When the interceptor fires
 
 The harness invokes the interceptor before it passes the turn to the agent model. For each turn:
 
-1. The harness calls `passive-decorate(turn, session)`.
+1. The harness calls `open-memory-decorate(turn, session)`.
 2. The interceptor returns a `DecoratedTurn` with zero or more relevant memories.
-3. The harness injects the returned memories into the agent context (as hidden context blocks, tool context, or prompt injection) before invoking the agent.
+3. The harness injects the returned memories into the agent context (as context blocks, tool context, or prompt injection) before invoking the agent.
 
-The decorator may choose to return an empty `memories` array for turns where nothing is relevant (e.g., greetings). It should return memories for turns where the agent would otherwise lack needed context:
+The decorator may choose to return an empty `memories` array for turns where nothing is relevant (e.g., greetings). It SHOULD return memories for turns where the agent would otherwise lack needed context:
 - User states a preference: decorate with any existing preference memories.
 - User references a past decision: decorate with the decision memory.
 - User mentions a project or file: decorate with project-scoped memories.
@@ -406,7 +401,30 @@ The decorator uses `session.memory_scope` (set by the memory system per v0.6, U-
 
 ### 5.5 MCP interceptor binding
 
-In MCP, the decorator is an interceptor named `passive-decorate` (or `memory/passive-decorate`). The interceptor schema:
+In MCP, the decorator is defined via the MCP specification's interceptor mechanism (currently [SEP-2624](https://github.com/Degiorgio/modelcontextprotocol/blob/SEP-1763/seps/2624-interceptors-for-model-context-protocol.md)). The memory system declares an interceptor (e.g. named `open-memory-decorator`) on user turn submission. The interceptor descriptor:
+
+```json
+{
+  "name": "open-memory-decorator",
+  "version": "0.1.0",
+  "description": "Decorate a turn with memories relevant to the session scope",
+  "type": "mutation",
+  "hooks": [
+    {
+      "events": ["agent/turn-user"],
+      "phase": "request"
+    }
+  ],
+  "mode": "active",
+  "failOpen": true
+}
+```
+
+The decorator is a **mutator**: it transforms the request-phase payload by attaching memories to the turn. Because the harness must apply that transformation before the agent model sees the turn, the interceptor is `"type": "mutation"` and runs `"mode": "active"` (blocking and transforming) rather than `"audit"`, which would compute a shadow mutation without applying it.
+
+`"failOpen": true` keeps decoration non-invasive: if the interceptor crashes or times out, the harness SHOULD let the turn proceed undecorated. Returning no memories is likewise not an error — the turn still goes through. This is the correct default because decoration is an enhancement to context, not a gate on it.
+
+The invocation payload carries the `Turn` and `SessionContext`:
 
 ```json
 {
@@ -439,23 +457,48 @@ In MCP, the decorator is an interceptor named `passive-decorate` (or `memory/pas
 }
 ```
 
-The interceptor returns a `DecoratedTurn` object matching the schema in Section 5.2.
+The interceptor returns a `MutationResult` whose `payload` is the `DecoratedTurn` from Section 5.2:
 
-### 5.6 Interaction with `passive-create`
+```json
+{
+  "interceptor": "open-memory-decorator",
+  "type": "mutation",
+  "phase": "request",
+  "modified": true,
+  "payload": {
+    "turn": { "role": "user", "content": "...", "turn_number": 7, "timestamp": "..." },
+    "memories": [
+      {
+        "memory": { "identifier": "mem:abc123", "...": "runtime representation" },
+        "reason": "matches project scope",
+        "score": 0.92
+      }
+    ]
+  }
+}
+```
 
-`passive-decorate` and `passive-create` are orthogonal and may both be registered:
+`modified` is `true` when at least one memory was attached. When nothing is relevant, the interceptor returns `"modified": false` with an empty `memories` array and the harness proceeds with the turn unchanged. Mutations execute sequentially by `priorityHint`, so a memory system MAY set a negative `priorityHint` if decoration must run before other request-phase mutations.
+
+### 5.6 Interaction with `open-memory-observe`
+
+`open-memory-decorate` and `open-memory-observe` are orthogonal and may both be registered:
 
 | Interceptor | Purpose | Returns |
 |---|---|---|
-| `passive-create` | Observe turn, propose a memory to store | `Maybe<MemoryRequest>` |
-| `passive-decorate` | Observe turn, return relevant memories for context | `DecoratedTurn` |
+| `open-memory-observe` | Observe turn, propose a memory to store | `Maybe<MemoryRequest>` |
+| `open-memory-decorate` | Observe turn, return relevant memories for context | `DecoratedTurn` |
 
 A turn may trigger both:
-1. `passive-decorate` runs first, returning relevant memories for the agent's context.
-2. `passive-create` runs next, proposing a new memory from the turn's content.
+1. `open-memory-decorate` runs first, returning relevant memories for the agent's context.
+2. `open-memory-observe` runs next, proposing a new memory from the turn's content.
 3. The harness persists the proposed memory via `remember` (if any).
 
 The order is an implementation detail; the spec only requires that both interceptors receive the same `Turn` and `SessionContext` and can make independent decisions.
+
+---
+
+# MANUAL REVIEW BOUNDARY
 
 ## Part 6. Memory lookup
 
@@ -472,8 +515,8 @@ A memory system SHOULD declare which runtime surfaces it supports. The capabilit
     "endpoints": {
       "remember": true,
       "recall": true,
-      "passive-create": true,
-      "passive-decorate": true
+      "open-memory-observe": true,
+      "open-memory-decorate": true
     },
     "bindings": ["mcp", "cli"],
     "scopes": {
@@ -542,8 +585,8 @@ A session with user `u:alice`, agent `agent:notes-assistant`, project `proj:plat
 
 ```
 Turn 1: user says "I prefer concise answers."
-  passive-decorate returns: [] (no prior preferences)
-  passive-create returns: MemoryRequest {
+  open-memory-decorate returns: [] (no prior preferences)
+  open-memory-observe returns: MemoryRequest {
     body: "User prefers concise answers.",
     media_type: "text/plain",
     title: "User preference: concise answers",
@@ -556,14 +599,14 @@ Turn 1: user says "I prefer concise answers."
   → remember creates memory M1 (identifier: mem:abc123)
 
 Turn 2: user asks "What's the status update policy?"
-  passive-decorate returns: [M1] with reason "matches user preference for concise answers"
+  open-memory-decorate returns: [M1] with reason "matches user preference for concise answers"
   → harness injects M1's body as context before calling agent
   → agent calls recall? No — decoration provided context already
-  passive-create returns: null (nothing new to remember)
+  open-memory-observe returns: null (nothing new to remember)
 
 Turn 3: agent outputs "Status updates are due Fridays."
-  passive-decorate returns: [] (no relevant prior memories for this output)
-  passive-create returns: MemoryRequest {
+  open-memory-decorate returns: [] (no relevant prior memories for this output)
+  open-memory-observe returns: MemoryRequest {
     body: "Status updates are due Fridays from Sep 15.",
     media_type: "text/markdown",
     title: "Status updates move to Friday",
