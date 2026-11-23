@@ -488,13 +488,108 @@ A turn may trigger both:
 
 The order is an implementation detail; the spec only requires that both interceptors receive the same `Turn` and `SessionContext` and can make independent decisions.
 
+## Part 6. Memory lookup
+
+### 6.1 Purpose
+
+In addition to content-based `recall`, a memory system MUST implement direct memory lookup by identifier. `recall` answers "what is relevant to this query?" and leaves selection and ranking to the system; `lookup` answers "give me this exact memory" and MUST NOT rank, summarize, or substitute. It exists for three jobs:
+
+- **Following links and evidence.** `links` and `evidence` entries address other memories by `{origin, identifier, version}` (v0.6, 3.2 and 3.1.4); resolving one requires an exact read.
+- **Retrieving authored memories by identifier.** `remember` returns only the `identifier` and a receipt (Section 2.3); the full object is read back through `lookup`.
+- **Reading a pinned revision.** A link or evidence entry may pin a `version`; `lookup` returns that revision rather than the current one.
+
+`lookup` is a read surface only. It does not follow links, expand stubs, compile multiple memories, or return tombstones.
+
+### 6.2 Request
+
+`lookup` accepts a request object. Its fields are the same across bindings:
+
+```
+{
+  "identifier": string,                       // required: the memory to read
+  "version": integer | string,                // optional: a pinned revision; omit for the current one
+  "origin": string                            // optional: the origin the identifier belongs to;
+                                               //           defaults to the serving system's own origin
+}
+```
+
+- `identifier` is required and MUST be matched exactly. It is not a query: no fuzzy, prefix or content matching applies.
+- `version`, when present, selects exactly one revision using the system's declared comparator (v0.6, 3.3.3, I-4). When omitted, the current revision is returned — the revision not superseded by a later one under that comparator.
+- `origin`, when present, addresses a memory that originated in another store (v0.6, I-8). When omitted, the identifier is resolved within the serving system. A system that does not hold the origin-to-local mapping cannot resolve the memory, and the reference remains dangling (v0.6, 3.5.5).
+- A system MAY accept additional fields. It MUST NOT require a `scope` (scope is system-set per v0.6, U-11) and MUST NOT accept a free-text `query`; that is `recall`'s surface.
+
+A system MAY offer a batch form that accepts several identifiers. Each memory MUST then be projected independently, and the semantics below apply per identifier.
+
+### 6.3 Response
+
+A successful lookup returns one memory in the runtime representation (Section 1.3):
+
+```
+{
+  // runtime representation per Section 1.3
+  "identifier": string,
+  "media_type": string,
+  "body": string,
+  "title": string,
+  "tags": [string],
+  "path": string,
+  "valid_from": string,
+  "valid_until": string,
+  "version": integer | string,
+  "provenance": [{ "id", "kind", "contribution", ... }],
+  "evidence": [{ "ref", "relation", ... }],
+  "links": [{ "target", "rel", ... }],
+  "weight": number,
+  "stub": boolean,
+  "auditable": boolean
+}
+```
+
+The projection obeys the same rules as `recall` (Section 3.3): it MUST include `identifier`, `media_type` and `body`; it MUST NOT include `checksum`, `scope`, tombstone fields or audit records (v0.6, U-12); and it MAY add extension fields under a dot-prefixed prefix (v0.6, I-21). `provenance`, `evidence` and `links` MAY be summarized, but because lookup is the surface used to follow references, a system SHOULD return `links` unfiltered so the caller can resolve them.
+
+When `stub` is `true`, the body is a summary or pointer and the full content is fetched explicitly. `lookup` does not expand a stub; the caller decides whether to fetch `body_uri` (v0.6, I-17).
+
+### 6.4 Revisions, validity and tombstones
+
+- **Pinned revisions.** When `version` is supplied, `lookup` MUST return that revision even if a later revision exists. When `version` is omitted, it MUST return the current revision and MUST NOT return an older one under the same `identifier`.
+- **Validity is not filtered.** Unlike `recall`, which SHOULD exclude memories whose `valid_until` is in the past unless explicitly requested (Section 2.2.5), `lookup` MUST return the addressed revision even when it has expired. Links and evidence may legitimately point at an expired memory, and the caller sees `valid_until` in the projection and can judge.
+- **Forgotten memories are not readable.** A tombstone is a lifecycle record, not a memory body, and tombstones and audit records MUST NOT reach the agent through a runtime surface (v0.6, U-12). A lookup of a forgotten identifier returns `not_found`, and any link or evidence that addressed it remains dangling (v0.6, 3.5.5).
+
+### 6.5 Outcomes and access control
+
+The serving system enforces access control and projects the memory before returning it (v0.6, 3.4). A lookup MUST NOT return a memory outside the caller's scope, and it MUST NOT include `scope` in the response. Because lookup is exact, it is an easy way to attempt to read a memory whose identifier was seen elsewhere; the system MUST authorize every lookup as it would any read, not only recall.
+
+| Outcome | Meaning | Example binding signals |
+|---|---|---|
+| `found` | The memory resolved; the response carries it | MCP tool result; CLI exit 0 with the object on stdout; HTTP 200 |
+| `not_found` | No memory with that `identifier`, `origin` and optional `version` is visible to the caller | MCP tool error; CLI non-zero exit; HTTP 404 |
+| `unavailable` | The memory exists but cannot be served now (for example, its origin is unreachable under federation) | MCP tool error; CLI non-zero exit; HTTP 503 |
+
+These are examples, not requirements: each binding chooses how it signals an outcome. An unauthorized lookup MUST report `not_found`, not a distinguishable error, so that a caller cannot use lookup to confirm that a memory exists. Where access is allowed but the memory is temporarily unreachable, a system MAY report `unavailable`. A binding that returns structured errors MAY use:
+
+```json
+{
+  "error": {
+    "code": "not_found" | "unavailable",
+    "message": string,
+    "identifier": string,
+    "version": integer | string,
+    "origin": string
+  }
+}
+```
+
+### 6.6 Binding note
+
+Like `remember` and `recall`, `lookup` is binding-neutral (v0.6, I-10). In MCP it is a tool named `lookup` whose description states:
+
+> Read one memory by identifier, optionally pinned to a revision and origin. Returns the runtime representation; does not search, follow links, or expand stubs.
+
+In a harness hook it is a function; in CLI it is a subcommand; over REST it is an endpoint; or it may be exposed through another surface the harness supports. The request and response shapes are the same across bindings.
+
 ---
 
 # MANUAL REVIEW BOUNDARY
-
-## Part 6. Memory lookup
-
-In addition to content-based `recall`, a memory system MUST implement direct memory lookup in order to support following links and retrieving authored memories by ID.
 
 ## Part 7. Capability declaration
 
