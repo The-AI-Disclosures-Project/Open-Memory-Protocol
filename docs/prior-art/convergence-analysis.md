@@ -149,10 +149,12 @@ separately define user rights obligations.
 
 ### Agent-authored vs user-authored memory
 
-Coding agents span a spectrum: some (Codex, Cursor, Gemini CLI) treat memory
-as user-authored documentation; others (Claude Code, Goose) have the agent
-create memories autonomously; enterprise services have LLMs extract memories
-from conversations without explicit user instruction.
+Coding agents span a spectrum: some (Cursor, Gemini CLI) treat memory as
+user-authored documentation; others (Claude Code, Goose) have the agent create
+memories autonomously; Codex does both, with user-authored `AGENTS.md` files
+and a separate store of memories extracted from past chats in the background;
+enterprise services have LLMs extract memories from conversations without
+explicit user instruction.
 
 **Implication:** The standard should track authorship in provenance metadata
 (who created this memory: the user, the agent, a system process, an import).
