@@ -1,23 +1,24 @@
 # Open Memory Protocol: The Memory Object
 
-**Editors' draft v0.6.1, 2026-11-20.**
+**Editors' draft v0.6.1, 2026-11-25.**
 
-Proposals the group has not yet adopted are kept in [Notes J](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md#j-proposals-not-yet-in-the-text) until they are accepted or rejected.
+This document is the top-level specification for the Open Memory Protocol (OMP), covering the minimal accepted core across its three surfaces (**Exchange**, **Runtime**, and **Admin**), with detailed per-area specifications linked as they are adopted. Open proposals are tracked as GitHub issues and pull requests; unadopted proposals from v0.6 are kept in [Notes J](working-group/exchange-and-runtime/2026-11-09-working-spec-v0.6-notes.md#j-proposals-not-yet-in-the-text) while they are moved to issues.
 
 ## Part 1. The memory object
 
 ### 1.1 What is a memory object
+
 Memory in the Open Memory Protocol is defined as a **body** plus **metadata**. The body is the part of the memory that is relevant to an agent. The metadata is there to help transfer additional information alongside the body to other memory stores that the agent interacts with. It also helps the memory systems keep track of provenance and versioning, linking memories to each other, and controlling who can access them.
 
-We do not enforce the size of a memory. Different systems may have more granular information, such as making memories consist of a single fact only, others may include entire essays as a single memory, we aim to support both. A memory server can process memories to better fit their particular memory format once they receive it, our goal for the memory object is only to transfer it over.
+We do not enforce the size of a memory: it can be anything from a single fact to an entire document, and every field in 1.2 MUST work at any size. A receiving system MAY refactor, split, or merge an imported memory to fit its own format, as long as it maintains provenance back to the original memory's `identifier`.
 
 **Body Format**
 
-The body MUST be a string. Non-text content, such as images or audio, MAY be carried as a base64-encoded string with `body_encoding: base64`. Implementations are not required to interpret every media type.
+The `body` MUST be a UTF-8 string, never a nested object. Structured formats such as JSON or XML are carried as serialized strings, with `media_type` declaring how to interpret them (for example `application/json`, `application/xml`, or `text/plain`).
 
-In cases where a memory is stored as a structured object such as JSON or XML the metadata MUST include a `media_type` field with a value such as `application/json` or `application/xml`.
+Content whose bytes are not UTF-8 text, such as images or audio, MUST be carried either inline as a base64-encoded string with `body_encoding: base64`, or by reference as a stub: `stub: true`, `media_type` set to the content's own type, `body_uri` pointing to where the full content can be fetched, and `body` empty or a summary. Implementations are not required to interpret every media type.
 
-The body of a memory also does not need to include full documents inline. It can instead indicate that a memory is a stub with the `stub` field and optionally tell the memory system elsewhere with a `body_uri` field.
+Large text documents MAY also be carried as stubs using `stub: true` and an optional `body_uri` instead of inline text.
 
 ### 1.2 Field table
 
@@ -45,12 +46,17 @@ The table defines every standardized field within the Open Memory Protocol. Unst
 | `evidence` | list of references or strings | optional | What the memory is based on: source material, transcript turns, other memories, or a person's statement (3.1.4). In the audit profile, it is required for derived memories. |
 | `links` | list of edges | optional | References to other memories. |
 | `weight` | float | optional | A relative ordering of importance among memories from one `origin`. Values from different origins are not comparable. A receiving system MAY interpret `weight` however it wants. |
-| `body` | string | required | The content of the memory, in the format `media_type` declares. A string (1.1). |
+| `body` | string | required | The content of the memory, in the format `media_type` declares. A UTF-8 string (1.1). |
 
 
-Each field has one of four tiers: **required** fields are carried by every memory; **audit-required** fields are required in the audit profile (3.7) and optional otherwise; **ACL-required** fields are required wherever access control applies; and **optional** fields may be omitted in every profile.
+Each field has one of four tiers, adopted as the v0.6 baseline:
 
-`checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes, decoded first if `body_encoding` is set. Its value is `algorithm:hex`; implementations MUST support `sha256`.
+- **required** (`identifier`, `media_type`, `created_at`, `body`): carried by every memory.
+- **audit-required** (`version`, `checksum`, `provenance`, plus `evidence` for derived memories): required in the audit profile (3.7) and optional otherwise.
+- **ACL-required** (`scope`): required where access control applies; access control and its profile are deferred out of the base specification to the administrative specification.
+- **optional** (all other fields): may be omitted in every profile.
+
+`checksum` is computed over the UTF-8 bytes of `identifier`, `version` (if present), `created_at`, `updated_at` (if present) and `media_type`, each followed by a newline (`0x0A`), then the body bytes — decoded first if `body_encoding` is set, or the UTF-8 bytes of the body string as carried for a by-reference stub. Its value is `algorithm:hex`; implementations MUST support `sha256`.
 
 Implementations MAY add fields. Unknown fields MUST be preserved on export and MUST NOT change the meaning of standard fields.
 
@@ -89,23 +95,27 @@ Implementations MAY add fields. Unknown fields MUST be preserved on export and M
 
 ## Part 2. Goals and scope
 
-The protocol standardizes two things: an **exchange format**, the metadata that travels with a memory so one system can export it and another import and represent it, for portability and data ownership; and **runtime plug-in points** so that memory systems can exchange memories in real time.
+The protocol aims to enable a many-to-many mapping between agents, memory systems, and users without prescribing internal implementations. It standardizes three surfaces, each with a detailed specification linked from this document as it is adopted:
 
-While memory systems can be complex and different systems have different requirements, our goal is to allow the core of every memory system, the memory itself, to be transferred across memory systems.
+1. **Exchange.** Data interoperability through import, export, and server-to-server federation, giving users portability and sovereignty over their data.
+2. **Runtime.** Agent interoperability, allowing a single memory system to serve multiple agents concurrently or interchangeably across core memory operations (create, semantic recall, recall by identifier, and forget), with recommended guidance for both active tools (such as MCP or CLI) and passive hooks rather than mandating a single binding.
+3. **Admin.** Control-plane interoperability for multi-user scoping, access control, permissioning, and lineage, deferred out of the base exchange specification into its own proposal.
+
+While memory systems can be complex and different systems have different requirements, our core goal is to allow memories to move cleanly across systems and agents.
 
 Our aim is to enable:
 
-1. **Easy adoption.** Adopting the Open Memory Protocol should be simple for memory systems of all types. We do this by separating our exchange format from the runtime format and making most metadata optional.
+1. **Easy adoption.** Adopting the Open Memory Protocol should be simple for memory systems of all types. We do this by separating the exchange, runtime, and admin surfaces and making most metadata optional.
 2. **Auditability.** Supporting primitives that make it easy to track and audit provenance of and changes in memories.
-3. **Room for innovation.** The protocol standardizes the exchange format, not how memory is retrieved by the agent or stored. We aim not to limit memory systems in any way.
+3. **Room for innovation.** The protocol standardizes interoperable surfaces and object shapes, not how memory is stored, ranked, or retrieved. We aim not to limit memory systems in any way.
 
 We don't take a position on the following items:
 
 1. The underlying storage format the memory system uses.
 2. The size and semantic scope of a single memory.
 3. The recall function signature, ranking, or retrieval algorithms.
-4. Agent to memory system communication.
-
+4. Whether agents integrate via tools (such as MCP) or hooks.
+5. Access-control policy languages or fixed scope hierarchies.
 
 ## Part 3. Rules
 
