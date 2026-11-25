@@ -47,23 +47,67 @@ it determines they may be relevant.
 
 ### Codex (OpenAI)
 
-**Storage:** Markdown file in the project directory.
+*Updated November 2026 from the current Codex documentation. The rest of this
+survey reflects September 2026.*
 
-**Memory structure:** `AGENTS.md` at project root. A single markdown file
-containing instructions, conventions, and context for the agent.
+**Storage:** Markdown instruction files in the Codex home directory
+(`~/.codex`, or `$CODEX_HOME`) and in the repository, plus an optional local
+memory store under the Codex home.
 
-**Scope model:** Project-level only. No user-level or directory-level scoping.
+**Memory structure:**
+- `~/.codex/AGENTS.md`: user-level instructions for every repository. An
+  `AGENTS.override.md` in the same directory takes its place while it exists.
+- `AGENTS.md` or `AGENTS.override.md` at the project root and in any
+  subdirectory, for project- and directory-level instructions. Other filenames
+  can be added with `project_doc_fallback_filenames`.
+- Local memories, off by default: files Codex generates from earlier chats,
+  under `$CODEX_HOME/memories/` or, in a fresh Codex home,
+  `$CODEX_HOME/memories_v2/`. The documentation describes them as generated
+  summaries with supporting evidence from prior chats, and as generated state
+  rather than files to edit by hand.
 
-**Lifecycle:** Primarily user-created. The file is maintained by the developer
-as part of the project, similar to a README or CONTRIBUTING guide.
+**Scope model:** Instruction files have a global tier (the Codex home) and a
+directory-level project tier: Codex walks from the project root (usually the
+Git root) down to the working directory and takes at most one file per
+directory. The local memory store belongs to a machine (its Codex home); the
+documentation does not describe a per-project split.
 
-**Retrieval:** The entire file is loaded into context at session start.
+**Lifecycle:** Instruction files are user-authored. Local memories are
+agent-authored in the background: once a chat has been idle long enough, Codex
+extracts memories from it, skipping active and short-lived chats, followed by
+a global consolidation pass. The extraction and consolidation models are
+configurable. Codex redacts secrets from generated
+memory fields, and chats that used MCP tools or web search can be kept out of
+memory generation.
 
-**User control:** Full. Plain text file in the repo.
+**Retrieval:** Instruction files are concatenated from the global file down to
+the working directory, so files closer to the working directory come later and
+take precedence, up to `project_doc_max_bytes` (32 KiB by default). Nothing is
+searched. When memories are enabled, Codex injects existing memories into new
+sessions; the documentation does not say how they are selected.
 
-**Portability:** Plain markdown. Trivially portable.
+**User control:** Instruction files are plain text. Memories have a per-machine
+on/off setting, a per-chat `/memories` control over whether the chat can use
+existing memories and whether it can feed future ones, and a delete action that
+resets the machine's store. The memory files can be inspected, but the
+documentation advises against editing them as the primary control.
 
-**Context injection:** Entire file injected into context at session start.
+**Portability:** `AGENTS.md` is plain markdown, and other harnesses read it
+(Hermes, Pi). The ChatGPT desktop app, which hosts Codex, imports another
+agent's setup from Claude Code, Claude Cowork or Cursor; Codex CLI imports from
+Claude Code or Cursor, up to 50 chats from the last 30 days. The documented
+mapping: instruction files become `AGENTS.md`, `settings.json` becomes
+`config.toml`, Claude Code project memories become Codex memories, slash
+commands become skills, and skills, plugins, project folders, MCP
+configuration, hooks, subagents and recent chats are carried over. The source
+setup is left unchanged, and the desktop app can keep the import in sync. The
+documentation
+lists where each item goes but not what is lost, and asks users to review
+permissions, MCP authentication, hooks and argument-dependent prompts
+afterwards.
+
+**Context injection:** The instruction chain is built once per run and injected
+at session start. Memories are injected when enabled.
 
 ### Goose (Block)
 
@@ -472,27 +516,32 @@ AGENTS.md, GEMINI.md, .cursor/rules/, .clinerules/, .goose/memory/,
 .hermes.md. There is no shared convention. A user who works with multiple
 harnesses maintains multiple memory files with duplicated content. The
 cross-format reading in Hermes and Pi (both read AGENTS.md and CLAUDE.md)
-is a pragmatic step toward interoperability.
+is a pragmatic step toward interoperability. Codex takes another route: a
+one-way importer that converts a Claude Code or Cursor setup into Codex's own
+files and memory store.
 
 **Memory architecture depth.** The systems span a wide spectrum. At one end,
-Codex uses a single markdown file with no retrieval. At the other, OpenClaw
+Aider keeps no cross-session memory beyond configuration, convention files and
+git history. At the other, OpenClaw
 has a five-surface architecture with three-phase dreaming, trigger-based
 injection, provenance-gated security, and standing intents. Hermes has five
 persistence layers with pluggable external memory providers. The standard
 needs to accommodate both ends of this spectrum.
 
-**Agent-authored vs user-authored memory.** Some systems (Codex, Cursor,
-Gemini CLI) treat memory files as user-authored documentation the agent
-consumes but does not write. Others (Claude Code, Goose) have the agent
-create memories autonomously. The most sophisticated systems (OpenClaw,
-Hermes) use background consolidation to promote observations into curated
-memory through deterministic gates. The authorship model affects provenance:
-who is responsible for the accuracy of a memory?
+**Agent-authored vs user-authored memory.** Some systems (Cursor, Gemini CLI)
+treat memory files as user-authored documentation the agent consumes but does
+not write. Others (Claude Code, Goose) have the agent create memories
+autonomously. Codex keeps the two apart: user-authored `AGENTS.md` files, and
+a separate store of memories it generates in the background. The most
+sophisticated systems (OpenClaw, Hermes) use background consolidation to
+promote observations into curated memory through deterministic gates. The
+authorship model affects provenance: who is responsible for the accuracy of a
+memory?
 
-**Scope granularity.** Claude Code supports directory-level scoping (nested
-CLAUDE.md files). Cursor supports file-level scoping (glob patterns on rules).
-OpenClaw and Hermes support project-level scoping via Git repository
-identification. Most others are project-level only.
+**Scope granularity.** Claude Code and Codex support directory-level scoping
+(nested CLAUDE.md and AGENTS.md files). Cursor supports file-level scoping
+(glob patterns on rules). OpenClaw and Hermes support project-level scoping
+via Git repository identification. Most others are project-level only.
 
 **Memory structure.** Claude Code structures memories with typed entries
 (user, feedback, project, reference) and YAML frontmatter. OpenClaw uses
